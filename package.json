@@ -1,0 +1,15 @@
+{
+  "name": "feels-like-organic-root",
+  "version": "1.0.0",
+  "description": "Root package to manage both client and server",
+  "scripts": {
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install",
+    "seed": "cd server && npm run seed",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -23,6 +23,10 @@ const Athlet = sequelize.define('Athlet', {
     type: DataTypes.ENUM('eingeladen', 'aktiv', 'inaktiv'),
     defaultValue: 'eingeladen',
   },
+  role: {
+    type: DataTypes.ENUM('athlet', 'trainer'),
+    defaultValue: 'athlet',
+  },
 });
 
 module.exports = Athlet;
