@@ -1,8 +1,15 @@
 const { connectDB, sequelize } = require('./config/db');
 const express = require('express');
 const cors = require('cors');
+
+// Modelle laden (damit Tabellen erstellt werden)
+require('./models/index');
+
 // Routen Importieren
-const testRoutes = require('./routes/testRoutes');
+const authRoutes = require('./routes/authRoutes');
+const trainingRoutes = require('./routes/trainingRoutes');
+const rankingRoutes = require('./routes/rankingRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 require('dotenv').config();
 
@@ -14,7 +21,15 @@ app.use(cors());              // Erlaubt Zugriff vom Frontend
 app.use(express.json());      // Erlaubt JSON im Request-Body
 
 // Routen registrieren
-app.use('/api', testRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/trainings', trainingRoutes);
+app.use('/api/ranking', rankingRoutes);
+app.use('/api/users', userRoutes);
+
+// Health-Check für API
+app.get('/api', (req, res) => {
+  res.json({ message: 'API is running' });
+});
 
 // Test-Root
 app.get('/', (req, res) => {

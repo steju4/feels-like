@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api'; // Unser API Client
+import api from '../api/axios'; 
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -8,9 +8,10 @@ const Dashboard = () => {
 
   // Test-Aufruf an das Backend beim Laden der Seite
   useEffect(() => {
-    api.get('/test')
+    // API Call anpassen, falls /test nicht mehr existiert oder geschützt ist.
+    api.get('/') 
       .then(response => {
-        setServerStatus(response.data);
+        setServerStatus({ message: 'Verbunden' });
       })
       .catch(error => {
         console.error("API Fehler:", error);
@@ -23,7 +24,7 @@ const Dashboard = () => {
       
       {/* SYSTEM STATUS CHECK (Nur für Dev) */}
       <div style={{ 
-        background: serverStatus?.athleteCount >= 0 ? '#e8f5e9' : '#ffebee', 
+        background: serverStatus?.message === 'Verbunden' ? '#e8f5e9' : '#ffebee', 
         padding: '10px', 
         borderRadius: '8px', 
         border: '1px dashed #ccc',
@@ -31,7 +32,6 @@ const Dashboard = () => {
         fontSize: '0.9rem'
       }}>
         <strong>System Status:</strong> {serverStatus ? serverStatus.message : 'Verbinde...'} 
-        {serverStatus?.athleteCount >= 0 && <span> (Athleten in DB: {serverStatus.athleteCount})</span>}
       </div>
 
       {/* 1. Hero / Welcome Area */}
