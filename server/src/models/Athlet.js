@@ -1,3 +1,13 @@
+/*
+  TODO: Athlet Model
+  
+  Definiert den User (Sowohl Athlet als auch Trainer).
+  Felder existieren bereits, aber müssen ggf. erweitert werden.
+  Sicherstellen:
+  - role: Unterscheidung zwischen 'trainer' und 'athlet' ist essenziell für die Rechte.
+  - passwortHash: Sicher speichern (bcrypt).
+*/
+
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db.js');
 
