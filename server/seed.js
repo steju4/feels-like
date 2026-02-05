@@ -36,7 +36,7 @@ const seedDaten = async () => {
         status: 'aktiv'
       }
 
-    ]);
+    ], { individualHooks: true });
 
     console.log(`✅ ${athleten.length} Nutzer (Athleten & Trainer) erfolgreich angelegt!`);
     process.exit();

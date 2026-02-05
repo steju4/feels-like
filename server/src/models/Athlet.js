@@ -10,9 +10,9 @@
 
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db.js');
+const bcrypt = require('bcryptjs');
 
 const Athlet = sequelize.define('Athlet', {
-  // Attribute aus deinem Grobdesign
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -20,7 +20,7 @@ const Athlet = sequelize.define('Athlet', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true, // Jede Email darf es nur einmal geben
+    unique: true,
     validate: {
       isEmail: true,
     },
@@ -37,6 +37,26 @@ const Athlet = sequelize.define('Athlet', {
     type: DataTypes.ENUM('athlet', 'trainer'),
     defaultValue: 'athlet',
   },
+}, {
+  hooks: {
+    beforeCreate: async (user) => {
+      if (user.passwortHash) {
+        const salt = await bcrypt.genSalt(10);
+        user.passwortHash = await bcrypt.hash(user.passwortHash, salt);
+      }
+    },
+    beforeUpdate: async (user) => {
+      if (user.changed('passwortHash')) {
+        const salt = await bcrypt.genSalt(10);
+        user.passwortHash = await bcrypt.hash(user.passwortHash, salt);
+      }
+    }
+  }
 });
+
+// Instanz-Methode zum Prüfen des Passworts
+Athlet.prototype.checkPassword = async function(enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.passwortHash);
+};
 
 module.exports = Athlet;
