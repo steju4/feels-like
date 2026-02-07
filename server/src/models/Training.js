@@ -16,7 +16,51 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 
 const Training = sequelize.define('Training', {
-  // Platzhalter für Feld-Definitionen
+  // Datum der Einheit
+  date: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  // Sportart
+  type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  // Dauer in Minuten
+  duration: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 1,
+    },
+  },
+  // Belastungsempfinden 1-10
+  rpe: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 1,
+      max: 10,
+    },
+  },
+  // Optionaler Freitext
+  note: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  // Berechneter Score (z.B. duration * rpe)
+  feelsLikeScore: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 0,
+    },
+  },
+  // Zuordnung zum Athleten
+  athletId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 module.exports = Training;
