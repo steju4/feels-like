@@ -23,6 +23,7 @@ exports.profilLaden = async (req, res) => {
 
     res.json(user);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Fehler beim Laden des Profils' });
   }
 };

@@ -53,13 +53,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    setLoading(true);
     try {
       await api.post('/auth/logout'); // Server muss Cookie löschen
     } catch (e) {
       console.error(e);
+    } finally {
+      // Local State leeren
+      setUser(null);
+      setLoading(false);
     }
-    // Local State leeren
-    setUser(null);
   };
 
   return (
