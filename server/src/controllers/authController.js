@@ -1,17 +1,16 @@
 /*
-  TODO: Auth Controller
+  Auth Controller (Kontoverwaltung)
   
   Steuert den Authentifizierungs-Flow.
   Funktionen:
-  - login: User Credentials prüfen -> JWT Token ausstellen -> zurücksenden.
-  - register: (Optional, falls sich User selbst registrieren dürfen)
-  - changePassword: (Optional)
+  - anmelden: User Credentials prüfen -> JWT Token ausstellen -> zurücksenden.
+  - abmelden: Session beenden.
 */
 
 const jwt = require('jsonwebtoken');
 const Athlet = require('../models/Athlet');
 
-exports.login = async (req, res) => {
+exports.anmelden = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -59,7 +58,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.logout = (req, res) => {
+exports.abmelden = (req, res) => {
   res.clearCookie('token');
   res.json({ message: 'Erfolgreich ausgeloggt' });
 };

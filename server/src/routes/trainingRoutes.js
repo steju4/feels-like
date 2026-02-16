@@ -1,13 +1,12 @@
 /*
-  TODO: Training Routes
+  Training Routes (TrainingsVerwaltung)
   
   CRUD-Endpunkte für Trainings. MUSS durch authMiddleware geschützt sein.
-  Ungefähre Routen:
-  - GET / (Alle Trainings listen)
-  - POST / (Neues Training)
-  - GET /:id (Details)
-  - PUT /:id (Update)
-  - DELETE /:id (Löschen)
+  Routen:
+  - GET / (alleTrainings)
+  - POST / (trainingErfassen)
+  - PUT /:id (trainingAendern)
+  - DELETE /:id (trainingLoeschen)
 */
 
 const express = require('express');
@@ -16,6 +15,6 @@ const trainingController = require('../controllers/trainingController');
 // const authMiddleware = require('../middleware/authMiddleware');
 
 // Beispiel:
-// router.get('/', authMiddleware, trainingController.getAllTrainings);
+// router.get('/', authMiddleware, trainingController.alleTrainings);
 
 module.exports = router;

@@ -1,18 +1,16 @@
 /*
-  TODO: User/Athlet Controller
+  User Controller (AthletenVerwaltung)
   
   Verwaltung der Benutzer.
   Funktionen:
-  - getProfile: Eigene Daten laden.
-  - getAllAthletes: (Nur für Trainer) Liste aller Athleten laden.
-  - inviteAthlet: (Nur für Trainer) Neuen User anlegen/einladen.
+  - profilLaden: Eigene Daten laden.
+  - athletenListe: (Nur für Trainer) Liste aller Athleten laden.
+  - athletAnlegen: (Nur für Trainer) Neuen User anlegen/einladen.
 */
 
 const Athlet = require('../models/Athlet');
 
-// Beispiel wie man die /me Route nutzt
-// Frontend ruft GET /api/users/me auf -> Controller antwortet.
-exports.getProfile = async (req, res) => {
+exports.profilLaden = async (req, res) => {
   try {
     // req.user.id kommt aus dem Token
     const user = await Athlet.findByPk(req.user.id, {
