@@ -1,13 +1,28 @@
 /*
-  TODO: User/Athlet Controller
+  User Controller (AthletenVerwaltung)
   
   Verwaltung der Benutzer.
   Funktionen:
-  - getProfile: Eigene Daten laden.
-  - getAllAthletes: (Nur für Trainer) Liste aller Athleten laden.
-  - inviteAthlet: (Nur für Trainer) Neuen User anlegen/einladen.
+  - profilLaden: Eigene Daten laden.
+  - athletenListe: (Nur für Trainer) Liste aller Athleten laden.
+  - athletAnlegen: (Nur für Trainer) Neuen User anlegen/einladen.
 */
 
-exports.getProfile = async (req, res) => {
-  res.send('Profile Logic');
+const Athlet = require('../models/Athlet');
+
+exports.profilLaden = async (req, res) => {
+  try {
+    // req.user.id kommt aus dem Token
+    const user = await Athlet.findByPk(req.user.id, {
+      attributes: { exclude: ['passwortHash'] } // Passwort nicht zurückgeben
+    });
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User nicht gefunden' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler beim Laden des Profils' });
+  }
 };

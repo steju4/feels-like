@@ -1,12 +1,12 @@
 /*
-  TODO: Ranking/Stats Controller
+  Ranking Controller (AnalyseService)
   
   Logik für die Bestenlisten und Auswertungen.
   Funktionen:
-  - getLeaderboard: Alle User abrufen, FeelsLike-Scores summieren/berechnen, sortieren und zurückgeben.
-  - getStats: Persönliche Statistiken für Charts.
+  - berechneRanking: Alle User abrufen, FeelsLike-Scores summieren/berechnen, sortieren und zurückgeben.
+  - berechneStatistik: Persönliche Statistiken für Charts.
 */
 
-exports.getLeaderboard = async (req, res) => {
-  res.send('Leaderboard Logic');
+exports.berechneRanking = async (req, res) => {
+  res.send('Ranking berechnen Logic');
 };

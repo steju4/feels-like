@@ -31,9 +31,11 @@ npm run install-all
 ### 2. Environment Variablen (WICHTIG!)
 Im Ordner `server` liegt eine Datei namens `.env.example`.
 1.  Benenne diese um in `.env` (oder kopiere sie).
-2.  Passe ggf. das `JWT_SECRET` an.
+2.  Aktuell ist es noch egal was bei `JWT_SECRET` steht, da wir in der Entwicklung keine echten Tokens verwenden, aber es muss gesetzt sein
+3. Der Rest (Datenbank, Port) kann so bleiben.
 
-**Hinweis:** Die `.env` Datei wird **nicht** ins Git hochgeladen (Sicherheit!), daher muss jeder Entwickler seine eigene erstellen.
+
+**Hinweis:** Die `.env` Datei wird **nicht** ins Git hochgeladen (Sicherheit!), daher muss jeder seine eigene erstellen.
 
 ### 3. Datenbank vorbereiten
 Um Testdaten zu haben (inkl. 1 Trainer-Account und 3 Athleten), führe aus:
@@ -47,7 +49,7 @@ npm run seed
 ## ▶️ Projekt starten
 Du hast zwei Möglichkeiten:
 
-### Option A: Der "All-in-One" Modus (Empfohlen) 👍
+### Option A: Der "All-in-One" Modus (Empfohlen)
 Startet Backend und Frontend gleichzeitig in einem Terminal.
 
 ```bash
@@ -68,15 +70,15 @@ Die App ist dann unter `http://localhost:5173` erreichbar. Die API läuft unter 
 
 ---
 
-## 🤝 Entwickler-Workflow (WICHTIG!)
+## Entwickler-Workflow
 
-Damit wir uns nicht gegenseitig stören und Merge-Konflikte vermeiden, gelten folgende Regeln:
+Damit man sich nicht gegenseitig stört und um Merge-Konflikte vermeiden, gelten folgende Regeln:
 
 ### 1. 🛡️ Schutz des `dev` Branch
 Niemand pusht direkt auf `main` oder `dev`! Diese Branches müssen immer stabil sein.
 
 ### 2. 🌱 Neue Features entwickeln (Feature Branches)
-Erstelle für JEDE Aufgabe einen neuen Branch:
+Erstelle für JEDE Aufgabe einen neuen Branch namens nach folgendem Schema: `type/name` (z.B. `feature/login-page`, `fix/dashboard-css`, `docs/update-readme`).
 
 ```bash
 # Zuerst aktualisieren

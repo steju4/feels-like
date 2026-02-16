@@ -1,16 +1,17 @@
 /*
-  TODO: Auth Routes
+  Auth Routes (Kontoverwaltung)
   
   Definition der Endpunkte für Authentifizierung.
-  Ungefähre Routen:
-  - POST /login
-  - POST /register (falls benötigt)
+  Routen:
+  - POST /login (anmelden)
+  - POST /logout (abmelden)
 */
 
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 
-// router.post('/login', authController.login);
+router.post('/login', authController.anmelden);
+router.post('/logout', authController.abmelden);
 
 module.exports = router;
