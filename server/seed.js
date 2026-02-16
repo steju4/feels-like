@@ -1,4 +1,4 @@
-const { sequelize, Athlet, Training } = require('./src/models');
+const { sequelize, Athlet, Trainingseinheit } = require('./src/models');
 
 const seedDaten = async () => {
   try {
@@ -42,72 +42,72 @@ const seedDaten = async () => {
     // 3. Dummy-Trainingseinträge (verteilte Daten für Tests)
     const trainings = [
       {
-        date: '2026-01-15',
-        type: 'Laufen',
-        duration: 45,
-        rpe: 6,
+        datum: '2026-01-15',
+        sportart: 'Laufen',
+        dauer: 45,
+        distanz: 8.5,
         note: 'Morgenlauf im Park',
-        feelsLikeScore: 45 * 6,
-        athletId: athleten[1].id, 
-      },
-      {
-        date: '2026-01-18',
-        type: 'Radfahren',
-        duration: 90,
-        rpe: 7,
-        note: 'Intervall-Session',
-        feelsLikeScore: 90 * 7,
+        feelsLikeScore: 270,
         athletId: athleten[1].id,
       },
       {
-        date: '2025-12-05',
-        type: 'Schwimmen',
-        duration: 60,
-        rpe: 5,
+        datum: '2026-01-18',
+        sportart: 'Radfahren',
+        dauer: 90,
+        distanz: 35.0,
+        note: 'Intervall-Session',
+        feelsLikeScore: 630,
+        athletId: athleten[1].id,
+      },
+      {
+        datum: '2025-12-05',
+        sportart: 'Schwimmen',
+        dauer: 60,
+        distanz: 2.5,
         note: 'Technikfokus',
-        feelsLikeScore: 60 * 5,
-        athletId: athleten[2].id, 
+        feelsLikeScore: 300,
+        athletId: athleten[2].id,
       },
       {
-        date: '2025-11-28',
-        type: 'Krafttraining',
-        duration: 50,
-        rpe: 8,
-        note: 'Beine & Core',
-        feelsLikeScore: 50 * 8,
-        athletId: athleten[3].id, 
-      },
-      {
-        date: '2025-12-20',
-        type: 'Laufen',
-        duration: 30,
-        rpe: 4,
-        note: 'Regenerationslauf',
-        feelsLikeScore: 30 * 4,
+        datum: '2025-11-28',
+        sportart: 'Laufen',
+        dauer: 50,
+        distanz: 9.0,
+        note: 'Tempodauerlauf',
+        feelsLikeScore: 400,
         athletId: athleten[3].id,
       },
       {
-        date: '2026-01-02',
-        type: 'Radfahren',
-        duration: 120,
-        rpe: 6,
+        datum: '2025-12-20',
+        sportart: 'Laufen',
+        dauer: 30,
+        distanz: 5.0,
+        note: 'Regenerationslauf',
+        feelsLikeScore: 120,
+        athletId: athleten[3].id,
+      },
+      {
+        datum: '2026-01-02',
+        sportart: 'Radfahren',
+        dauer: 120,
+        distanz: 50.0,
         note: 'Lockere Ausdauer',
-        feelsLikeScore: 120 * 6,
+        feelsLikeScore: 720,
         athletId: athleten[0].id,
       },
       {
-        date: '2025-10-10',
-        type: 'Laufen',
-        duration: 55,
-        rpe: 7,
+        datum: '2025-10-10',
+        sportart: 'Laufen',
+        dauer: 55,
+        distanz: 10.5,
         note: 'Tempodauerlauf',
-        feelsLikeScore: 55 * 7,
+        feelsLikeScore: 385,
         athletId: athleten[2].id,
       },
     ];
 
-    const createdTrainings = await Training.bulkCreate(trainings); // Trainings speichern
-    console.log(`${createdTrainings.length} Trainings erfolgreich angelegt!`);
+    const erstellteTrainings = await Trainingseinheit.bulkCreate(trainings);
+    console.log(`${erstellteTrainings.length} Trainings erfolgreich angelegt!`);
     process.exit();
 
   } catch (error) {

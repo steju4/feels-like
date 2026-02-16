@@ -1,13 +1,13 @@
 const { sequelize } = require('../config/db');
 const Athlet = require('./Athlet');
-const Training = require('./Training');
+const Trainingseinheit = require('./Trainingseinheit');
 
 // Beziehungen definieren (Associations)
-Athlet.hasMany(Training, { foreignKey: 'athletId' });
-Training.belongsTo(Athlet, { foreignKey: 'athletId' });
+Athlet.hasMany(Trainingseinheit, { foreignKey: 'athletId' });
+Trainingseinheit.belongsTo(Athlet, { foreignKey: 'athletId' });
 
 module.exports = {
   sequelize,
   Athlet,
-  Training
+  Trainingseinheit
 };

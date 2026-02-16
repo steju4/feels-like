@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { connectDB, sequelize } = require('./config/db');
 const express = require('express');
 const cors = require('cors');
@@ -12,8 +14,6 @@ const trainingRoutes = require('./routes/trainingRoutes');
 const rankingRoutes = require('./routes/rankingRoutes');
 const userRoutes = require('./routes/userRoutes');
 
-require('dotenv').config();
-
 const app = express();
 
 // Middleware
@@ -27,7 +27,7 @@ app.use(cookieParser());      // Erlaubt Lesen von Cookies
 
 // Routen registrieren
 app.use('/api/auth', authRoutes);
-app.use('/api/trainings', trainingRoutes);
+app.use('/api/training', trainingRoutes);
 app.use('/api/ranking', rankingRoutes);
 app.use('/api/users', userRoutes);
 
