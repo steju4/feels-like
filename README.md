@@ -31,7 +31,7 @@ npm run install-all
 ### 2. Environment Variablen (WICHTIG!)
 Im Ordner `server` liegt eine Datei namens `.env.example`.
 1.  Benenne diese um in `.env` (oder kopiere sie).
-2.  Aktuell ist es noch egal was bei `JWT_SECRET` steht, da wir in der Entwicklung keine echten Tokens verwenden, aber es muss gesetzt sein
+2.  Setze bei `JWT_SECRET` einen sicheren, zufälligen Wert. Er wird verwendet, um JWT-Tokens zu signieren und zu verifizieren. Er sollte nicht zu einfach sein und nicht ins Repository committet werden.
 3. Der Rest (Datenbank, Port) kann so bleiben.
 
 
@@ -72,7 +72,7 @@ Die App ist dann unter `http://localhost:5173` erreichbar. Die API läuft unter 
 
 ## Entwickler-Workflow
 
-Damit man sich nicht gegenseitig stört und um Merge-Konflikte vermeiden, gelten folgende Regeln:
+Damit man sich nicht gegenseitig stört und um Merge-Konflikte zu vermeiden, gelten folgende Regeln:
 
 ### 1. 🛡️ Schutz des `dev` Branch
 Niemand pusht direkt auf `main` oder `dev`! Diese Branches müssen immer stabil sein.

@@ -11,6 +11,10 @@
 
 const jwt = require('jsonwebtoken');
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET ist nicht definiert. Bitte in der .env Datei setzen.');
+}
+
 module.exports = (req, res, next) => {
   // 1. Token aus Cookie lesen
   const token = req.cookies.token;
