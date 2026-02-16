@@ -13,6 +13,10 @@ const Athlet = require('../models/Athlet');
 exports.anmelden = async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ message: 'E-Mail und Passwort sind erforderlich' });
+  }
+
   try {
     // 1. User suchen
     const user = await Athlet.findOne({ where: { email } });
@@ -59,6 +63,10 @@ exports.anmelden = async (req, res) => {
 };
 
 exports.abmelden = (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax'
+  });
   res.json({ message: 'Erfolgreich ausgeloggt' });
 };

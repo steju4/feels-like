@@ -26,11 +26,11 @@
 }
 
 /* Zeilen-Hervorhebung beim Drüberfahren */
-.ranking-table tr:hover {
+.ranking-table tbody tr:hover {
   background-color: #f5f5f5;
 }
 
 /* Die ersten drei Plätze hervorheben */
-.ranking-table tr:nth-child(1) { font-weight: bold; color: #d4af37; } /* Gold */
-.ranking-table tr:nth-child(2) { color: #aaa9ad; } /* Silber */
-.ranking-table tr:nth-child(3) { color: #b08d57; } /* Bronze */
+.ranking-table tbody tr:nth-child(1) { font-weight: bold; color: #d4af37; } /* Gold */
+.ranking-table tbody tr:nth-child(2) { color: #aaa9ad; } /* Silber */
+.ranking-table tbody tr:nth-child(3) { color: #b08d57; } /* Bronze */

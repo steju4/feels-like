@@ -1,5 +1,5 @@
 import React from 'react';
-import './Ranking.css'; // 
+import './Ranking.css';
 
 const Ranking = () => {
   // Mock-Daten anlegen
