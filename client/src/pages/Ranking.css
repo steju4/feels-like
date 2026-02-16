@@ -1,0 +1,36 @@
+.ranking-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse; /* Entfernt doppelte Rahmen */
+  margin-top: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ranking-table th {
+  background-color: #4CAF50; /* Ein organisches Grün passend zu "Feels Like" */
+  color: white;
+  text-align: left;
+  padding: 12px;
+}
+
+.ranking-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Zeilen-Hervorhebung beim Drüberfahren */
+.ranking-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Die ersten drei Plätze hervorheben */
+.ranking-table tr:nth-child(1) { font-weight: bold; color: #d4af37; } /* Gold */
+.ranking-table tr:nth-child(2) { color: #aaa9ad; } /* Silber */
+.ranking-table tr:nth-child(3) { color: #b08d57; } /* Bronze */

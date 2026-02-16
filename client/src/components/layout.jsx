@@ -1,7 +1,17 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 import './Layout.css';
 
 const Layout = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = (e) => {
+    e.preventDefault(); // Verhindert normales Link-Verhalten
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="layout-container">
       {/* Die Seitenleiste */}
@@ -11,8 +21,11 @@ const Layout = () => {
           <li><Link to="/">🏠 Dashboard</Link></li>
           <li><Link to="/training">🏃 Mein Training</Link></li>
           <li><Link to="/ranking">🏆 Ranking</Link></li>
-          {/* Platzhalter für später */}
-          <li style={{marginTop: 'auto'}}><Link to="/login">Logout</Link></li>
+           
+          {/* Logout Button */}
+          <li style={{marginTop: 'auto'}}>
+            <a href="/login" onClick={handleLogout}>🚪 Logout</a>
+          </li>
         </ul>
       </nav>
 
