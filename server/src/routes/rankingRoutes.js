@@ -8,7 +8,8 @@
 const express = require('express');
 const router = express.Router();
 const rankingController = require('../controllers/rankingController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// router.get('/', rankingController.berechneRanking);
+router.get('/', authMiddleware, rankingController.berechneRanking);
 
 module.exports = router;

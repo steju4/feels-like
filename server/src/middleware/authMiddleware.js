@@ -11,13 +11,13 @@
 
 const jwt = require('jsonwebtoken');
 
-if (!process.env.JWT_SECRET) {
-  throw new Error('JWT_SECRET ist nicht definiert. Bitte in der .env Datei setzen.');
-}
-
 module.exports = (req, res, next) => {
-  // 1. Token aus Cookie lesen
-  const token = req.cookies.token;
+  // 1. Token aus Cookie oder Authorization-Header lesen
+  const cookieToken = req.cookies?.token;
+  const headerToken = req.headers.authorization?.startsWith('Bearer ')
+    ? req.headers.authorization.slice(7)
+    : null;
+  const token = cookieToken || headerToken;
   
   if (!token) {
     return res.status(401).json({ message: 'Zugriff verweigert.' });
@@ -25,7 +25,7 @@ module.exports = (req, res, next) => {
 
   try {
     // 2. Token verifizieren
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
     
     // 3. User in req speichern
     // Ab hier Zugriff auf req.user.id, req.user.role, etc.
