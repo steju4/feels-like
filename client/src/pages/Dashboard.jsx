@@ -1,131 +1,191 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import api from '../api/axios'; 
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 import './Dashboard.css';
 
-const Dashboard = () => {
-  const [serverStatus, setServerStatus] = useState(null);
+function formatDauer(minuten) {
+  if (!minuten) return '0 min';
+  const h = Math.floor(minuten / 60);
+  const m = minuten % 60;
+  if (h === 0) return `${m} min`;
+  if (m === 0) return `${h} h`;
+  return `${h} h ${m} min`;
+}
 
-  // Test-Aufruf an das Backend beim Laden der Seite
+function formatDatum(dateStr) {
+  if (!dateStr) return '';
+  return new Date(dateStr).toLocaleDateString('de-DE', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function greetingLabel() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Guten Morgen';
+  if (hour < 18) return 'Guten Tag';
+  return 'Guten Abend';
+}
+
+function StatCard({ title, value, helper, tone, loading }) {
+  return (
+    <article className={`dash-card dash-card-${tone}`}>
+      <p className="dash-card-title">{title}</p>
+      {loading ? <div className="dash-card-skeleton" /> : <p className="dash-card-value">{value}</p>}
+      <p className="dash-card-helper">{helper}</p>
+    </article>
+  );
+}
+
+function ActivityItem({ training }) {
+  return (
+    <li className="activity-item">
+      <div className="activity-main">
+        <p className="activity-sport">{training.sportart}</p>
+        <p className="activity-date">{formatDatum(training.datum)}</p>
+      </div>
+      <div className="activity-meta">
+        <span>{training.distanz != null ? `${training.distanz} km` : '-'}</span>
+        <span>{formatDauer(training.dauer)}</span>
+        <span className="activity-rpe">RPE {training.feelsLikeScore}</span>
+      </div>
+    </li>
+  );
+}
+
+export default function Dashboard() {
+  const { user } = useAuth();
+
+  const [stats, setStats] = useState(null);
+  const [trainings, setTrainings] = useState([]);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [loadingList, setLoadingList] = useState(true);
+
+  const [filterSportart, setFilterSportart] = useState('');
+  const [filterZeitraum, setFilterZeitraum] = useState('');
+
+  const fetchData = useCallback(async () => {
+    const params = {};
+    if (filterSportart) params.sportart = filterSportart;
+    if (filterZeitraum) params.zeitraum = filterZeitraum;
+
+    setLoadingStats(true);
+    setLoadingList(true);
+
+    try {
+      const [statsRes, listRes] = await Promise.all([
+        api.get('/api/training/stats', { params }),
+        api.get('/api/training', { params }),
+      ]);
+      setStats(statsRes.data);
+      setTrainings(listRes.data);
+    } catch (err) {
+      console.error('Dashboard Fehler:', err);
+    } finally {
+      setLoadingStats(false);
+      setLoadingList(false);
+    }
+  }, [filterSportart, filterZeitraum]);
+
   useEffect(() => {
-    // API Call anpassen, falls /test nicht mehr existiert oder geschützt ist.
-    api.get('/') 
-      .then(response => {
-        setServerStatus({ message: 'Verbunden' });
-      })
-      .catch(error => {
-        console.error("API Fehler:", error);
-        setServerStatus({ message: 'Server nicht erreichbar ❌', info: 'Ist das Backend gestartet?' });
-      });
-  }, []);
+    fetchData();
+  }, [fetchData]);
 
   return (
-    <div className="dashboard-container">
-      
-      {/* SYSTEM STATUS CHECK (Nur für Dev) */}
-      <div style={{ 
-        background: serverStatus?.message === 'Verbunden' ? '#e8f5e9' : '#ffebee', 
-        padding: '10px', 
-        borderRadius: '8px', 
-        border: '1px dashed #ccc',
-        marginBottom: '1rem',
-        fontSize: '0.9rem'
-      }}>
-        <strong>System Status:</strong> {serverStatus ? serverStatus.message : 'Verbinde...'} 
-      </div>
+    <section className="dashboard-shell">
+      <header className="dashboard-hero">
+        <div>
+          <p className="dashboard-overline">{greetingLabel()}</p>
+          <h1>{user?.name || 'Athlet'} - Trainingscockpit</h1>
+          <p>Deine letzten Einheiten, aktuelle Form und die wichtigsten Kennzahlen auf einen Blick.</p>
+        </div>
+      </header>
 
-      {/* 1. Hero / Welcome Area */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <h1>Guten Morgen, Athlet! 👋</h1>
-          <p>Bereit, deine Performance heute auf das nächste Level zu heben?</p>
-        </div>
-        <div className="hero-action">
-          <Link to="/training" className="btn-primary">
-            + Training erfassen
-          </Link>
-        </div>
+      <section className="dashboard-filterbar">
+        <label>
+          Sportart
+          <select value={filterSportart} onChange={e => setFilterSportart(e.target.value)}>
+            <option value="">Alle</option>
+            <option value="Laufen">Laufen</option>
+            <option value="Radfahren">Radfahren</option>
+            <option value="Schwimmen">Schwimmen</option>
+          </select>
+        </label>
+
+        <label>
+          Zeitraum
+          <select value={filterZeitraum} onChange={e => setFilterZeitraum(e.target.value)}>
+            <option value="">Gesamt</option>
+            <option value="woche">Letzte 7 Tage</option>
+            <option value="monat">Letzter Monat</option>
+            <option value="quartal">Letztes Quartal</option>
+            <option value="jahr">Letztes Jahr</option>
+          </select>
+        </label>
+
+        {(filterSportart || filterZeitraum) && (
+          <button type="button" className="dashboard-clear" onClick={() => {
+            setFilterSportart('');
+            setFilterZeitraum('');
+          }}>
+            Filter zuruecksetzen
+          </button>
+        )}
       </section>
 
-      {/* 2. Key Stats Grid */}
-      <section className="stats-grid">
-        {/* Card: Weekly Goal */}
-        <div className="stat-card">
-          <div className="stat-header">
-            <span className="stat-title">Wochenziel (Laufen)</span>
-            <div className="stat-icon">🏃</div>
-          </div>
-          <div className="stat-value">32 km</div>
-          <div className="stat-subtext">von 50 km erreicht</div>
-          <div className="progress-container">
-            <div className="progress-bar" style={{width: '64%'}}></div>
-          </div>
-        </div>
-
-        {/* Card: Streak */}
-        <div className="stat-card">
-          <div className="stat-header">
-            <span className="stat-title">Dein Streak</span>
-            <div className="stat-icon">🔥</div>
-          </div>
-          <div className="stat-value">5 Tage</div>
-          <div className="stat-subtext">
-            <strong>Super!</strong> Bleib dran.
-          </div>
-        </div>
-
-        {/* Card: Ranking */}
-        <div className="stat-card">
-          <div className="stat-header">
-            <span className="stat-title">Team Ranking</span>
-            <div className="stat-icon">🏆</div>
-          </div>
-          <div className="stat-value">#3</div>
-          <div className="stat-subtext">
-            Top 10% im Team
-          </div>
-        </div>
+      <section className="dashboard-cards">
+        <StatCard
+          title="Distanz"
+          value={stats ? `${stats.gesamtDistanz} km` : '-'}
+          helper="Gesamt"
+          tone="blue"
+          loading={loadingStats}
+        />
+        <StatCard
+          title="Einheiten"
+          value={stats ? stats.anzahlTrainings : '-'}
+          helper="im Filter"
+          tone="green"
+          loading={loadingStats}
+        />
+        <StatCard
+          title="Dauer"
+          value={stats ? formatDauer(stats.gesamtDauer) : '-'}
+          helper="Gesamt"
+          tone="amber"
+          loading={loadingStats}
+        />
+        <StatCard
+          title="Feels Like"
+          value={stats ? `${stats.durchschnittFeelsLike} / 10` : '-'}
+          helper="Durchschnitt"
+          tone="berry"
+          loading={loadingStats}
+        />
       </section>
 
-      {/* 3. Recent Activity (Placeholder list) */}
-      <section className="recent-section">
-        <div className="section-header">
-          <h2 className="section-title">Letzte Aktivitäten</h2>
-          <Link to="/training" className="view-all">Alle anzeigen →</Link>
+      <section className="dashboard-activities">
+        <div className="dashboard-activities-head">
+          <h2>Letzte Aktivitaeten</h2>
+          {!loadingList && <span>{trainings.length} Eintraege</span>}
         </div>
-        
-        <div className="activity-list">
-          <div className="activity-item">
-            <div className="activity-icon">🏃‍♂️</div>
-            <div className="activity-details">
-              <span className="activity-title">Laufen am Morgen</span>
-              <span className="activity-date">Heute, 07:30 Uhr</span>
-            </div>
-            <div className="activity-value">10.5 km</div>
-          </div>
 
-          <div className="activity-item">
-            <div className="activity-icon">🚴</div>
-            <div className="activity-details">
-              <span className="activity-title">Rennrad Tour</span>
-              <span className="activity-date">Gestern, 14:00 Uhr</span>
-            </div>
-            <div className="activity-value">45 km</div>
+        {loadingList ? (
+          <div className="activity-loading">Lade Aktivitaeten ...</div>
+        ) : trainings.length === 0 ? (
+          <div className="activity-empty">
+            <p>Keine Trainings im aktuellen Filter.</p>
+            <span>Waehle einen anderen Zeitraum oder eine andere Sportart.</span>
           </div>
-
-          <div className="activity-item">
-            <div className="activity-icon">🏊‍♂️</div>
-            <div className="activity-details">
-              <span className="activity-title">Schwimmtraining</span>
-              <span className="activity-date">Montag, 18:00 Uhr</span>
-            </div>
-            <div className="activity-value">2.5 km</div>
-          </div>
-        </div>
+        ) : (
+          <ul className="activity-list">
+            {trainings.map(training => (
+              <ActivityItem key={training.id} training={training} />
+            ))}
+          </ul>
+        )}
       </section>
-
-    </div>
+    </section>
   );
-};
-
-export default Dashboard;
+}

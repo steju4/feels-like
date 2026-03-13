@@ -1,0 +1,779 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Software Detailed Design Document</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2e8cfdb8-b521-80b3-8a18-ce71fa98a809" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title" dir="auto">Software Detailed Design Document</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-text"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Projekttitel</th><td>Feels Like</td></tr><tr class="property-row property-row-date"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/calendar_gray.svg" style="width:14px;height:14px;display:block"/></span>Erstellt am</th><td><time>@14. Januar 2026</time></td></tr><tr class="property-row property-row-last_edited_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Zuletzt aktualisiert von</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Zuletzt aktualisiert um</th><td><time>@5. März 2026 10:03</time></td></tr><tr class="property-row property-row-person"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/friends_gray.svg" style="width:14px;height:14px;display:block"/></span>Überprüfer/-innen</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">A</span></span>Atu</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">I</span></span>Isabella Schwarz</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span><span class="user"><img src="https://lh3.googleusercontent.com/a/AAcHTtedGTO0Xh7JF3Aon-QW5-EnIIw0P7wsp3fX2nOyDLlG=s100" class="icon user-icon"/>Sophie Lazarjan</span></td></tr><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Erstellt von</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Kategorie</th><td><span class="selected-value select-value-color-orange">Strategiedokument</span></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h3 id="30acfdb8-b521-80ae-ad23-d9571d3bd7c9" class="">Versionsverwaltung</h3></div><div style="display:contents" dir="ltr"><table id="30acfdb8-b521-804e-97b2-d9edff25c90b" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="30acfdb8-b521-8012-b790-fdc6ba3d2d09"><td id="~LwX" class=""><strong>Version</strong></td><td id="MzLw" class=""><strong>Datum</strong></td><td id="@^]|" class=""><strong>Änderungen</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="30acfdb8-b521-80a6-952a-f4837b4002ff"><td id="~LwX" class="">V 1.0.0</td><td id="MzLw" class="">14. Januar 2026</td><td id="@^]|" class="">Initialversion</td></tr></div><div style="display:contents" dir="ltr"><tr id="30acfdb8-b521-80ed-b94d-def971e1470e"><td id="~LwX" class="">V 1.1.0</td><td id="MzLw" class="">16. Februar 2026</td><td id="@^]|" class="">Anpassung des Implementierungsumfang (Entität Wettbewerb gestrichen)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8049-95fe-deab4fb278a4"><td id="~LwX" class="">V 1.2.0</td><td id="MzLw" class="">05. März 2026</td><td id="@^]|" class="">Detaillierte Beschreibung der Module erweitert</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-80a7-a951-ef712e9f931e" class="toggle"><li><details open=""><summary>1. Übersicht der Softwarearchitektur</summary><div style="display:contents" dir="auto"><h3 id="2f1cfdb8-b521-805b-9ea3-fd8c22b62927" class="">1.1 Architekturmuster</h3></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-8056-ac2f-c519b073d363" class="">Basierend auf den im Software-Entwicklungsplan (SDP) festgelegten Technologien (React für das Frontend, Node.js/Express für das Backend, SQL für die Datenbank) wählen wir eine klassische <strong>3-Schichten-Architektur (3-Tier-Architecture)</strong>.</p></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-8016-918e-d892ffe3badd" class="">Diese Architektur trennt klar zwischen Präsentation, Geschäftslogik und Datenhaltung, was die Wartbarkeit erhöht und paralleles Arbeiten im Team (Frontend/Backend) ermöglicht.</p></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8032-8a62-fe4f8018589e" class="bulleted-list"><li style="list-style-type:disc"><strong>Präsentationsschicht (Oberflächenpaket):</strong> React (Single Page Application). Verantwortlich für die Darstellung (UI) und Benutzerinteraktion.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80fc-a013-e99363cb61c9" class="bulleted-list"><li style="list-style-type:disc"><strong>Logikschicht (Fachklassenpaket):</strong> Node.js mit Express. Verantwortlich für die API-Bereitstellung, Verarbeitung der Geschäftslogik und Authentifizierung.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80e9-8e4a-e249ebe2bde8" class="bulleted-list"><li style="list-style-type:disc"><strong>Datenhaltungsschicht:</strong> SQL-Datenbank (SQLite). Verantwortlich für die persistente Speicherung der Entitäten.</li></ul></div><div style="display:contents" dir="auto"><h3 id="2f1cfdb8-b521-80fc-8d0f-c04e0703811a" class="">1.2 Paketdiagramm (Struktur der Module)</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2e8cfdb8-b521-8088-9611-c16a6bd4f609" class="code code-wrap"><code class="language-Mermaid" style="white-space:pre-wrap;word-break:break-all">classDiagram
+
+%% =========================
+%% SCHICHT 1: OBERFLÄCHENPAKET
+%% =========================
+namespace Oberflächenpaket {
+  class LoginView
+  class TrainingView
+  class RankingView
+}
+
+%% =========================
+%% SCHICHT 2: FACHKLASSENEBENE  
+%% =========================
+namespace Fachklassenpaket {
+  class KontoverwaltungService
+  class TrainingService
+  class AnalyseService
+}
+
+%% =========================
+%% SCHICHT 3: DATENHALTUNG
+%% =========================
+namespace Datenhaltung {
+  class AthletRepository
+  class TrainingRepository
+  class SQL_Tabellen
+}
+
+%% =========================
+%% EXTERNE SYSTEME (E-Mail)
+%% =========================
+class EmailSystem
+
+%% =========================
+%% ABHÄNGIGKEITEN (Layers: oben -&gt; unten)
+%% =========================
+%% Oberfläche -&gt; Fachklassen
+LoginView ..&gt; KontoverwaltungService
+TrainingView ..&gt; TrainingService
+RankingView ..&gt; AnalyseService
+
+%% Fachklassen -&gt; Datenhaltung  
+KontoverwaltungService ..&gt; AthletRepository
+TrainingService ..&gt; TrainingRepository
+AnalyseService ..&gt; TrainingRepository
+
+%% Datenhaltung -&gt; DB
+AthletRepository ..&gt; SQL_Tabellen
+TrainingRepository ..&gt; SQL_Tabellen
+
+%% Fachklassen -&gt; externes System
+KontoverwaltungService ..&gt; EmailSystem
+</code></pre></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-8072-bcde-f5fae7811dd8" class=""><strong>Beschreibung der Pakete:</strong></p></div><div style="display:contents" dir="auto"><ol type="1" id="2f1cfdb8-b521-8094-bb45-d3c590038f66" class="numbered-list" start="1"><li><strong>Oberflächenpaket (Implementiert im Client)</strong><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80ad-906e-c68f96d5966c" class="bulleted-list"><li style="list-style-type:disc"><strong>Views (Komponenten):</strong> Hier befinden sich die Benutzeroberflächen wie <code>LoginView</code> (Authentifizierung) und <code>TrainingView</code> (Datenerfassung).</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-802f-8990-ee3ce1fe80dc" class="bulleted-list"><li style="list-style-type:disc"><strong>API Client:</strong> Eine Hilfsschicht (<code>api.js</code>), die die Kommunikation zum Backend kapselt und REST-Anfragen mittels <code>axios</code> durchführt.</li></ul></div></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="2f1cfdb8-b521-8077-a0f4-ea262c3c0965" class="numbered-list" start="2"><li><strong>Fachklassenpaket (Implementiert im Server/Services)</strong><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8043-95dc-f8844a1d16f2" class="bulleted-list"><li style="list-style-type:disc"><strong>Business Services:</strong> Hier liegt die eigentliche Logik (<code>TrainingService</code>, <code>AnalyseService</code>). Sie sind entkoppelt von der HTTP-Schnittstelle.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8059-94c1-e7dafcd7cd41" class="bulleted-list"><li style="list-style-type:disc"><strong>Controller:</strong> Die technischen Einstiegspunkte (z. B. <code>authController.js</code>). Sie nehmen HTTP-Anfragen entgegen, validieren diese und rufen die Services auf.</li></ul></div></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="2f1cfdb8-b521-802e-98f3-eeb69bb3e6ae" class="numbered-list" start="3"><li><strong>Datenhaltung (Implementiert im Server/Models)</strong><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80f2-8e1f-e7b2122255b9" class="bulleted-list"><li style="list-style-type:disc"><strong>Data Access / Models:</strong> Klassen wie <code>AthletRepository</code> (Sequelize Models), die das Laden und Speichern aus der Datenbank übernehmen.</li></ul></div></li></ol></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-80e4-ae7a-ce8beb6db501" class="">
+</p></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-8000-9c3f-e7a3cdcee400" class="toggle"><li><details open=""><summary>2. Detaillierte Beschreibung der Module</summary><div style="display:contents" dir="auto"><h2 id="2f1cfdb8-b521-8083-b159-fb3dca64887e" class=""><strong>2.1 Mapping der Klassen</strong></h2></div><div style="display:contents" dir="auto"><p id="2f8cfdb8-b521-80cd-bb31-fb556b60acb4" class="">Die Entity-Klassen aus dem Grobdesign werden zu Datenbank-Modellen im Backend und Typ-Definitionen im Frontend gemappt.</p></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-80c3-a30e-ffc67a3fdec0" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8046-b137-ca7597033aeb"><th id="_=zg" class="simple-table-header-color simple-table-header">Analyseklasse (Grobdesign)</th><th id="JfrV" class="simple-table-header-color simple-table-header">Controller (HTTP-Schicht)</th><th id="rynl" class="simple-table-header-color simple-table-header">Service (Geschäftslogik)</th><th id="XYYI" class="simple-table-header-color simple-table-header">Status</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8021-bacd-c59e89c194de"><td id="_=zg" class="">Kontoverwaltung</td><td id="JfrV" class=""><code>authController.js</code></td><td id="rynl" class="">-- (Logik direkt im Controller)</td><td id="XYYI" class="">Implementiert (Login/Logout)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8029-a2fe-cc2784fb1f7a"><td id="_=zg" class="">AthletenVerwaltung</td><td id="JfrV" class=""><code>userController.js</code></td><td id="rynl" class="">--</td><td id="XYYI" class="">Teilweise implementiert (nur <code>profilLaden</code>)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8000-80c7-c7b17546f3c4"><td id="_=zg" class="">TrainingsVerwaltung</td><td id="JfrV" class=""><code>trainingController.js</code></td><td id="rynl" class=""><code>trainingService.js</code></td><td id="XYYI" class="">Vollstandig implementiert (CRUD)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8001-a0b9-cfb641c48de6"><td id="_=zg" class=""><del>WettbewerbsVerwaltung</del></td><td id="JfrV" class="">--</td><td id="rynl" class="">--</td><td id="XYYI" class="">Gestrichen</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80bd-845c-e8082f2f36d6"><td id="_=zg" class="">AnalyseService (Ranking)</td><td id="JfrV" class=""><code>rankingController.js</code></td><td id="rynl" class="">--</td><td id="XYYI" class="">Platzhalter</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80e5-a460-f2a26951e343"><td id="_=zg" class="">AnalyseService (Statistik/Export)</td><td id="JfrV" class="">--</td><td id="rynl" class="">--</td><td id="XYYI" class="">Noch nicht implementiert</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="309cfdb8-b521-80e2-b9f5-c8e0e0f492c7"><div style="font-size:1.5em"><span class="icon">⚠️</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="309cfdb8-b521-80b3-baaf-c419a3fd0a90" class=""><strong>Scope-Anpassung:</strong> Die Entität <code>Wettbewerb</code> (UC-03) wurde aus dem Implementierungsumfang gestrichen.<br/>Grund: Reduzierung der Teamgröße von 5 auf 4 Personen während der Entwicklungsphase. Die verbleibenden Ressourcen werden auf die höher priorisierten Use Cases (UC-01, UC-02, UC-04, UC-05, UC-06) fokussiert.</p></div></div></figure></div><div style="display:contents" dir="auto"><p id="309cfdb8-b521-80b0-a951-ed5bad654659" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-80bb-8e21-d67e9ef80f7c" class="">Die Kontrollklassen aus dem Grobdesign werden in <strong>Controller</strong> (HTTP-Handling) und <strong>Services</strong> (Logik) aufgeteilt:</p></div><div style="display:contents" dir="ltr"><table id="3edb39bd-71dc-417f-b38c-e9c6ad7d616b" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="96b5e311-b56a-4b5f-884f-9c22b30b8d8f"><td id="c=cH" class=""><strong>Analyseklasse</strong></td><td id="o@Kv" class="" style="width:481px"><strong>Implementierung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="86414b0e-8002-4f24-beb6-16e191d1af53"><td id="c=cH" class=""><strong>Kontoverwaltung</strong></td><td id="o@Kv" class="" style="width:481px"><strong>Controller:</strong> <code>authController.js</code> (Route: <code>/auth/login</code>)<br/><strong>Service:</strong> <code>authService.js</code> (Prüft Passwort-Hash, generiert Token)</td></tr></div><div style="display:contents" dir="ltr"><tr id="3537ae2a-50d2-41ea-8fd1-b30078ea753f"><td id="c=cH" class=""><strong>Trainingsverwaltung</strong></td><td id="o@Kv" class="" style="width:481px"><strong>Controller:</strong> <code>trainingController.js</code> (Route: <code>/api/training</code>)<br/><strong>Service:</strong> <code>trainingService.js</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="b57bc824-cd38-45c2-9aa0-90617f153be5"><td id="c=cH" class=""><strong>AnalyseService</strong></td><td id="o@Kv" class="" style="width:481px"><strong>Service:</strong> <code>analyseService.js</code> (Enthält Algorithmen für Ranking/Statistik)</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-8044-b157-e0b2b57280b9" class="">2.2 Datenmodelle</h3></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-809d-a996-ed1142515fe6" class="">Die Entity-Klassen aus dem Grobdesign werden als Sequelize-Modelle (ORM) implementiert. Die Datenhaltung erfolgt in einer SQLite-Datenbank.</p></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-8005-9b8e-f2dee3297ca3" class="">Athlet (Tabelle: <code>Athlets</code>)</h3></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-808c-a835-e38929fddf8f" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-804a-8aec-e1691ddf730e"><th id="JXKg" class="simple-table-header-color simple-table-header">Attribut</th><th id="?Uaw" class="simple-table-header-color simple-table-header">Typ</th><th id="ompH" class="simple-table-header-color simple-table-header">Pflicht</th><th id="aFb{" class="simple-table-header-color simple-table-header">Besonderheiten</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80b3-aa98-f13c87fe6e23"><td id="JXKg" class=""><code>id</code></td><td id="?Uaw" class="">INTEGER</td><td id="ompH" class="">Ja</td><td id="aFb{" class="">Primary Key, auto-increment (von Sequelize)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80e5-aeee-e8f2ff67eaff"><td id="JXKg" class=""><code>name</code></td><td id="?Uaw" class="">STRING</td><td id="ompH" class="">Ja</td><td id="aFb{" class=""></td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80c6-80d3-c456c79f5c95"><td id="JXKg" class=""><code>email</code></td><td id="?Uaw" class="">STRING</td><td id="ompH" class="">Ja</td><td id="aFb{" class="">unique, wird als E-Mail validiert</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80bf-9510-c22f3a6cd2ee"><td id="JXKg" class=""><code>passwortHash</code></td><td id="?Uaw" class="">STRING</td><td id="ompH" class="">Ja</td><td id="aFb{" class="">Wird vor dem Speichern per bcrypt gehasht (beforeCreate/beforeUpdate Hook)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80c0-907c-e5ec7334dd63"><td id="JXKg" class=""><code>status</code></td><td id="?Uaw" class="">ENUM(&#x27;eingeladen&#x27;, &#x27;aktiv&#x27;, &#x27;inaktiv&#x27;)</td><td id="ompH" class="">Nein</td><td id="aFb{" class="">Default: <code>&#x27;eingeladen&#x27;</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8041-be9f-c2c1305b39de"><td id="JXKg" class=""><code>role</code></td><td id="?Uaw" class="">ENUM(&#x27;athlet&#x27;, &#x27;trainer&#x27;)</td><td id="ompH" class="">Nein</td><td id="aFb{" class="">Default: <code>&#x27;athlet&#x27;</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8022-a7cb-fdc5e719e9b4"><td id="JXKg" class=""><code>createdAt</code></td><td id="?Uaw" class="">DATE</td><td id="ompH" class="">Ja</td><td id="aFb{" class="">Automatisch von Sequelize</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-804b-8732-cd968f0bb4aa"><td id="JXKg" class=""><code>updatedAt</code></td><td id="?Uaw" class="">DATE</td><td id="ompH" class="">Ja</td><td id="aFb{" class="">Automatisch von Sequelize</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-80d6-83f5-fcc4f82016d1" class=""><strong>Instanzmethode:</strong> <code>checkPassword(enteredPassword)</code> : Vergleicht ein eingegebenes Klartext-Passwort mit dem gespeicherten Hash via <code>bcrypt.compare()</code>.</p></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-80ae-9343-e1199ef5d020" class=""><strong>Hinweis:</strong> Im Grobdesign existiert eine separate Klasse <code>Trainer</code>. In der Implementierung wird stattdessen das Feld <code>role</code> im Athlet-Modell verwendet (<code>&#x27;trainer&#x27;</code> vs. <code>&#x27;athlet&#x27;</code>), um beide Rollen in einem einzigen Modell abzubilden. Dies vereinfacht die Datenhaltung, da sich Trainer und Athlet nur in der Rolle und den Berechtigungen unterscheiden.</p></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-8058-b299-ebdbad0eb2fc" class="">Trainingseinheit (Tabelle: <code>trainings</code>)</h3></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-8015-87ff-c6f45373217b" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80ae-a332-e4d0f5e88aed"><th id="egp@" class="simple-table-header-color simple-table-header">Attribut</th><th id="]bd=" class="simple-table-header-color simple-table-header">Typ</th><th id="=;uk" class="simple-table-header-color simple-table-header">Pflicht</th><th id="?E}U" class="simple-table-header-color simple-table-header">Besonderheiten</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80bd-93c9-fe92ae6720f9"><td id="egp@" class=""><code>id</code></td><td id="]bd=" class="">INTEGER</td><td id="=;uk" class="">Ja</td><td id="?E}U" class="">Primary Key, auto-increment</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-800a-b617-f76056128b0a"><td id="egp@" class=""><code>datum</code></td><td id="]bd=" class="">DATEONLY</td><td id="=;uk" class="">Ja</td><td id="?E}U" class="">Nur Datum, keine Uhrzeit</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80e0-ad8a-dcf397d743ba"><td id="egp@" class=""><code>sportart</code></td><td id="]bd=" class="">STRING</td><td id="=;uk" class="">Ja</td><td id="?E}U" class="">Erlaubte Werte: <code>&#x27;Laufen&#x27;</code>, <code>&#x27;Radfahren&#x27;</code>, <code>&#x27;Schwimmen&#x27;</code> (wird vom Service validiert)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80e5-86a7-d6684f067e9a"><td id="egp@" class=""><code>dauer</code></td><td id="]bd=" class="">INTEGER</td><td id="=;uk" class="">Ja</td><td id="?E}U" class="">Dauer in Minuten, min: 1</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8084-816b-ec6973836ad3"><td id="egp@" class=""><code>distanz</code></td><td id="]bd=" class="">DOUBLE</td><td id="=;uk" class="">Nein</td><td id="?E}U" class="">Distanz in km, optional</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8084-b604-d79c06d3dcf7"><td id="egp@" class=""><code>note</code></td><td id="]bd=" class="">TEXT</td><td id="=;uk" class="">Nein</td><td id="?E}U" class="">Freitext-Notiz</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-803d-8ccc-e671689ed74d"><td id="egp@" class=""><code>feelsLikeScore</code></td><td id="]bd=" class="">INTEGER</td><td id="=;uk" class="">Ja</td><td id="?E}U" class="">Wert 1--10, subjektive Belastungseinschatzung</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8091-9fc5-f200d93b4688"><td id="egp@" class=""><code>athletId</code></td><td id="]bd=" class="">INTEGER</td><td id="=;uk" class="">Ja</td><td id="?E}U" class="">Foreign Key -&gt; <code>Athlets.id</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80c1-91a2-f243c23c9e62"><td id="egp@" class=""><code>createdAt</code></td><td id="]bd=" class="">DATE</td><td id="=;uk" class="">Ja</td><td id="?E}U" class="">Automatisch von Sequelize</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80f2-864d-ee5a89bf7b8c"><td id="egp@" class=""><code>updatedAt</code></td><td id="]bd=" class="">DATE</td><td id="=;uk" class="">Ja</td><td id="?E}U" class="">Automatisch von Sequelize</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-806a-b59c-e786956bfa37" class="">Beziehungen (Associations)</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="31acfdb8-b521-8027-8601-e2d421a8e185" class="code code-wrap"><code class="language-Mermaid" style="white-space:pre-wrap;word-break:break-all">erDiagram
+    Athlet ||--o{ Trainingseinheit : &quot;hat viele (hasMany)&quot;
+</code></pre></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-80fd-bde8-f0ffe2802f39" class="">Ein Athlet kann beliebig viele Trainingseinheiten haben. Jede Trainingseinheit gehort genau einem Athleten.</p></div><div style="display:contents" dir="auto"><hr id="31acfdb8-b521-80ef-b5f3-d3be62cdea36"/></div><div style="display:contents" dir="auto"><h3 id="2538bb29-ba58-4ecc-b70d-a4345db8b221" class="">2.3 Schnittstellen-Spezifikation (API)</h3></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-8077-9e53-d38f0b37c6c9" class="">Alle Endpunkte kommunizieren uber JSON. Authentifizierung erfolgt uber einen JWT-Token, der als HttpOnly-Cookie (<code>token</code>) gesendet wird.</p></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-805e-97e5-cae40908bd77" class="">Authentifizierung (<code>/api/auth</code>) -- authController</h3></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-802a-96b8-c8c07723adf6" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-804d-bc1b-eb1106b7f166"><th id="imn=" class="simple-table-header-color simple-table-header">Methode</th><th id="g]Bs" class="simple-table-header-color simple-table-header">Pfad</th><th id="BUY{" class="simple-table-header-color simple-table-header">Auth</th><th id="aFsw" class="simple-table-header-color simple-table-header">Beschreibung</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-801c-86c0-fa40a4284934"><td id="imn=" class="">POST</td><td id="g]Bs" class=""><code>/api/auth/login</code></td><td id="BUY{" class="">Nein</td><td id="aFsw" class="">Anmelden. Body: <code>{ email, password }</code>. Setzt bei Erfolg ein HttpOnly-Cookie <code>token</code> mit JWT (gultig 7 Tage). Antwort: <code>{ message, user: { id, name, email, role } }</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8026-a61c-c2e0e3cb65e8"><td id="imn=" class="">POST</td><td id="g]Bs" class=""><code>/api/auth/logout</code></td><td id="BUY{" class="">Nein</td><td id="aFsw" class="">Abmelden. Loscht das <code>token</code>-Cookie. Antwort: <code>{ message }</code></td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-8069-9489-eadd66f8e57b" class="">User-Verwaltung (<code>/api/users</code>) -- userController</h3></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-808e-be9c-f50e99ddb877" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8055-94cb-ee38a4281516"><th id="aMJ\" class="simple-table-header-color simple-table-header">Methode</th><th id="vq=b" class="simple-table-header-color simple-table-header">Pfad</th><th id="eBhU" class="simple-table-header-color simple-table-header">Auth</th><th id="Qach" class="simple-table-header-color simple-table-header">Beschreibung</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8053-a3eb-efba29edebf7"><td id="aMJ\" class="">GET</td><td id="vq=b" class=""><code>/api/users/me</code></td><td id="eBhU" class="">Ja</td><td id="Qach" class="">Profil des aktuell eingeloggten Users laden (Session Restore). Gibt alle Felder zuruck ausser <code>passwortHash</code>.</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-8072-99e5-e38226d3fa86" class="">Trainings-Verwaltung (<code>/api/training</code>) -- trainingController -&gt; trainingService</h3></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-805a-81df-c42938ac936f" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8033-97ea-f73483575a3b"><th id="t_mW" class="simple-table-header-color simple-table-header">Methode</th><th id="qGrz" class="simple-table-header-color simple-table-header">Pfad</th><th id="z=@C" class="simple-table-header-color simple-table-header">Auth</th><th id="`YOL" class="simple-table-header-color simple-table-header">Beschreibung</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8097-8276-c60698896726"><td id="t_mW" class="">GET</td><td id="qGrz" class=""><code>/api/training</code></td><td id="z=@C" class="">Ja</td><td id="`YOL" class="">Alle Trainingseinheiten des eingeloggten Athleten laden, sortiert nach Datum absteigend.</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-803f-a9b4-cb0e3c8d1226"><td id="t_mW" class="">POST</td><td id="qGrz" class=""><code>/api/training</code></td><td id="z=@C" class="">Ja</td><td id="`YOL" class="">Neue Trainingseinheit erstellen. Body: <code>{ datum, sportart, dauer, distanz?, feelsLikeScore, note? }</code>. Validierung im Service.</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80bd-995e-ceb33653645c"><td id="t_mW" class="">PUT</td><td id="qGrz" class=""><code>/api/training/:id</code></td><td id="z=@C" class="">Ja</td><td id="`YOL" class="">Trainingseinheit bearbeiten. Nur der Besitzer darf andern (Autorisierungsprufung).</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8068-806c-d03e8263218a"><td id="t_mW" class="">DELETE</td><td id="qGrz" class=""><code>/api/training/:id</code></td><td id="z=@C" class="">Ja</td><td id="`YOL" class="">Trainingseinheit loschen. Nur der Besitzer darf loschen (Autorisierungsprufung).</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-80d2-8966-c6c791cf9abc" class="">Ranking (<code>/api/ranking</code>) -- rankingController</h3></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-8006-ace4-efb525bb3076" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80a9-b23a-e70775c475cd"><th id="QVBZ" class="simple-table-header-color simple-table-header">Methode</th><th id="cNV{" class="simple-table-header-color simple-table-header">Pfad</th><th id="P?Wg" class="simple-table-header-color simple-table-header">Auth</th><th id="hyzz" class="simple-table-header-color simple-table-header">Beschreibung</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8089-9406-c47cccfa3abf"><td id="QVBZ" class="">GET</td><td id="cNV{" class=""><code>/api/ranking</code></td><td id="P?Wg" class="">--</td><td id="hyzz" class=""><em>Noch nicht implementiert (Platzhalter).</em></td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-8093-885c-d26dd613d3b0" class=""><strong>Fehlerformat:</strong> Bei Fehlern antwortet die API mit <code>{ message: &quot;Fehlerbeschreibung&quot; }</code> und dem entsprechenden HTTP-Statuscode (400, 401, 403, 404, 500).</p></div><div style="display:contents" dir="auto"><hr id="31acfdb8-b521-80ac-9f3e-cefba5102293"/></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-80d2-888b-d70c12057d06" class="">2.4 Middleware-Module</h3></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-80c8-92fe-ca57f6ea9b70" class="">authMiddleware</h3></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-803c-ba53-f5b99843368b" class="bulleted-list"><li style="list-style-type:disc"><strong>Datei:</strong> <code>server/src/middleware/authMiddleware.js</code></li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-80a7-8fcb-cced12833531" class="bulleted-list"><li style="list-style-type:disc"><strong>Aufgabe:</strong> Schutzt Routen vor unautorisiertem Zugriff. Wird als Express-Middleware vor geschtuzten Route-Handlern eingehängt.</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-80f5-b3a7-c574ccad8122" class="bulleted-list"><li style="list-style-type:disc"><strong>Ablauf:</strong><div style="display:contents" dir="auto"><ol type="1" id="31acfdb8-b521-8046-a0a1-e7c79934f304" class="numbered-list" start="1"><li>Liest den JWT-Token aus dem HttpOnly-Cookie <code>token</code></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="31acfdb8-b521-8029-a4d4-f6d3870f12ad" class="numbered-list" start="2"><li>Verifiziert den Token mit <code>jwt.verify()</code> und dem <code>JWT_SECRET</code></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="31acfdb8-b521-80e2-a29a-df7164d4f95e" class="numbered-list" start="3"><li>Bei Erfolg: Schreibt die dekodierten Token-Daten (id, role, name) in <code>req.user</code></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="31acfdb8-b521-80bf-841c-ff596a4dee51" class="numbered-list" start="4"><li>Bei Fehler: Gibt HTTP 401 zuruck und loscht das Cookie</li></ol></div></li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-8082-b5a7-f7749202c5be" class="bulleted-list"><li style="list-style-type:disc"><strong>Eingabe:</strong> HTTP-Request mit Cookie</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-804c-82c6-d4fbc631ea63" class="bulleted-list"><li style="list-style-type:disc"><strong>Ausgabe:</strong> <code>req.user = { id, role, name }</code> oder HTTP 401</li></ul></div><div style="display:contents" dir="auto"><hr id="31acfdb8-b521-8094-8ba1-cf89672fec85"/></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-8025-8a5a-edaa28c128ef" class="">2.5 Geschäftslogik: TrainingService</h3></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-80bd-9aa6-ea676141c021" class=""><strong>Datei:</strong> <code>server/src/services/trainingService.js</code></p></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-8000-b738-f7ecd93f77bc" class="">Implementiert die Kontrollklasse <code>TrainingsVerwaltung</code> aus dem Grobdesign als Service-Schicht (Schicht 2 / Fachklassenpaket).</p></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-80b2-a1b3-d372922e0af9" class=""><strong>Exportierte Funktionen:</strong></p></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-802b-a280-e635b36d0720" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80d7-9e73-f3d5f4f7e19b"><th id="d;l^" class="simple-table-header-color simple-table-header">Funktion</th><th id="_bPe" class="simple-table-header-color simple-table-header">Parameter</th><th id="_DYv" class="simple-table-header-color simple-table-header">Ruckgabe</th><th id="Es^R" class="simple-table-header-color simple-table-header">Beschreibung</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80fa-8e24-e601376e113d"><td id="d;l^" class=""><code>trainingErfassen(athletId, daten)</code></td><td id="_bPe" class="">athletId: number, daten: Object</td><td id="_DYv" class="">Promise&lt;Trainingseinheit&gt;</td><td id="Es^R" class="">Validiert Eingabedaten, erstellt neues Training</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-808b-a625-d8f13349ae53"><td id="d;l^" class=""><code>alleTrainings(athletId)</code></td><td id="_bPe" class="">athletId: number</td><td id="_DYv" class="">Promise&lt;Trainingseinheit[]&gt;</td><td id="Es^R" class="">Ladt alle Trainings eines Athleten (nach Datum DESC)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8036-aff2-c4a94b16723f"><td id="d;l^" class=""><code>trainingAendern(trainingId, athletId, neueDaten)</code></td><td id="_bPe" class="">trainingId: number, athletId: number, neueDaten: Object</td><td id="_DYv" class="">Promise&lt;Trainingseinheit&gt;</td><td id="Es^R" class="">Autorisierung + Validierung + Update</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80e4-886b-da76c96353ca"><td id="d;l^" class=""><code>trainingLoeschen(trainingId, athletId)</code></td><td id="_bPe" class="">trainingId: number, athletId: number</td><td id="_DYv" class="">Promise&lt;void&gt;</td><td id="Es^R" class="">Autorisierung + Loschung</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-806f-9fa8-c576d8b65720"><td id="d;l^" class=""><code>validateTrainingsDaten(daten)</code></td><td id="_bPe" class="">daten: Object</td><td id="_DYv" class="">{ valid: boolean, errors: string[] }</td><td id="Es^R" class="">Validiert Pflichtfelder, Wertebereiche, erlaubte Sportarten</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-80c9-b054-eac7786a7cd6" class=""><strong>Validierungsregeln:</strong></p></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-8042-b21b-d058e1a1c192" class="bulleted-list"><li style="list-style-type:disc"><code>datum</code>: Pflichtfeld</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-80f0-ac4a-ed82bcacd530" class="bulleted-list"><li style="list-style-type:disc"><code>sportart</code>: Pflichtfeld, muss <code>&#x27;Laufen&#x27;</code>, <code>&#x27;Radfahren&#x27;</code> oder <code>&#x27;Schwimmen&#x27;</code> sein</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-8027-ad01-ed75afd2ed06" class="bulleted-list"><li style="list-style-type:disc"><code>dauer</code>: Pflichtfeld, muss &gt; 0 sein</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-8036-8c91-fff3237a75fe" class="bulleted-list"><li style="list-style-type:disc"><code>distanz</code>: Optional, falls angegeben &gt;= 0</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-8001-8e5e-c6f0ce4c59ff" class="bulleted-list"><li style="list-style-type:disc"><code>feelsLikeScore</code>: Pflichtfeld, ganze Zahl zwischen 1 und 10</li></ul></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-8069-962f-f79899e1c6e4" class=""><strong>Autorisierung:</strong> Bei <code>trainingAendern</code> und <code>trainingLoeschen</code> wird gepruft, ob <code>training.athletId === athletId</code>. Falls nicht: HTTP 403.</p></div><div style="display:contents" dir="auto"><hr id="31acfdb8-b521-8005-ab9e-ed263af15733"/></div><div style="display:contents" dir="auto"><h3 id="31acfdb8-b521-8068-80ab-f141c814f021" class="">2.6 Frontend-Komponenten (Oberflächenpaket)</h3></div><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-80da-9dfc-d3cd57119ecf" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8073-a1cf-e763ca86c19b"><th id="Eb_O" class="simple-table-header-color simple-table-header">Analyse-View (SDD)</th><th id="?`&lt;i" class="simple-table-header-color simple-table-header">Implementierte Komponente</th><th id="m;NZ" class="simple-table-header-color simple-table-header">Datei</th><th id="cfw?" class="simple-table-header-color simple-table-header">Status</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80ba-8257-d301815c7c1d"><td id="Eb_O" class="">LoginView</td><td id="?`&lt;i" class=""><code>Login.jsx</code></td><td id="m;NZ" class=""><code>client/src/pages/Login.jsx</code></td><td id="cfw?" class="">Implementiert</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8014-b7e7-db3c044b1069"><td id="Eb_O" class="">TrainingView</td><td id="?`&lt;i" class=""><code>TrainingForm.jsx</code></td><td id="m;NZ" class=""><code>client/src/pages/TrainingForm.jsx</code></td><td id="cfw?" class="">Implementiert (Liste + Formular + Loschen)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80b4-a635-cb64035121fe"><td id="Eb_O" class="">RankingView</td><td id="?`&lt;i" class=""><code>Ranking.jsx</code></td><td id="m;NZ" class=""><code>client/src/pages/Ranking.jsx</code></td><td id="cfw?" class="">Platzhalter (Dummy-Daten)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80f4-a9b3-da118a37deb9"><td id="Eb_O" class="">DashboardView</td><td id="?`&lt;i" class=""><code>Dashboard.jsx</code></td><td id="m;NZ" class=""><code>client/src/pages/Dashboard.jsx</code></td><td id="cfw?" class="">Implementiert (Platzhalter-Statistiken)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80fc-93d9-e968a3f42d8a"><td id="Eb_O" class="">AdminView</td><td id="?`&lt;i" class=""><code>AdminUsers.jsx</code></td><td id="m;NZ" class=""><code>client/src/pages/AdminUsers.jsx</code></td><td id="cfw?" class="">Platzhalter</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-80de-bd5d-f13d4daf1c5f" class=""><strong>Zusatzliche Infrastruktur-Komponenten:</strong></p></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-8068-8edf-da942af35e9e" class="bulleted-list"><li style="list-style-type:disc"><code>AuthContext.jsx</code> -- React Context fur globalen User-State, Login/Logout-Funktionen, Session Restore</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-80dc-b20e-f3725f1287a8" class="bulleted-list"><li style="list-style-type:disc"><code>ProtectedRoute.jsx</code> -- Wrapper-Komponente, die unautorisierte Nutzer auf <code>/login</code> weiterleitet</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-80d2-bafd-e92272125c8c" class="bulleted-list"><li style="list-style-type:disc"><code>Layout.jsx</code> -- Sidebar-Navigation mit Outlet fur geschutzte Seiten</li></ul></div><div style="display:contents" dir="auto"><ul id="31acfdb8-b521-802e-826f-cd24fdd34870" class="bulleted-list"><li style="list-style-type:disc"><code>axios.js</code> -- Zentrale Axios-Instanz mit <code>baseURL</code> und <code>withCredentials: true</code></li></ul></div></details></li></ul></div><div style="display:contents" dir="auto"><p id="31acfdb8-b521-80e5-a0ed-e9414dc20db2" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-803b-b880-ff0eb362af94" class="toggle"><li><details open=""><summary>3. Technische Spezifikationen</summary><div style="display:contents" dir="auto"><h3 id="2f1cfdb8-b521-80a2-a299-ee1e35408d28" class="">3.1 Framework-Entscheidungen</h3></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8009-830b-d20410c963f4" class="bulleted-list"><li style="list-style-type:disc"><strong>Kommunikation:</strong> REST API (JSON Format).</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80ac-9def-fd1d9a173a40" class="bulleted-list"><li style="list-style-type:disc"><strong>Authentifizierung:</strong> Erfolgt über ein JWT, das als HttpOnly-Cookie (token) gesetzt wird. Der Server liest das Token aus <code>req.cookies.token</code>.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80eb-8818-c6da2fbd4db9" class="bulleted-list"><li style="list-style-type:disc"><strong>Fehlerbehandlung:</strong> Exceptions werden in der Controller-Schicht abgefangen und in standardisierte HTTP-Statuscodes (500, 400, 404) umgewandelt.</li></ul></div><div style="display:contents" dir="auto"><h3 id="2f1cfdb8-b521-802c-849c-f93157e2c301" class="">3.2 Verwendete Bibliotheken &amp; Tools</h3></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-8016-9de6-ce059533964b" class="">Um die Architektur umzusetzen, werden folgende spezifische Bibliotheken genutzt:</p></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-8055-9a08-d07721786e60" class=""><strong>Frontend (Client):</strong></p></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8068-a48f-faf98de5e3e0" class="bulleted-list"><li style="list-style-type:disc"><code>vite</code>: Build-Tool und Entwicklungsserver.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8021-9cd5-ec8a47ddc7ce" class="bulleted-list"><li style="list-style-type:disc"><code>react-router-dom</code>: Für das client-seitige Routing (SPA-Navigation).</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80fd-97df-d6e670539c19" class="bulleted-list"><li style="list-style-type:disc"><code>axios</code>: HTTP-Client für die Kommunikation mit der REST-API.</li></ul></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-8095-9a2f-ddc6d5f8d9a5" class=""><strong>Backend (Server):</strong></p></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80e3-b7c9-e57b70c83866" class="bulleted-list"><li style="list-style-type:disc"><code>express</code>: Webserver-Framework.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8025-8fc2-dcb379990fe3" class="bulleted-list"><li style="list-style-type:disc"><code>sequelize</code>: ORM zur Abstraktion der SQL-Befehle.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80f6-b708-c8dd69634d43" class="bulleted-list"><li style="list-style-type:disc"><code>sqlite3</code>: Datenbank-Treiber für SQLite.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8008-bc33-d86976e5ffb0" class="bulleted-list"><li style="list-style-type:disc"><code>bcryptjs</code>: Sicheres Hashing von Passwörtern.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8083-87db-e84061f08c53" class="bulleted-list"><li style="list-style-type:disc"><code>dotenv</code>: Verwaltung von Umgebungsvariablen und Secrets.</li></ul></div><div style="display:contents" dir="auto"><p id="2f1cfdb8-b521-8003-9229-f94b411168bc" class="">
+</p></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-8007-9a79-c79a87668edb" class="toggle"><li><details open=""><summary>4. Qualitäts- und Sicherheitsaspekte</summary><div style="display:contents" dir="auto"><h3 id="2f1cfdb8-b521-8021-a10d-cbc53dd66eb3" class="">4.1 Sicherheitsmaßnahmen</h3></div><div style="display:contents" dir="auto"><ul id="2fecfdb8-b521-80f1-8c0b-e1d3407cb963" class="bulleted-list"><li style="list-style-type:disc"><strong>Passwort-Sicherheit:</strong> Passwörter werden niemals im Klartext gespeichert. Beim Anlegen oder Ändern eines Users wird das Passwort automatisch über Sequelize Lifecycle Hooks (<code>beforeCreate</code>, <code>beforeUpdate</code>) mittels <code>bcrypt</code> gehasht und gesalzen.</li></ul></div><div style="display:contents" dir="auto"><ul id="2fecfdb8-b521-8031-b8e9-da98731a9463" class="bulleted-list"><li style="list-style-type:disc"><strong>Authentifizierung:</strong> Wir verwenden <strong>HTTP-Only Cookies</strong> für die Übertragung von JWTs (JSON Web Tokens). Dies verhindert, dass client-seitiges JavaScript (z.B. bei XSS-Angriffen) auf den Token zugreifen kann.</li></ul></div><div style="display:contents" dir="auto"><ul id="2fecfdb8-b521-80e5-bb1e-e4ffc3f1cd95" class="bulleted-list"><li style="list-style-type:disc"><strong>Secrets Management:</strong> Sensitive Daten wie <code>JWT_SECRET</code> und Datenbank-Zugangsdaten werden nicht im Code hardcodiert. Sie werden über <code>.env</code> Dateien geladen, die per .gitignore strikt von der Versionsverwaltung ausgeschlossen sind.</li></ul></div><div style="display:contents" dir="auto"><ul id="2fecfdb8-b521-807e-9771-d3cbab5f8ac3" class="bulleted-list"><li style="list-style-type:disc"><strong>Route Protection:</strong> Im Backend prüft eine Middleware (<code>authMiddleware</code>) bei jedem geschützten Request die Gültigkeit des Cookies. Im Frontend verhindert ProtectedRoute, dass nicht eingeloggte Nutzer auf interne Seiten gelangen.</li></ul></div><div style="display:contents" dir="auto"><h3 id="2f1cfdb8-b521-8090-8a7f-ed97c2f08773" class="">4.2 Entwicklungsprozess</h3></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-8016-baa6-fd84e3ec381d" class="bulleted-list"><li style="list-style-type:disc"><strong>Version Control:</strong> Nutzung von Git mit Feature-Branches.</li></ul></div><div style="display:contents" dir="auto"><ul id="2f1cfdb8-b521-80d4-bc83-dd37026f388a" class="bulleted-list"><li style="list-style-type:disc"><strong>Separation of Concerns:</strong> Strikte Trennung von Routing, Controller und Service-Logik zur Gewährleistung der Testbarkeit und Wartbarkeit.</li></ul></div><div style="display:contents" dir="auto"><h3 id="2fccfdb8-b521-801d-8fa9-d5e627396bed" class="">4.3 Entwurfsmuster (Design Patterns)</h3></div><div style="display:contents" dir="auto"><p id="2fccfdb8-b521-80dd-a715-dc0d1522883a" class="">Zur Sicherstellung einer sauberen Architektur und Wartbarkeit werden im Projekt zwei zentrale Design Patterns eingesetzt:</p></div><div style="display:contents" dir="auto"><p id="2fccfdb8-b521-808c-b715-ca5ba4ad7045" class=""><strong>1. Singleton Pattern (Bereich: Infrastruktur)</strong></p></div><div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-8086-a54c-f4a8b0a759aa" class="bulleted-list"><li style="list-style-type:disc"><strong>Kontext:</strong> Die Anwendung benötigt Zugriff auf geteilte Ressourcen, die nur einmal existieren dürfen (Datenbankverbindung, Logging-Instanz).</li></ul></div><div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-800e-8aa9-d5e45f4a2553" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong> Das mehrfache Öffnen von Datenbankverbindungen bei jedem Request würde zu Performance-Problemen und Inkonsistenzen führen.</li></ul></div><div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-8053-97a3-f941ca9ee02e" class="bulleted-list"><li style="list-style-type:disc"><strong>Lösung:</strong> Wir implementieren die Datenbank-Instanz (<code>sequelize</code>) und den API-Client (<code>axios</code> im Frontend) als Singletons. In Node.js nutzen wir dazu das Modul-System (Caching), das sicherstellt, dass beim Importieren der Datei <code>db.js</code> immer dieselbe Instanz zurückgegeben wird.</li></ul></div><div style="display:contents" dir="auto"><p id="2fccfdb8-b521-801c-824e-c63fc3401393" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2fccfdb8-b521-800f-96a4-d4796706e7f6" class=""><strong>2. Strategy Pattern (Bereich: Geschäftslogik / Ranking)</strong></p></div><div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-805b-8d98-fea843aaa5a5" class="bulleted-list"><li style="list-style-type:disc"><strong>Kontext:</strong> Die Anwendung muss verschiedene Rankings berechnen (z. B. &quot;Meiste Kilometer&quot;, &quot;Meiste Trainingseinheiten&quot;, &quot;Längste Dauer&quot;).</li></ul></div><div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-80fe-928a-ca90ff75f4ca" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong> Ein Controller, der all diese Varianten mit <code>if (type == &#x27;km&#x27;) ... else if (type == &#x27;time&#x27;) ...</code> abhandelt, wird schnell unübersichtlich und schwer zu testen (Verstoß gegen das Open/Closed Principle).</li></ul></div><div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-804f-9191-dceb79c9cdf5" class="bulleted-list"><li style="list-style-type:disc"><strong>Lösung:</strong> Wir kapseln die Berechnungslogik in austauschbare Strategien.<div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-80db-a329-fe5b1585ca7e" class="bulleted-list"><li style="list-style-type:circle">Der <code>RankingController</code> definiert nur den Input (die Trainingsdaten).</li></ul></div><div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-8024-976f-f5d6291474e7" class="bulleted-list"><li style="list-style-type:circle">Es gibt separate Strategie-Funktionen (z. B. <code>DistanceStrategy</code>, <code>FrequencyStrategy</code>).</li></ul></div><div style="display:contents" dir="auto"><ul id="2fccfdb8-b521-80b6-8a4d-d1363dfcde55" class="bulleted-list"><li style="list-style-type:circle">Zur Laufzeit wird basierend auf dem User-Filter die passende Strategie gewählt, ohne den Controller-Code ändern zu müssen.</li></ul></div></li></ul></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-80be-84f4-dbc657869237" class="toggle"><li><details open=""><summary>5. Design-Abweichungen vom Grobdesign</summary><div style="display:contents" dir="ltr"><table id="31acfdb8-b521-808a-aeb6-ca7abd98b550" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-801d-893e-c30264bd6287"><th id="kqTi" class="simple-table-header-color simple-table-header">Grobdesign</th><th id="^t{j" class="simple-table-header-color simple-table-header">Implementierung</th><th id="xPE]" class="simple-table-header-color simple-table-header">Begründung</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-8027-893f-c65cd25cf03d"><td id="kqTi" class="">Separate <code>Trainer</code>-Klasse</td><td id="^t{j" class=""><code>role</code>-Feld im <code>Athlet</code>-Modell</td><td id="xPE]" class="">Trainer und Athlet teilen dieselben Stammdaten, Unterscheidung über Rolle ausreichend</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-807e-a446-d50a9d938096"><td id="kqTi" class=""><code>feelsLikeScore</code> nicht im Grobdesign</td><td id="^t{j" class="">Neues Feld in Trainingseinheit</td><td id="xPE]" class="">Kern-Feature der Anwendung, subjektive Belastungsbewertung (1--10)</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80dd-8f4a-d0cf3b07b54d"><td id="kqTi" class=""><code>Wettbewerb</code>-Klasse</td><td id="^t{j" class="">Noch nicht implementiert</td><td id="xPE]" class="">Priorisierung: Training-CRUD zuerst</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80e5-877a-fa95006bf056"><td id="kqTi" class=""><code>StatistikFilter</code>, <code>RankingFilter</code>, <code>CSVDatei</code></td><td id="^t{j" class="">Noch nicht implementiert</td><td id="xPE]" class="">Folgt in späteren Sprints</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-80f9-a0b8-cad368b50eb7"><td id="kqTi" class=""><code>AthletenVerwaltung.einladungVersenden()</code></td><td id="^t{j" class="">Noch nicht implementiert</td><td id="xPE]" class="">E-Mail-System noch nicht angebunden</td></tr></div><div style="display:contents" dir="ltr"><tr id="31acfdb8-b521-807a-8f89-c07b79c715d5"><td id="kqTi" class=""><code>note</code>-Feld in Trainingseinheit</td><td id="^t{j" class="">Neues optionales Feld</td><td id="xPE]" class="">Erweiterung fur Freitext-Notizen zu Trainings</td></tr></div></tbody></table></div></details></li></ul></div><div style="display:contents" dir="auto"><p id="2e8cfdb8-b521-80b4-9662-f1cd44e9a0be" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2e8cfdb8-b521-80e4-8c4c-d4535ed675f8" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2e8cfdb8-b521-800e-a97c-f485c62614a0" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2e8cfdb8-b521-80ce-9caa-fbaf4d8ae90c" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2e8cfdb8-b521-80c7-8a79-d1458da5f558" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2e8cfdb8-b521-8099-8e1e-e88d8320a16f" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
