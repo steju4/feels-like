@@ -39,6 +39,15 @@ const Trainingseinheit = sequelize.define('Trainingseinheit', {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
+  // Belastungsempfinden 1-10
+  rpe: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      min: 1,
+      max: 10,
+    },
+  },
   // Optionaler Freitext
   note: {
     type: DataTypes.TEXT,

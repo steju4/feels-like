@@ -39,13 +39,13 @@ exports.anmelden = async (req, res) => {
 
     // 4. Token als HttpOnly Cookie senden
     res.cookie('token', token, {
-      httpOnly: true, // Frontend-JavaScript kann nicht darauf zugreifen (Schutz vor XSS)
-      secure: false, // TRUE falls man HTTPS nutzt
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
-      sameSite: 'lax' // Schutz vor CSRF
+      httpOnly: true,
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: 'lax'
     });
 
-    // 5. Antwort senden (Token im Cookie)
+    // 5. Antwort senden (Token auch im Body für Header-basierte Nutzung)
     res.json({
       message: 'Erfolgreich eingeloggt',
       user: {
@@ -53,7 +53,8 @@ exports.anmelden = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role
-      }
+      },
+      token
     });
 
   } catch (error) {

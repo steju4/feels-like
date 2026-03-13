@@ -5,6 +5,40 @@
   font-family: Arial, sans-serif;
 }
 
+.ranking-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.ranking-filters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  color: #333;
+  gap: 6px;
+}
+
+.ranking-filters select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.ranking-status {
+  margin: 12px 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f0f4ff;
+}
+
+.ranking-status.error {
+  background: #ffecec;
+  color: #a33;
+}
+
 .ranking-table {
   width: 100%;
   border-collapse: collapse; /* Entfernt doppelte Rahmen */

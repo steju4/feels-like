@@ -23,7 +23,7 @@ app.use(cors({
   credentials: true 
 }));
 app.use(express.json());      // Erlaubt JSON im Request-Body
-app.use(cookieParser());      // Erlaubt Lesen von Cookies
+app.use(cookieParser());      // Cookies parsen
 
 // Routen registrieren
 app.use('/api/auth', authRoutes);
