@@ -1,61 +1,48 @@
 /*
-  Training Service (TrainingsVerwaltung – Geschäftslogik)
+  Training Service (TrainingsVerwaltung – Geschaeftslogik)
 
-    Kontrollklasse "TrainingsVerwaltung" aus dem Grobdesign:
-    +trainingErfassen(athlet, daten : Trainingseinheit)
-    +trainingAendern(einheit, neueDaten)
-    +trainingLoeschen(einheit)
-
-  Schicht 2 (Fachklassenpaket) gemäß Software Detailed Design Document.
-  Kapselt gesamte Geschäftslogik und Validierung.
-  Der Controller (Schicht 1) delegiert hierhin, und dieser Service
-  greift auf das Sequelize-Model (Schicht 3 / Datenhaltung) zu.
+  Schicht 2 gemaess SDD:
+  - Validierung und Autorisierung fuer CRUD
+  - Filterlogik fuer Dashboard-Ansicht
+  - Statistikberechnung fuer Dashboard-Kennzahlen
 */
 
+const { Op } = require('sequelize');
 const Trainingseinheit = require('../models/Trainingseinheit');
 
-// Erlaubte Sportarten
 const ERLAUBTE_SPORTARTEN = ['Laufen', 'Radfahren', 'Schwimmen'];
 
-/**
- * Validiert die Eingabedaten einer Trainingseinheit.
- * Pflichtfelder: datum, sportart, dauer
- * Dauer muss > 0 sein, Distanz (falls angegeben) >= 0
- * feelsLikeScore muss zwischen 1 und 10 liegen
- *
- * @param {Object} daten – Die Formulardaten
- * @returns {{ valid: boolean, errors: string[] }}
- */
+function createHttpError(status, message) {
+  const error = new Error(message);
+  error.status = status;
+  return error;
+}
+
 function validateTrainingsDaten(daten) {
   const errors = [];
 
-  // Pflichtfeld: datum
   if (!daten.datum) {
     errors.push('Datum ist ein Pflichtfeld.');
   }
 
-  // Pflichtfeld: sportart
   if (!daten.sportart) {
     errors.push('Sportart ist ein Pflichtfeld.');
   } else if (!ERLAUBTE_SPORTARTEN.includes(daten.sportart)) {
     errors.push(`Sportart muss eine der folgenden sein: ${ERLAUBTE_SPORTARTEN.join(', ')}.`);
   }
 
-  // Pflichtfeld: dauer > 0
   if (daten.dauer === undefined || daten.dauer === null || daten.dauer === '') {
     errors.push('Dauer ist ein Pflichtfeld.');
   } else if (Number(daten.dauer) <= 0 || !Number.isFinite(Number(daten.dauer))) {
     errors.push('Dauer muss eine positive Zahl sein (> 0).');
   }
 
-  // Optionales Feld: distanz >= 0
   if (daten.distanz !== undefined && daten.distanz !== null && daten.distanz !== '') {
     if (Number(daten.distanz) < 0 || !Number.isFinite(Number(daten.distanz))) {
-      errors.push('Distanz muss eine nicht-negative Zahl sein (≥ 0).');
+      errors.push('Distanz muss eine nicht-negative Zahl sein (>= 0).');
     }
   }
 
-  // Pflichtfeld: feelsLikeScore (1–10)
   if (daten.feelsLikeScore === undefined || daten.feelsLikeScore === null || daten.feelsLikeScore === '') {
     errors.push('FeelsLike-Score ist ein Pflichtfeld.');
   } else {
@@ -68,23 +55,54 @@ function validateTrainingsDaten(daten) {
   return { valid: errors.length === 0, errors };
 }
 
-/**
- * trainingErfassen – Neues Training für einen Athleten anlegen.
- * UC-04: „Athlet erfasst neue Trainingseinheit mit erforderlichen Daten"
- *
- * @param {number} athletId – ID des eingeloggten Athleten
- * @param {Object} daten – { datum, sportart, dauer, distanz, feelsLikeScore, note }
- * @returns {Promise<Trainingseinheit>}
- */
+function getVonDatum(zeitraum) {
+  if (!zeitraum) return null;
+
+  const now = new Date();
+  const vonDatum = new Date(now);
+
+  switch (zeitraum) {
+    case 'woche':
+      vonDatum.setDate(now.getDate() - 7);
+      break;
+    case 'monat':
+      vonDatum.setMonth(now.getMonth() - 1);
+      break;
+    case 'quartal':
+      vonDatum.setMonth(now.getMonth() - 3);
+      break;
+    case 'jahr':
+      vonDatum.setFullYear(now.getFullYear() - 1);
+      break;
+    default:
+      return null;
+  }
+
+  return vonDatum.toISOString().split('T')[0];
+}
+
+function buildWhereClause(athletId, { sportart, zeitraum } = {}) {
+  const where = { athletId };
+
+  if (sportart && ERLAUBTE_SPORTARTEN.includes(sportart)) {
+    where.sportart = sportart;
+  }
+
+  const vonDatum = getVonDatum(zeitraum);
+  if (vonDatum) {
+    where.datum = { [Op.gte]: vonDatum };
+  }
+
+  return where;
+}
+
 async function trainingErfassen(athletId, daten) {
   const validation = validateTrainingsDaten(daten);
   if (!validation.valid) {
-    const error = new Error(validation.errors.join(' '));
-    error.status = 400;
-    throw error;
+    throw createHttpError(400, validation.errors.join(' '));
   }
 
-  const training = await Trainingseinheit.create({
+  return Trainingseinheit.create({
     datum: daten.datum,
     sportart: daten.sportart,
     dauer: Number(daten.dauer),
@@ -95,60 +113,33 @@ async function trainingErfassen(athletId, daten) {
     note: daten.note || null,
     athletId,
   });
-
-  return training;
 }
 
-/**
- * alleTrainings – Alle Trainingseinheiten eines Athleten laden.
- * Athlet sieht nur seine eigenen Trainings.
- *
- * @param {number} athletId – ID des eingeloggten Athleten
- * @returns {Promise<Trainingseinheit[]>}
- */
-async function alleTrainings(athletId) {
-  const trainings = await Trainingseinheit.findAll({
-    where: { athletId },
+async function alleTrainings(athletId, filter = {}) {
+  const where = buildWhereClause(athletId, filter);
+
+  return Trainingseinheit.findAll({
+    where,
     order: [['datum', 'DESC']],
   });
-  return trainings;
 }
 
-/**
- * trainingAendern – Bestehendes Training bearbeiten.
- * Prüft, ob das Training dem Athleten gehört (Autorisierung).
- * UC-04: „Athlet wählt bestehende Einheit aus und ändert die Daten"
- *
- * @param {number} trainingId – ID der Trainingseinheit
- * @param {number} athletId – ID des eingeloggten Athleten
- * @param {Object} neueDaten – Aktualisierte Felder
- * @returns {Promise<Trainingseinheit>}
- */
 async function trainingAendern(trainingId, athletId, neueDaten) {
   const training = await Trainingseinheit.findByPk(trainingId);
 
   if (!training) {
-    const error = new Error('Trainingseinheit nicht gefunden.');
-    error.status = 404;
-    throw error;
+    throw createHttpError(404, 'Trainingseinheit nicht gefunden.');
   }
 
-  // Autorisierung: Nur eigene Trainings bearbeiten
   if (training.athletId !== athletId) {
-    const error = new Error('Keine Berechtigung, dieses Training zu bearbeiten.');
-    error.status = 403;
-    throw error;
+    throw createHttpError(403, 'Keine Berechtigung, dieses Training zu bearbeiten.');
   }
 
-  // Validierung der neuen Daten
   const validation = validateTrainingsDaten(neueDaten);
   if (!validation.valid) {
-    const error = new Error(validation.errors.join(' '));
-    error.status = 400;
-    throw error;
+    throw createHttpError(400, validation.errors.join(' '));
   }
 
-  // Update durchführen
   training.datum = neueDaten.datum;
   training.sportart = neueDaten.sportart;
   training.dauer = Number(neueDaten.dauer);
@@ -162,39 +153,52 @@ async function trainingAendern(trainingId, athletId, neueDaten) {
   return training;
 }
 
-/**
- * trainingLoeschen – Training löschen.
- * Prüft, ob das Training dem Athleten gehört (Autorisierung).
- * UC-04: „Athlet wählt bestehende Einheit zum Löschen aus"
- *
- * @param {number} trainingId – ID der Trainingseinheit
- * @param {number} athletId – ID des eingeloggten Athleten
- * @returns {Promise<void>}
- */
 async function trainingLoeschen(trainingId, athletId) {
   const training = await Trainingseinheit.findByPk(trainingId);
 
   if (!training) {
-    const error = new Error('Trainingseinheit nicht gefunden.');
-    error.status = 404;
-    throw error;
+    throw createHttpError(404, 'Trainingseinheit nicht gefunden.');
   }
 
-  // Autorisierung: Nur eigene Trainings löschen
   if (training.athletId !== athletId) {
-    const error = new Error('Keine Berechtigung, dieses Training zu löschen.');
-    error.status = 403;
-    throw error;
+    throw createHttpError(403, 'Keine Berechtigung, dieses Training zu loeschen.');
   }
 
   await training.destroy();
 }
 
+async function trainingStatistik(athletId, filter = {}) {
+  const where = buildWhereClause(athletId, filter);
+  const trainings = await Trainingseinheit.findAll({ where });
+
+  if (trainings.length === 0) {
+    return {
+      gesamtDistanz: 0,
+      anzahlTrainings: 0,
+      gesamtDauer: 0,
+      durchschnittFeelsLike: 0,
+    };
+  }
+
+  const gesamtDistanz = trainings.reduce((sum, t) => sum + (parseFloat(t.distanz) || 0), 0);
+  const gesamtDauer = trainings.reduce((sum, t) => sum + (parseInt(t.dauer, 10) || 0), 0);
+  const feelsLikeSum = trainings.reduce((sum, t) => sum + (parseInt(t.feelsLikeScore, 10) || 0), 0);
+
+  return {
+    gesamtDistanz: Math.round(gesamtDistanz * 10) / 10,
+    anzahlTrainings: trainings.length,
+    gesamtDauer,
+    durchschnittFeelsLike: Math.round((feelsLikeSum / trainings.length) * 10) / 10,
+  };
+}
+
 module.exports = {
+  ERLAUBTE_SPORTARTEN,
+  validateTrainingsDaten,
+  buildWhereClause,
   trainingErfassen,
   alleTrainings,
   trainingAendern,
   trainingLoeschen,
-  validateTrainingsDaten,
-  ERLAUBTE_SPORTARTEN,
+  trainingStatistik,
 };

@@ -1,85 +1,66 @@
-/*
-  Training Controller (TrainingsVerwaltung)
-  
-  Schicht 1 (Oberflächenpaket / API-Schicht) nach SDD.
-  Nimmt HTTP-Requests entgegen, delegiert an den TrainingService (Schicht 2)
-  und gibt HTTP-Responses zurück.
-  
-  Da Routen mit `authMiddleware` geschützt werden, hat man Zugriff auf req.user
-  (enthält id, role, name aus dem JWT-Token).
-  
-  Funktionen (Kontrollklasse TrainingsVerwaltung):
-  - trainingErfassen: Neues Training anlegen (POST)
-  - alleTrainings: Alle Trainings des eingeloggten Users holen (GET)
-  - trainingAendern: Bestehendes Training bearbeiten (PUT)
-  - trainingLoeschen: Training löschen (DELETE)
-*/
-
 const trainingService = require('../services/trainingService');
 
-/**
- * POST /api/training
- * Neues Training anlegen.
- * Body: { datum, sportart, dauer, distanz, feelsLikeScore, note }
- */
-exports.trainingErfassen = async (req, res) => {
-  try {
-    const athletId = req.user.id;
-    const training = await trainingService.trainingErfassen(athletId, req.body);
-    res.status(201).json(training);
-  } catch (error) {
-    const status = error.status || 500;
-    res.status(status).json({ message: error.message });
-  }
-};
+function sendError(res, error) {
+  const status = error.status || 500;
+  return res.status(status).json({ message: error.message || 'Serverfehler' });
+}
 
-/**
- * GET /api/training
- * Alle Trainings des eingeloggten Athleten laden.
- * Athlet sieht nur eigene Trainings (Datenisolation wird im Service sichergestellt).
- */
-exports.alleTrainings = async (req, res) => {
+async function trainingErfassen(req, res) {
   try {
-    const athletId = req.user.id;
-    const trainings = await trainingService.alleTrainings(athletId);
-    res.json(trainings);
+    const training = await trainingService.trainingErfassen(req.user.id, req.body);
+    return res.status(201).json(training);
   } catch (error) {
-    const status = error.status || 500;
-    res.status(status).json({ message: error.message });
+    return sendError(res, error);
   }
-};
+}
 
-/**
- * PUT /api/training/:id
- * Bestehendes Training bearbeiten.
- * Nur der Besitzer darf sein eigenes Training ändern.
- * Body: { datum, sportart, dauer, distanz, feelsLikeScore, note }
- */
-exports.trainingAendern = async (req, res) => {
+async function alleTrainings(req, res) {
   try {
-    const athletId = req.user.id;
+    const trainings = await trainingService.alleTrainings(req.user.id, req.query);
+    return res.json(trainings);
+  } catch (error) {
+    return sendError(res, error);
+  }
+}
+
+async function trainingAendern(req, res) {
+  try {
     const trainingId = parseInt(req.params.id, 10);
-    const training = await trainingService.trainingAendern(trainingId, athletId, req.body);
-    res.json(training);
+    const training = await trainingService.trainingAendern(trainingId, req.user.id, req.body);
+    return res.json(training);
   } catch (error) {
-    const status = error.status || 500;
-    res.status(status).json({ message: error.message });
+    return sendError(res, error);
   }
-};
+}
 
-/**
- * DELETE /api/training/:id
- * Training löschen.
- * Nur der Besitzer darf sein eigenes Training löschen.
- */
-exports.trainingLoeschen = async (req, res) => {
+async function trainingLoeschen(req, res) {
   try {
-    const athletId = req.user.id;
     const trainingId = parseInt(req.params.id, 10);
-    await trainingService.trainingLoeschen(trainingId, athletId);
-    res.json({ message: 'Trainingseinheit erfolgreich gelöscht.' });
+    await trainingService.trainingLoeschen(trainingId, req.user.id);
+    return res.json({ message: 'Trainingseinheit erfolgreich geloescht.' });
   } catch (error) {
-    const status = error.status || 500;
-    res.status(status).json({ message: error.message });
+    return sendError(res, error);
   }
+}
+
+async function getStats(req, res) {
+  try {
+    const stats = await trainingService.trainingStatistik(req.user.id, req.query);
+    return res.json(stats);
+  } catch (error) {
+    return sendError(res, error);
+  }
+}
+
+module.exports = {
+  trainingErfassen,
+  alleTrainings,
+  trainingAendern,
+  trainingLoeschen,
+  getStats,
+  // Alias-Namen fuer Dashboard-Routenkompatibilitaet
+  createTraining: trainingErfassen,
+  getAlleTrainings: alleTrainings,
+  updateTraining: trainingAendern,
+  deleteTraining: trainingLoeschen,
 };
