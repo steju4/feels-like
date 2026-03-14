@@ -3,12 +3,23 @@
   
   Steuert den Authentifizierungs-Flow.
   Funktionen:
-  - anmelden: User Credentials prüfen -> JWT Token ausstellen -> zurücksenden.
+  - anmelden: Credentials validieren -> AuthService aufrufen -> Session-Cookie setzen.
   - abmelden: Session beenden.
 */
 
-const jwt = require('jsonwebtoken');
-const Athlet = require('../models/Athlet');
+const authService = require('../services/authService');
+
+const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+
+function getCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: COOKIE_MAX_AGE,
+    path: '/',
+  };
+}
 
 exports.anmelden = async (req, res) => {
   const { email, password } = req.body;
@@ -18,55 +29,29 @@ exports.anmelden = async (req, res) => {
   }
 
   try {
-    // 1. User suchen
-    const user = await Athlet.findOne({ where: { email } });
-    if (!user) {
-      return res.status(401).json({ message: 'E-Mail oder Passwort falsch' });
-    }
+    const { token, user } = await authService.anmelden(email, password);
 
-    // 2. Passwort prüfen
-    const isMatch = await user.checkPassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'E-Mail oder Passwort falsch' });
-    }
+    // Session über HttpOnly-Cookie (primärer Kanal)
+    res.cookie('token', token, getCookieOptions());
 
-    // 3. Token erstellen
-    const token = jwt.sign(
-      { id: user.id, role: user.role, name: user.name },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' } // Token ist 7 Tage gültig
-    );
-
-    // 4. Token als HttpOnly Cookie senden
-    res.cookie('token', token, {
-      httpOnly: true, // Frontend-JavaScript kann nicht darauf zugreifen (Schutz vor XSS)
-      secure: false, // TRUE falls man HTTPS nutzt
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
-      sameSite: 'lax' // Schutz vor CSRF
-    });
-
-    // 5. Antwort senden (Token im Cookie)
+    // Keine Token-Rückgabe im Body, um unnötige Exposition zu vermeiden.
     res.json({
       message: 'Erfolgreich eingeloggt',
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
+      user,
     });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Serverfehler beim Login' });
+    res.status(error.status || 500).json({ message: error.message || 'Serverfehler beim Login' });
   }
 };
 
 exports.abmelden = (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: false,
-    sameSite: 'lax'
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
   });
   res.json({ message: 'Erfolgreich ausgeloggt' });
 };

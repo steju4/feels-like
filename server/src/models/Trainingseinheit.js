@@ -7,7 +7,7 @@
   - sportart: Sportart (z.B. Laufen, Radfahren, Schwimmen)
   - dauer: Dauer in Minuten
   - distanz: Zurückgelegte Distanz in km
-  - feelsLikeScore: Der berechnete Wert
+  - feelsLikeScore: Subjektive Belastung (RPE) auf Skala 1-10
   - note: Freitext Notiz
   - athletId: Verknüpfung zum User (Athlet)
 */
@@ -44,12 +44,13 @@ const Trainingseinheit = sequelize.define('Trainingseinheit', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  // Berechneter Score
+  // Belastungsempfinden als FeelsLikeScore (RPE) auf Skala 1-10
   feelsLikeScore: {
     type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
-      min: 0,
+      min: 1,
+      max: 10,
     },
   },
   // Zuordnung zum Athleten
