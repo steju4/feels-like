@@ -48,7 +48,7 @@ function ActivityItem({ training }) {
       <div className="activity-meta">
         <span>{training.distanz != null ? `${training.distanz} km` : '-'}</span>
         <span>{formatDauer(training.dauer)}</span>
-        <span className="activity-rpe">RPE {training.feelsLikeScore}</span>
+        <span className="activity-rpe">FeelsLikeScore (RPE): {training.feelsLikeScore}</span>
       </div>
     </li>
   );
@@ -61,6 +61,7 @@ export default function Dashboard() {
   const [trainings, setTrainings] = useState([]);
   const [loadingStats, setLoadingStats] = useState(true);
   const [loadingList, setLoadingList] = useState(true);
+  const [fetchError, setFetchError] = useState('');
 
   const [filterSportart, setFilterSportart] = useState('');
   const [filterZeitraum, setFilterZeitraum] = useState('');
@@ -70,18 +71,20 @@ export default function Dashboard() {
     if (filterSportart) params.sportart = filterSportart;
     if (filterZeitraum) params.zeitraum = filterZeitraum;
 
+    setFetchError('');
     setLoadingStats(true);
     setLoadingList(true);
 
     try {
       const [statsRes, listRes] = await Promise.all([
-        api.get('/api/training/stats', { params }),
-        api.get('/api/training', { params }),
+        api.get('/training/stats', { params }),
+        api.get('/training', { params }),
       ]);
       setStats(statsRes.data);
       setTrainings(listRes.data);
     } catch (err) {
       console.error('Dashboard Fehler:', err);
+      setFetchError('Dashboard-Daten konnten nicht geladen werden. Bitte Seite neu laden.');
     } finally {
       setLoadingStats(false);
       setLoadingList(false);
@@ -129,10 +132,12 @@ export default function Dashboard() {
             setFilterSportart('');
             setFilterZeitraum('');
           }}>
-            Filter zuruecksetzen
+            Filter zurücksetzen
           </button>
         )}
       </section>
+
+      {fetchError && <div className="activity-empty"><p>{fetchError}</p></div>}
 
       <section className="dashboard-cards">
         <StatCard
@@ -157,7 +162,7 @@ export default function Dashboard() {
           loading={loadingStats}
         />
         <StatCard
-          title="Feels Like"
+          title="FeelsLikeScore (RPE)"
           value={stats ? `${stats.durchschnittFeelsLike} / 10` : '-'}
           helper="Durchschnitt"
           tone="berry"
@@ -167,16 +172,16 @@ export default function Dashboard() {
 
       <section className="dashboard-activities">
         <div className="dashboard-activities-head">
-          <h2>Letzte Aktivitaeten</h2>
-          {!loadingList && <span>{trainings.length} Eintraege</span>}
+          <h2>Letzte Aktivitäten</h2>
+          {!loadingList && <span>{trainings.length} Einträge</span>}
         </div>
 
         {loadingList ? (
-          <div className="activity-loading">Lade Aktivitaeten ...</div>
+          <div className="activity-loading">Lade Aktivitäten ...</div>
         ) : trainings.length === 0 ? (
           <div className="activity-empty">
             <p>Keine Trainings im aktuellen Filter.</p>
-            <span>Waehle einen anderen Zeitraum oder eine andere Sportart.</span>
+            <span>Wähle einen anderen Zeitraum oder eine andere Sportart.</span>
           </div>
         ) : (
           <ul className="activity-list">

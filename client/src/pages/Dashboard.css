@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
   --dash-cream: #f6f2e9;
@@ -32,6 +32,12 @@
   display: grid;
   gap: 22px;
   box-shadow: 0 22px 50px rgba(40, 60, 40, 0.08);
+  animation: dashFadeIn 0.35s ease-out;
+}
+
+@keyframes dashFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dashboard-hero {
@@ -65,7 +71,9 @@
 
 .dashboard-hero h1 {
   margin: 6px 0 10px;
-  font-family: 'Fraunces', serif;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   font-size: clamp(1.6rem, 2vw, 2.2rem);
 }
 
@@ -105,6 +113,13 @@
   color: var(--dash-ink);
   font-size: 0.95rem;
   padding: 10px 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-filterbar select:focus {
+  outline: none;
+  border-color: #7db08c;
+  box-shadow: 0 0 0 3px rgba(125, 176, 140, 0.18);
 }
 
 .dashboard-clear {
@@ -136,6 +151,12 @@
   background: #fff;
   padding: 18px;
   box-shadow: 0 8px 20px rgba(29, 47, 33, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dash-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(29, 47, 33, 0.12);
 }
 
 .dash-card-title {
@@ -196,7 +217,8 @@
 .dashboard-activities-head h2 {
   margin: 0;
   font-size: 1.22rem;
-  font-family: 'Fraunces', serif;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
 }
 
 .dashboard-activities-head span {
@@ -221,6 +243,12 @@
   border: 1px solid #d9dfd5;
   border-radius: 12px;
   background: #fff;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.activity-item:hover {
+  background: #f8fbf5;
+  transform: translateY(-1px);
 }
 
 .activity-sport {

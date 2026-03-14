@@ -95,7 +95,7 @@ export default function TrainingForm() {
       }
     }
     if (!formData.feelsLikeScore || Number(formData.feelsLikeScore) < 1 || Number(formData.feelsLikeScore) > 10) {
-      validationErrors.push('FeelsLike-Score muss zwischen 1 und 10 liegen.');
+      validationErrors.push('FeelsLikeScore (RPE) muss zwischen 1 und 10 liegen.');
     }
 
     setErrors(validationErrors);
@@ -320,9 +320,9 @@ export default function TrainingForm() {
                 />
               </div>
 
-              {/* FeelsLike-Score (1–10) */}
+              {/* FeelsLikeScore (RPE) (1-10) */}
               <div className="form-group">
-                <label htmlFor="feelsLikeScore">FeelsLike-Score (1–10) *</label>
+                <label htmlFor="feelsLikeScore">FeelsLikeScore (RPE) (1-10) *</label>
                 <div className="score-input-wrapper">
                   <input
                     type="range"

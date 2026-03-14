@@ -34,6 +34,13 @@ const Ranking = () => {
     return m ? m.label : 'Wert';
   }, [metrik]);
 
+  const formatWert = (wert) => {
+    const num = Number(wert || 0);
+    if (metrik === 'haeufigkeit') return `${num.toFixed(0)}x`;
+    if (metrik === 'dauer') return `${num.toFixed(0)} min`;
+    return `${num.toFixed(2)} km`;
+  };
+
   useEffect(() => {
     const fetchRanking = async () => {
       setLoading(true);
@@ -44,7 +51,12 @@ const Ranking = () => {
         });
         setDaten(response.data?.results || []);
       } catch (err) {
-        setError('Ranking konnte nicht geladen werden.');
+        const status = err.response?.status;
+        if (status === 403) {
+          setError('Rankinganalyse ist nur fuer Trainer verfuegbar.');
+        } else {
+          setError('Ranking konnte nicht geladen werden.');
+        }
         console.error(err);
       } finally {
         setLoading(false);
@@ -55,8 +67,10 @@ const Ranking = () => {
 
   return (
     <div className="ranking-container">
-      <h1>Bestenliste</h1>
-      <p>Ranking nach Distanz, Häufigkeit oder Dauer. Filterbar nach Sportart und Zeitraum.</p>
+      <header className="ranking-hero">
+        <h1>Rankinganalyse</h1>
+        <p>Vergleiche Athletinnen und Athleten nach Distanz, Häufigkeit oder Dauer im gewählten Zeitraum.</p>
+      </header>
 
       <div className="ranking-filters">
         <label>
@@ -95,21 +109,21 @@ const Ranking = () => {
           <thead>
             <tr>
               <th>Platz</th>
-              <th>Benutzer</th>
+              <th>Athlet/in</th>
               <th>{wertLabel}</th>
             </tr>
           </thead>
           <tbody>
             {daten.length === 0 && (
               <tr>
-                <td colSpan="3">Keine Daten für die ausgewählten Filter.</td>
+                <td colSpan="3">Keine Daten für die ausgewählten Filterkriterien.</td>
               </tr>
             )}
             {daten.map((eintrag, index) => (
               <tr key={eintrag.athletId || index}>
                 <td>{index + 1}.</td>
                 <td><strong>{eintrag.name}</strong></td>
-                <td>{(eintrag.wert ?? 0).toFixed(2)}</td>
+                <td>{formatWert(eintrag.wert)}</td>
               </tr>
             ))}
           </tbody>

@@ -1,176 +1,120 @@
-/* ============================================================
-   TrainingForm.css – Styles für die Trainings-Seite
-   Konsistent mit Dashboard.css und Login.css (gleiches Theme).
-   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
-/* === CSS Custom Properties (gleiche wie Dashboard) === */
 :root {
-  --primary-green: #2e7d32;
-  --secondary-green: #4caf50;
-  --dark-text: #1a1a1a;
-  --light-text: #666666;
-  --card-bg: #ffffff;
-  --bg-color: #f4f6f8;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-  --radius: 16px;
+  --dash-cream: #f6f2e9;
+  --dash-paper: #fffdfa;
+  --dash-ink: #1f2a22;
+  --dash-muted: #5a6a5f;
+  --dash-line: #d7ddd2;
+  --dash-green: #1f7a3a;
+  --dash-green-soft: #e8f4e9;
+  --dash-danger: #b44343;
 }
 
-/* === Seiten-Container === */
+.training-page,
+.training-page * {
+  box-sizing: border-box;
+  font-family: 'Manrope', sans-serif;
+}
+
 .training-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
-  animation: fadeIn 0.6s ease-out;
+  display: grid;
+  gap: 18px;
+  color: var(--dash-ink);
+  animation: trainingFadeIn 0.35s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes trainingFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* === Header === */
 .training-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   flex-wrap: wrap;
-  gap: 1rem;
+  background: linear-gradient(135deg, #214830, #1f7a3a);
+  color: #f4fff4;
+  border-radius: 18px;
+  padding: 22px;
 }
 
 .training-header h1 {
   margin: 0;
-  font-size: 2rem;
-  color: var(--dark-text);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
 }
 
 .training-subtitle {
-  margin: 0.25rem 0 0;
-  color: var(--light-text);
-  font-size: 1rem;
+  margin: 6px 0 0;
+  opacity: 0.9;
 }
 
-/* === Buttons === */
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  text-decoration: none;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-}
-
-.btn-secondary {
-  background: #e0e0e0;
-  color: var(--dark-text);
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-secondary:hover {
-  background: #d0d0d0;
-}
-
-.btn-danger {
-  background: #e53935;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-danger:hover {
-  background: #c62828;
-}
-
-.btn-edit,
-.btn-delete {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  padding: 0.3rem 0.5rem;
-  border-radius: 6px;
-  transition: background 0.2s;
-}
-
-.btn-edit:hover {
-  background: #e3f2fd;
-}
-
-.btn-delete:hover {
-  background: #ffebee;
-}
-
-/* === Alerts (Erfolg / Fehler) === */
 .alert {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--dash-line);
+  background: var(--dash-paper);
 }
 
 .alert ul {
   margin: 0;
-  padding-left: 1.2rem;
+  padding-left: 18px;
 }
 
 .alert-success {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
+  border-color: #b6ddbc;
+  background: #edf8ef;
+  color: #24522b;
 }
 
 .alert-error {
-  background: #ffebee;
-  color: #c62828;
-  border: 1px solid #ef9a9a;
+  border-color: #ebc3c3;
+  background: #fff3f3;
+  color: #7c2a2a;
 }
 
-/* === Formular-Karte === */
-.training-form-card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  padding: 2rem;
-  box-shadow: var(--shadow-md);
+.training-form-card,
+.training-list-card {
+  background: var(--dash-paper);
+  border: 1px solid var(--dash-line);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 24px rgba(38, 58, 40, 0.08);
+  transition: box-shadow 0.2s ease;
+}
+
+.training-form-card:hover,
+.training-list-card:hover {
+  box-shadow: 0 14px 26px rgba(38, 58, 40, 0.11);
 }
 
 .training-form-card h2 {
-  margin: 0 0 1.5rem;
-  color: var(--primary-green);
-  font-size: 1.4rem;
+  margin: 0 0 14px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
 }
 
-/* Grid-Layout für Formularfelder */
+.training-form {
+  display: grid;
+  gap: 14px;
+}
+
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: 6px;
 }
 
 .form-group-full {
@@ -178,99 +122,127 @@
 }
 
 .form-group label {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #444;
-  font-size: 0.95rem;
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--dash-muted);
+  font-weight: 700;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-  padding: 0.7rem 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  background-color: #fafafa;
-  font-family: inherit;
   width: 100%;
-  box-sizing: border-box;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--primary-green);
-  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-  background-color: #fff;
+  border: 1px solid #cfd8cb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.96rem;
+  color: var(--dash-ink);
+  background: #fff;
 }
 
 .form-group textarea {
   resize: vertical;
 }
 
-/* Score-Slider */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #7db08c;
+  box-shadow: 0 0 0 3px rgba(125, 176, 140, 0.18);
+}
+
 .score-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 12px;
 }
 
 .score-slider {
   flex: 1;
   -webkit-appearance: none;
   appearance: none;
-  height: 8px;
-  border-radius: 4px;
-  background: #e0e0e0;
-  outline: none;
-  border: none !important;
-  padding: 0 !important;
+  height: 7px;
+  border-radius: 10px;
+  background: #d9e2d5;
 }
 
 .score-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: var(--primary-green);
+  background: var(--dash-green);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .score-slider::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--primary-green);
-  cursor: pointer;
+  width: 20px;
+  height: 20px;
   border: none;
+  border-radius: 50%;
+  background: var(--dash-green);
+  cursor: pointer;
 }
 
 .score-value {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--primary-green);
-  min-width: 2rem;
+  width: 36px;
   text-align: center;
+  font-weight: 700;
+  color: var(--dash-green);
 }
 
-/* Formular-Aktionen */
-.form-actions {
+.form-actions,
+.modal-actions {
   display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* === Trainings-Liste (Tabelle) === */
-.training-list-card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-danger:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: #2e5e3d;
+  color: #f2fff2;
+}
+
+.btn-primary:hover {
+  background: #234b31;
+}
+
+.btn-secondary {
+  background: #e6ece3;
+  color: #304137;
+}
+
+.btn-secondary:hover {
+  background: #d7dfd3;
+}
+
+.btn-danger {
+  background: var(--dash-danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #983636;
 }
 
 .table-responsive {
@@ -280,144 +252,115 @@
 .training-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
 }
 
-.training-table thead {
-  background: #f5f5f5;
+.training-table th,
+.training-table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #e4e9de;
 }
 
 .training-table th {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  color: var(--light-text);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.training-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #f0f0f0;
-  vertical-align: middle;
+  letter-spacing: 0.8px;
+  color: var(--dash-muted);
+  background: #f2f6ef;
 }
 
 .training-table tbody tr:hover {
-  background-color: #fafafa;
+  background: #f8faf6;
 }
 
 .sportart-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  background: #e8f5e9;
-  color: var(--primary-green);
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--dash-green-soft);
+  color: #295838;
+  font-weight: 700;
 }
 
 .score-badge {
   display: inline-block;
-  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
-  color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #eef5ef;
+  color: #285735;
   font-weight: 700;
-  font-size: 0.85rem;
 }
 
 .note-cell {
-  max-width: 200px;
-  overflow: hidden;
+  max-width: 220px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--light-text);
+  overflow: hidden;
+  color: #617062;
 }
 
-.actions-cell {
-  white-space: nowrap;
+.btn-edit,
+.btn-delete {
+  border: 0;
+  background: transparent;
+  font-size: 1.05rem;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px 6px;
 }
 
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--light-text);
+.btn-edit:hover {
+  background: #eaf4ff;
 }
 
-.empty-state p {
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
+.btn-delete:hover {
+  background: #ffefef;
 }
 
+.empty-state,
 .loading-text {
   text-align: center;
-  color: var(--light-text);
-  padding: 2rem;
+  color: var(--dash-muted);
+  padding: 26px;
+  border: 1px dashed var(--dash-line);
+  border-radius: 12px;
+  background: #fcfdf9;
 }
 
-/* === Modal (Lösch-Bestätigung) === */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(20, 28, 20, 0.45);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 16px;
   z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
 }
 
 .modal-dialog {
-  background: white;
-  border-radius: var(--radius);
-  padding: 2rem;
-  max-width: 420px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  text-align: center;
+  width: min(420px, 100%);
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #d6ddd2;
+  padding: 18px;
 }
 
 .modal-dialog h3 {
-  margin: 0 0 0.75rem;
-  color: var(--dark-text);
-  font-size: 1.3rem;
+  margin: 0 0 8px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
 }
 
 .modal-dialog p {
-  color: var(--light-text);
-  margin: 0 0 1.5rem;
+  margin: 0 0 14px;
+  color: var(--dash-muted);
 }
 
-.modal-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-}
-
-/* === Responsive === */
-@media (max-width: 768px) {
-  .training-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
+@media (max-width: 900px) {
   .form-grid {
     grid-template-columns: 1fr;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions {
-    flex-direction: column;
   }
 }

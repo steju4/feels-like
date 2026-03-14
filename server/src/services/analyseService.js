@@ -22,7 +22,6 @@ class DurationStrategy {
   }
 }
 
-// Verfügbare Ranking-Strategien
 const strategies = {
   distanz: new DistanceStrategy(),
   haeufigkeit: new FrequencyStrategy(),
@@ -33,7 +32,7 @@ function chooseStrategy(key) {
   return strategies[key] || strategies.distanz;
 }
 
-function rank(entries, key) {
+function berechneRanking(entries, key) {
   const strategy = chooseStrategy(key);
   return strategy.apply(entries);
 }
@@ -42,5 +41,7 @@ module.exports = {
   DistanceStrategy,
   FrequencyStrategy,
   DurationStrategy,
-  rank,
+  berechneRanking,
+  // Alias fuer bestehende Aufrufer
+  rank: berechneRanking,
 };

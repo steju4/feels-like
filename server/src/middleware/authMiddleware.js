@@ -1,40 +1,49 @@
 /*
-  TODO: Auth Middleware
-  
-  Diese Middleware schützt Routen.
-  Aufgaben:
-  1. JWT Token aus dem 'token' Cookie lesen.
-  2. Token mit dem Secret verifizieren.
-  3. Bei Erfolg: Die User-ID/Rolle in das `req`-Objekt schreiben (z.B. req.user).
-  4. Bei Fehler: 401 Unauthorized zurückgeben.
+  Auth Middleware
+
+  Schützt Routen durch JWT-Verifizierung.
+  Token-Quellen:
+  1) Authorization: Bearer <token> (bevorzugt)
+  2) HttpOnly-Cookie 'token' (Browser-Session)
 */
 
 const jwt = require('jsonwebtoken');
 
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    const error = new Error('JWT_SECRET ist nicht gesetzt.');
+    error.status = 500;
+    throw error;
+  }
+  return secret;
+}
+
 module.exports = (req, res, next) => {
-  // 1. Token aus Cookie oder Authorization-Header lesen
+  // Header priorisieren, damit API-Clients explizit Auth steuern koennen.
   const cookieToken = req.cookies?.token;
   const headerToken = req.headers.authorization?.startsWith('Bearer ')
     ? req.headers.authorization.slice(7)
     : null;
-  const token = cookieToken || headerToken;
-  
+  const token = headerToken || cookieToken;
+
   if (!token) {
     return res.status(401).json({ message: 'Zugriff verweigert.' });
   }
 
   try {
-    // 2. Token verifizieren
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
-    
-    // 3. User in req speichern
-    // Ab hier Zugriff auf req.user.id, req.user.role, etc.
+    const decoded = jwt.verify(token, getJwtSecret());
     req.user = decoded;
-    
+
     next();
   } catch (error) {
-    // Bei ungültigem Token Cookie löschen
-    res.clearCookie('token');
+    // Bei ungueltigem Token Session-Cookie defensiv loeschen
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
     return res.status(401).json({ message: 'Token ungültig oder abgelaufen.' });
   }
 };

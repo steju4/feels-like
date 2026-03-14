@@ -9,10 +9,14 @@
 
 const { Op, fn, col } = require('sequelize');
 const { Athlet, Trainingseinheit } = require('../models');
-const { rank } = require('../services/rankingService');
+const { berechneRanking } = require('../services/analyseService');
 
 exports.berechneRanking = async (req, res) => {
   try {
+    if (req.user?.role !== 'trainer') {
+      return res.status(403).json({ message: 'Rankinganalyse ist nur für Trainer verfügbar.' });
+    }
+
     const { sportart = 'alle', zeitraum, metrik = 'distanz' } = req.query;
 
     const where = {};
@@ -35,7 +39,7 @@ exports.berechneRanking = async (req, res) => {
         'athletId',
         [fn('sum', col('distanz')), 'sumDistanz'],
         [fn('sum', col('dauer')), 'sumDauer'],
-        [fn('count', col('id')), 'anzahl'],
+        [fn('count', col('Trainingseinheit.id')), 'anzahl'],
       ],
       where,
       include: [
@@ -44,7 +48,7 @@ exports.berechneRanking = async (req, res) => {
           attributes: ['id', 'name', 'email'],
         },
       ],
-      group: ['athletId', 'Athlet.id', 'Athlet.name', 'Athlet.email'],
+      group: ['Trainingseinheit.athletId', 'Athlet.id', 'Athlet.name', 'Athlet.email'],
     });
 
     const daten = aggregiert.map((eintrag) => {
@@ -62,7 +66,7 @@ exports.berechneRanking = async (req, res) => {
     });
 
     // Strategie auswählen und sortieren
-    const ergebnis = rank(daten, metrik?.toLowerCase());
+    const ergebnis = berechneRanking(daten, metrik?.toLowerCase());
     res.json({ results: ergebnis });
   } catch (error) {
     console.error('Fehler beim Ranking:', error);

@@ -10,11 +10,17 @@
 
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db.js');
-const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 
-// Leichtgewichtiger Hash für Seeds/Tests (kein bcrypt notwendig)
-const hashPassword = (value) =>
-  crypto.createHash('sha256').update(value).digest('hex');
+const SALT_ROUNDS = 10;
+
+async function hashPassword(value) {
+  // Bereits gehashte Passwoerter (bcrypt-Format) nicht erneut hashen.
+  if (typeof value === 'string' && value.startsWith('$2')) {
+    return value;
+  }
+  return bcrypt.hash(String(value), SALT_ROUNDS);
+}
 
 const Athlet = sequelize.define('Athlet', {
   name: {
@@ -45,12 +51,12 @@ const Athlet = sequelize.define('Athlet', {
   hooks: {
     beforeCreate: async (user) => {
       if (user.passwortHash) {
-        user.passwortHash = hashPassword(user.passwortHash);
+        user.passwortHash = await hashPassword(user.passwortHash);
       }
     },
     beforeUpdate: async (user) => {
       if (user.changed('passwortHash')) {
-        user.passwortHash = hashPassword(user.passwortHash);
+        user.passwortHash = await hashPassword(user.passwortHash);
       }
     }
   }
@@ -58,7 +64,8 @@ const Athlet = sequelize.define('Athlet', {
 
 // Instanz-Methode zum Prüfen des Passworts
 Athlet.prototype.checkPassword = async function(enteredPassword) {
-  return hashPassword(enteredPassword) === this.passwortHash;
+  if (!this.passwortHash) return false;
+  return bcrypt.compare(String(enteredPassword), this.passwortHash);
 };
 
 module.exports = Athlet;

@@ -165,7 +165,7 @@ describe('validateTrainingsDaten', () => {
       const daten = { ...gueltigeDaten, distanz: -5 };
       const result = validateTrainingsDaten(daten);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Distanz muss eine nicht-negative Zahl sein (≥ 0).');
+      expect(result.errors).toContain('Distanz muss eine nicht-negative Zahl sein (>= 0).');
     });
 
     test('lehnt feelsLikeScore = 0 ab (unter Minimum)', () => {
