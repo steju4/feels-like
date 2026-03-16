@@ -1,0 +1,713 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Anforderungen</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2e8cfdb8-b521-81aa-88b8-fbf1c65decf5" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title" dir="auto">Anforderungen</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-text"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Projekttitel</th><td>Feels Like</td></tr><tr class="property-row property-row-date"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/calendar_gray.svg" style="width:14px;height:14px;display:block"/></span>Erstellt am</th><td><time>@7. November 2025</time></td></tr><tr class="property-row property-row-last_edited_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Zuletzt aktualisiert von</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Zuletzt aktualisiert um</th><td><time>@17. Januar 2026 10:38</time></td></tr><tr class="property-row property-row-person"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/friends_gray.svg" style="width:14px;height:14px;display:block"/></span>Überprüfer/-innen</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">I</span></span>Isabella Schwarz</span><span class="user"><img src="https://lh3.googleusercontent.com/a/AAcHTtedGTO0Xh7JF3Aon-QW5-EnIIw0P7wsp3fX2nOyDLlG=s100" class="icon user-icon"/>Sophie Lazarjan</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">A</span></span>Atu</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Joey</span></td></tr><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Erstellt von</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Kategorie</th><td><span class="selected-value select-value-color-orange">Strategiedokument</span></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h1 id="2e8cfdb8-b521-81f0-b06c-de6e32f25ee8" class="">Versionsverwaltung</h1></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8103-8213-ceeae227bc5e" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8144-a546-c710530c375b"><td id="~LwX" class=""><strong>Version</strong></td><td id="MzLw" class=""><strong>Datum</strong></td><td id="@^]|" class=""><strong>Änderungen</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81b4-9bee-e7ffd3c7b048"><td id="~LwX" class="">V 1.0.0</td><td id="MzLw" class="">7. November 2025</td><td id="@^]|" class="">Initialversion</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h1 id="2e8cfdb8-b521-813c-80dc-dc04a92ea518" class="">Anforderungen</h1></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-81b3-8ece-c596e029cdcf" class="toggle"><li><details open=""><summary>UC-01</summary><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8172-80e3-e46ea3c5e721" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-812a-8cdd-d1cbf44e54fa"><td id="r=&lt;]" class=""><strong>Feld</strong></td><td id="AH_?" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8132-8709-d834558f5ddb"><td id="r=&lt;]" class=""><strong>ID</strong></td><td id="AH_?" class="">A1.1</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81e8-b9d3-dd58dd1862b3"><td id="r=&lt;]" class=""><strong>Typ</strong></td><td id="AH_?" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-817f-9a40-d0e46d5443b5"><td id="r=&lt;]" class=""><strong>Herkunft</strong></td><td id="AH_?" class=""><code>UC-01: Kontoverwaltung</code> (Ablauf: Registrierung)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8140-a3e9-f3acb82097b9"><td id="r=&lt;]" class=""><strong>Description</strong></td><td id="AH_?" class="">Wenn ein Athlet einen gültigen Einladungslink (aus <code>UC-02</code>) aufruft, <strong>muss</strong> das <strong>System</strong> dem <strong>Athleten</strong> die <strong>Möglichkeit bieten</strong>, seine <strong>Registrierung abzuschließen</strong> (z.B. Eingabe von Name, Passwort).</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-818b-80db-e999007988f2"><td id="r=&lt;]" class=""><strong>Rationale</strong></td><td id="AH_?" class="">Dies ist der einzige Weg für einen neuen Athleten, ein Konto zu erstellen und dem System beizutreten.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8161-b92b-c4c1a6522f5c"><td id="r=&lt;]" class=""><strong>Fit Criterion</strong></td><td id="AH_?" class="">Test bestanden, wenn (a) ein ungültiger/abgelaufener Link zu einer Fehlermeldung führt und (b) ein gültiger Link das Registrierungsformular anzeigt und die Eingabe ein neues Konto erstellt.</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8197-9138-dd1ddcd590d6" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81e9-94d2-fc613f1661ce"><td id="avwm" class=""><strong>Feld</strong></td><td id="nv}G" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81b5-8e11-efc9cbe9584c"><td id="avwm" class=""><strong>ID</strong></td><td id="nv}G" class="">A1.2</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8156-b718-fd5cf519f832"><td id="avwm" class=""><strong>Typ</strong></td><td id="nv}G" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8101-a39e-e5893a930b4c"><td id="avwm" class=""><strong>Herkunft</strong></td><td id="nv}G" class=""><code>UC-01: Kontoverwaltung</code> (Ablauf: Anmeldung)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ad-a55d-e19ae331d3ab"><td id="avwm" class=""><strong>Description</strong></td><td id="nv}G" class="">Das System <strong>muss</strong> dem <strong>Athleten</strong> die <strong>Möglichkeit bieten</strong>, sich <strong>mit seinen Anmeldedaten (E-Mail, Passwort) zu authentifizieren</strong>.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8122-a75f-e75fc267c7cf"><td id="avwm" class=""><strong>Rationale</strong></td><td id="nv}G" class="">Stellt sicher, dass nur autorisierte Athleten auf ihre persönlichen Daten zugreifen können.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-811b-9a6d-f6c7b4c2ba77"><td id="avwm" class=""><strong>Fit Criterion</strong></td><td id="nv}G" class="">Test 1 (Erfolg): Ein Test-Athlet gibt korrekte Daten ein und wird zur persönlichen Startseite (<code>UC-05</code>) weitergeleitet. <br/> Test 2 (Fehlschlag): Ein Test-Athlet gibt falsche Daten ein, wird <em>nicht</em> weitergeleitet und erhält eine Fehlermeldung.</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-81e8-bcee-d2ee89ab3ca7" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-819e-87b3-f3c7481f7258"><td id="~PA[" class=""><strong>Feld</strong></td><td id="pYz=" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8144-83d1-d84d08bc2cde"><td id="~PA[" class=""><strong>ID</strong></td><td id="pYz=" class="">A1.3</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-811f-9b94-d30a64de82f9"><td id="~PA[" class=""><strong>Typ</strong></td><td id="pYz=" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81e3-bf1e-f9aea0eb498b"><td id="~PA[" class=""><strong>Herkunft</strong></td><td id="pYz=" class=""><code>UC-01: Kontoverwaltung</code> (Ablauf: Profil bearbeiten)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8104-8077-d6738b3cdd2e"><td id="~PA[" class=""><strong>Description</strong></td><td id="pYz=" class="">Wenn der Athlet angemeldet ist, <strong>muss</strong> das <strong>System</strong> dem <strong>Athleten</strong> die <strong>Möglichkeit bieten</strong>, seine <strong>persönlichen Kontodaten</strong> (z.B. Passwort) zu <strong>ändern</strong>.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8104-a5a1-f3b51f13218f"><td id="~PA[" class=""><strong>Rationale</strong></td><td id="pYz=" class="">Ermöglicht Athleten, ihre Account-Sicherheit und persönliche Daten selbst zu verwalten.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81a1-8438-eff3033805c3"><td id="~PA[" class=""><strong>Fit Criterion</strong></td><td id="pYz=" class="">Test bestanden, wenn ein angemeldeter Athlet sein Passwort erfolgreich ändern kann und sich anschließend mit dem <em>neuen</em> Passwort (und nicht mehr mit dem alten) anmelden kann.</td></tr></div></tbody></table></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-81b4-957a-f876393cec37" class="toggle"><li><details open=""><summary>UC-02</summary><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8116-b2d5-eb6f8fe94164" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8183-93e7-f331f3142699"><th id="RAHk" class="simple-table-header-color simple-table-header"><strong>Feld</strong></th><th id="eq{y" class="simple-table-header-color simple-table-header"><strong>Anforderung</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8180-aedd-e24676e45bcf"><td id="RAHk" class=""><strong>ID</strong></td><td id="eq{y" class="">A2.1</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-814a-919e-e0b9aad28def"><td id="RAHk" class=""><strong>Typ</strong></td><td id="eq{y" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-816e-ade7-c4268683a0e4"><td id="RAHk" class=""><strong>Herkunft</strong></td><td id="eq{y" class=""><code>UC-02: Athleten-Verwaltung/Einladung</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8165-90e1-fd669caf360f"><td id="RAHk" class=""><strong>Description</strong></td><td id="eq{y" class="">Das System muss dem Trainer die Möglichkeit bieten, Athletinnen zu verwalten, neue Athletinnen hinzuzufügen und Einladungen zur Systemnutzung per E-Mail zu versenden.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8157-a14c-e2a6e7ba0ced"><td id="RAHk" class=""><strong>Rationale</strong></td><td id="eq{y" class="">Diese Funktion ist notwendig, damit der Trainer Athletinnen in das System aufnehmen, deren Daten erfassen und sie zur Nutzung der Plattform einladen kann. Dadurch wird die Zuordnung zwischen Trainer und Athletin hergestellt.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81a6-9975-d368d8a7beab"><td id="RAHk" class=""><strong>Fit Criterion</strong></td><td id="eq{y" class="">Der Test gilt als bestanden, wenn ein Trainer sich erfolgreich authentifiziert, eine neue Athletin im System anlegen kann und diese Athletin eine Einladung per E-Mail erhält, die sie zur Registrierung im System berechtigt.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-817e-873a-f14e61b38627"><td id="RAHk" class=""><strong>Originator</strong></td><td id="eq{y" class="">Atussa</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ef-b02a-eeeb5976df1d"><td id="RAHk" class=""><strong>Priority</strong></td><td id="eq{y" class="">Muss</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-819e-82a1-f83f64d7ef99" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-819f-a723-fff0293c8307"><th id="{\VE" class="simple-table-header-color simple-table-header"><strong>Feld</strong></th><th id="RH_k" class="simple-table-header-color simple-table-header"><strong>Anforderung</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-818c-af7d-dcfc9861759c"><td id="{\VE" class=""><strong>ID</strong></td><td id="RH_k" class="">A2.2</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81dd-96ec-d9b24569e105"><td id="{\VE" class=""><strong>Typ</strong></td><td id="RH_k" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8137-a3e3-ec57440bcefa"><td id="{\VE" class=""><strong>Herkunft</strong></td><td id="RH_k" class=""><code>UC-02: Athleten-Verwaltung/Einladung</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81d9-9172-d713d01b8a36"><td id="{\VE" class=""><strong>Description</strong></td><td id="RH_k" class="">Das System muss dem Trainer die Möglichkeit bieten, eine Übersicht über alle zugeordneten Athletinnen einzusehen, einschließlich deren Status (eingeladen, aktiv, inaktiv).</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-817a-9d66-f6e6e3fc82f8"><td id="{\VE" class=""><strong>Rationale</strong></td><td id="RH_k" class="">Diese Funktion ist notwendig, damit der Trainer jederzeit den Überblick über seine betreuten Athletinnen behält und nachvollziehen kann, wer die Einladung angenommen oder bereits aktiv ist.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8189-ad46-da687ef52170"><td id="{\VE" class=""><strong>Fit Criterion</strong></td><td id="RH_k" class="">Der Test gilt als bestanden, wenn ein Trainer nach der Authentifizierung eine vollständige, fehlerfreie Übersicht seiner Athletinnen erhält, die Informationen zu Name, Aktivitätsstatus und Einladungsstatus enthält.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81c1-902e-e9c57781ef08"><td id="{\VE" class=""><strong>Originator</strong></td><td id="RH_k" class="">Atussa</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-815e-9e91-e366a4ebb750"><td id="{\VE" class=""><strong>Priority</strong></td><td id="RH_k" class="">Muss</td></tr></div></tbody></table></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-8174-a64e-e4d92f435938" class="toggle"><li><details open=""><summary>UC-03</summary><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8100-bd2a-ffda74ea7a21" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8199-a896-e60c17e132ea"><td id="~PA[" class=""><strong>Feld</strong></td><td id="pYz=" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81e9-ac0f-c2eafa50c940"><td id="~PA[" class=""><strong>ID</strong></td><td id="pYz=" class="">A3.1</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8152-8f69-c1dfda42c389"><td id="~PA[" class=""><strong>Typ</strong></td><td id="pYz=" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ac-b8e5-ecd30545996b"><td id="~PA[" class=""><strong>Herkunft</strong></td><td id="pYz=" class=""><code>UC-03: </code>Wettbewerbsdaten verwalten (für Athletinnen)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-811b-9ed7-db0dc1d3e369"><td id="~PA[" class=""><strong>Description</strong></td><td id="pYz=" class="">Das System <strong>muss</strong> dem Athleten die Möglichkeit bieten, die Details eines ausgewählten Wettbewerbs einzusehen und zu Verwalten</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81a9-a674-f56fcb6241b1"><td id="~PA[" class=""><strong>Rationale</strong></td><td id="pYz=" class="">Dies ist eine Kernfunktion, damit der Athlet seine Leistung (z.B. gelaufene Zeit, Status, Platzierung) im Kontext eines spezifischen Wettbewerbs nachvollziehen und analysieren kann.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8199-9cad-d788de3bea52"><td id="~PA[" class=""><strong>Fit Criterion</strong></td><td id="pYz=" class="">Test bestanden, wenn ein angemeldeter Athlet in der Wettbewerbsübersicht einen Wettbewerb auswählt und daraufhin eine Detailseite für genau diesen Wettbewerb geladen wird, die alle zugehörigen Daten (z.B. Zeit, Status) anzeigt.</td></tr></div></tbody></table></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-81da-8c52-e64eeca4beb1" class="toggle"><li><details open=""><summary>UC-04</summary><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-813e-9331-cde1a896e103" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81eb-ad8d-ef6e6da17232"><td id="IgEx" class=""><strong>Feld</strong></td><td id="L~A\" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-816c-a209-ce1be3e622ee"><td id="IgEx" class=""><strong>ID</strong></td><td id="L~A\" class="">A4.1</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81d3-a2a0-f94b49a8bb83"><td id="IgEx" class=""><strong>Typ</strong></td><td id="L~A\" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8199-a89f-d5afde9795ef"><td id="IgEx" class=""><strong>Herkunft</strong></td><td id="L~A\" class=""><code>UC-04: Trainingseinheiten verwalten</code> (aus Box <code>C</code>)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8148-9b72-dea77f0d5663"><td id="IgEx" class=""><strong>Description</strong></td><td id="L~A\" class="">Das System <strong>muss</strong> dem <code><strong>Athleten</strong></code> die <strong>Möglichkeit bieten</strong>, eine <code><strong>neue Trainingseinheit mit erforderlichen Daten</strong></code> (z.B. Datum, Sportart, Dauer, Distanz) zu <code><strong>erfassen</strong></code> </td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81a2-88b3-f968cfe05aeb"><td id="IgEx" class=""><strong>Rationale</strong></td><td id="L~A\" class="">Dies ist die zentrale Datenerfassungsfunktion und die Grundlage für alle Analyse-Use-Cases (UC-05, UC-06) 5.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8193-bdcb-cd195a07d751"><td id="IgEx" class=""><strong>Fit Criterion</strong></td><td id="L~A\" class="">Test bestanden, wenn ein Athlet die erforderlichen Daten eingibt, den Vorgang bestätigt und dieser neue Eintrag anschließend in seiner &quot;Persönlichen Statistik&quot; (UC-05) korrekt angezeigt wird </td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-812c-a1c0-cfdb30d7ddd9" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8138-9296-f3fa6992f014"><td id="V=&gt;[" class=""><strong>Feld</strong></td><td id="I;Mm" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8120-b96f-d00d58ebe628"><td id="V=&gt;[" class=""><strong>ID</strong></td><td id="I;Mm" class="">A4.2</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8177-a7ef-d9e67c7d139b"><td id="V=&gt;[" class=""><strong>Typ</strong></td><td id="I;Mm" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81f3-b131-dd4cd6a04fd9"><td id="V=&gt;[" class=""><strong>Herkunft</strong></td><td id="I;Mm" class=""><code>UC-04: Trainingseinheiten verwalten</code> (aus Box <code>D</code>)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-814c-b275-d673b248db6f"><td id="V=&gt;[" class=""><strong>Description</strong></td><td id="I;Mm" class="">Das System <strong>muss</strong> dem <code><strong>Athleten</strong></code> die <strong>Möglichkeit bieten</strong>, eine <code><strong>bestehende Trainingseinheit auszuwählen</strong></code> und deren <code><strong>Daten</strong></code> zu <code><strong>ändern</strong></code> </td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-817b-94cf-f5c99f8ee269"><td id="V=&gt;[" class=""><strong>Rationale</strong></td><td id="I;Mm" class="">Ermöglicht dem Athleten, Tippfehler oder falsche Angaben (z.B. falsche Distanz) nachträglich zu korrigieren, um die Datenqualität für die Analysen (UC-05, UC-06) sicherzustellen </td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8134-b5b0-dd0c2a0acf2d"><td id="V=&gt;[" class=""><strong>Fit Criterion</strong></td><td id="I;Mm" class="">Test bestanden, wenn ein Athlet einen bestehenden Eintrag (z.B. Distanz von 10km) öffnet, auf 12km ändert, den Vorgang bestätigt und die Distanz in der &quot;Persönlichen Statistik&quot; (UC-05) anschließend als 12km angezeigt wird </td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-81e9-afe1-c5dd0ee29033" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81bc-8a7c-d791c695f8ab"><td id="E|GP" class=""><strong>Feld</strong></td><td id="]Q[f" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ab-8097-f56d1411c7ad"><td id="E|GP" class=""><strong>ID</strong></td><td id="]Q[f" class="">A4.3</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ae-84e3-f152486fbbf3"><td id="E|GP" class=""><strong>Typ</strong></td><td id="]Q[f" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81b6-b9ef-df0fb4dfaec3"><td id="E|GP" class=""><strong>Herkunft</strong></td><td id="]Q[f" class=""><code>UC-04: Trainingseinheiten verwalten</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81d5-b6ae-edcec3023473"><td id="E|GP" class=""><strong>Description</strong></td><td id="]Q[f" class="">Das System <strong>muss</strong> dem <code><strong>Athleten</strong></code> die <strong>Möglichkeit bieten</strong>, eine <code><strong>bestehende Trainingseinheit</strong></code> zum <code><strong>Löschen auszuwählen</strong></code> </td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81b3-81f9-e483f3667f66"><td id="E|GP" class=""><strong>Rationale</strong></td><td id="]Q[f" class="">Gibt dem Athleten die Kontrolle über seine Daten, um fehlerhafte oder irrelevante Einträge (z.B. doppelte Einträge) zu entfernen 11.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-817b-90fa-d9b59ddf6435"><td id="E|GP" class=""><strong>Fit Criterion</strong></td><td id="]Q[f" class="">Test bestanden, wenn ein Athlet einen Eintrag zum Löschen auswählt, den Vorgang bestätigt und dieser Eintrag anschließend <em>nicht</em> mehr in der &quot;Persönlichen Statistik&quot; (UC-05) oder der &quot;Rankinganalyse&quot; (UC-06) erscheint 12.</td></tr></div></tbody></table></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-813f-9e48-d0655802e389" class="toggle"><li><details open=""><summary>UC-05</summary><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8125-b833-dcf5ba0175c6" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81d9-bcbd-dca448185048"><td id="Ty?Y" class=""><strong>Feld</strong></td><td id="NK~`" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81d2-90b3-e340a2b59c68"><td id="Ty?Y" class=""><strong>ID</strong></td><td id="NK~`" class="">A5.1</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8124-bba8-cef123da3bcd"><td id="Ty?Y" class=""><strong>Typ</strong></td><td id="NK~`" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8190-8e8b-cca540122697"><td id="Ty?Y" class=""><strong>Herkunft</strong></td><td id="NK~`" class=""><code>UC-05: Persönliche Statistk</code> (Erste Anforderung)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ea-8ad9-c4f6fbea3cb3"><td id="Ty?Y" class=""><strong>Description</strong></td><td id="NK~`" class="">Das <strong>System muss</strong> dem <code><strong>Athleten</strong></code> die <strong>Möglichkeit bieten</strong>, die <code><strong>Statistik-Übersichtsseite</strong></code> über die <code><strong>Hauptnavigation</strong></code> zu öffnen und anzuzeigen</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8173-837b-ce3733948693"><td id="Ty?Y" class=""><strong>Rationale</strong></td><td id="NK~`" class="">Der Aufruf der Statistikseite ist die zwingende Voraussetzung, um dem Athleten überhaupt den primären Nutzen des Systems (Leistungsanalyse) zur Verfügung stellen zu können</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81f2-8722-fa9382c5c0f6"><td id="Ty?Y" class=""><strong>Fit Criterion</strong></td><td id="NK~`" class="">Test bestanden, wenn der Athlet im angemeldeten Zustand im Hauptmenü auf den Punkt &quot;Meine Statistiken&quot; klickt und das System die korrekte Statistikseite (mit den ungefilterten Standard-Daten) <strong>innerhalb von 3 Sekunden</strong> lädt</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8106-9851-d1ba2ef17f37" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8192-b33d-d394f2c58a8f"><td id="_o&lt;a" class=""><strong>Feld</strong></td><td id="{Br?" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81fb-80a4-f42b28312678"><td id="_o&lt;a" class=""><strong>ID</strong></td><td id="{Br?" class="">A5.2</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81a7-8aa4-dea71bc21afb"><td id="_o&lt;a" class=""><strong>Typ</strong></td><td id="{Br?" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8183-868a-d16aad580ffe"><td id="_o&lt;a" class=""><strong>Herkunft</strong></td><td id="{Br?" class=""><code>UC-05: Persönliche Statistk</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8152-be5e-ef793178a107"><td id="_o&lt;a" class=""><strong>Description</strong></td><td id="{Br?" class="">Das <strong>System muss</strong> dem <code>Athleten</code> die <strong>Möglichkeit bieten</strong>, eine <code>Übersicht seiner Leistungsstatistiken</code> (z.B. Gesamtzeit, Gesamtstrecke, Durchschnittswerte) nach Sportart und/oder Zeitraum zu filtern und visuell aufbereitet anzuzeigen</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81d0-8e92-ff2dbdc8d7a2"><td id="_o&lt;a" class=""><strong>Rationale</strong></td><td id="{Br?" class="">Diese Funktion ist der <strong>primäre Nutzen</strong> des Use Cases und essentiell, da sie dem Athleten die notwendige Grundlage für die Analyse seiner Leistung und die Steuerung seines Trainings bietet</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8140-bb8b-eb20f092d58b"><td id="_o&lt;a" class=""><strong>Fit Criterion</strong></td><td id="{Br?" class=""><strong>Test bestanden, wenn:</strong> der Athlet die Seite &quot;Meine Statistiken&quot; aufruft, dort den Filter &quot;Sportart: Laufen&quot; und &quot;Zeitraum: Letztes Quartal&quot; anwendet, und die angezeigten Grafiken/Kennzahlen <strong>innerhalb von 2 Sekunden</strong> ausschließlich Laufdaten aus dem letzten Quartal korrekt widerspiegeln</td></tr></div></tbody></table></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-819d-b893-e6a95a22369d" class="toggle"><li><details open=""><summary>UC-06</summary><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8127-b45b-da445bcbce05" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8125-88a9-c5d7414217c0"><th id="OMYR" class="simple-table-header-color simple-table-header"><strong>Feld</strong></th><th id="_yMU" class="simple-table-header-color simple-table-header"><strong>Anforderung</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8137-9988-e4cfe4dc5750"><td id="OMYR" class=""><strong>ID</strong></td><td id="_yMU" class="">A6.1</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81c5-b95e-e552ea1d770b"><td id="OMYR" class=""><strong>Typ</strong></td><td id="_yMU" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-818a-81af-f16fa730055e"><td id="OMYR" class=""><strong>Herkunft</strong></td><td id="_yMU" class="">UC-06: Rankinganalyse und Vergleich (Ablauf: Rankinganalyse starten)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81af-85de-c8ad29fa82a3"><td id="OMYR" class=""><strong>Description</strong></td><td id="_yMU" class="">Das System <strong>muss</strong> dem <strong>Trainer</strong> die <strong>Möglichkeit bieten</strong>, eine <strong>Rankinganalyse zu starten</strong>, indem er <strong>Filterkriterien</strong> wie <strong>Zeitraum</strong>, <strong>Sportart</strong>, <strong>Distanz</strong> oder <strong>Leistungskennzahl</strong> auswählt.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-811d-b428-c8c4c45a96f2"><td id="OMYR" class=""><strong>Rationale</strong></td><td id="_yMU" class="">Diese Funktion ist zentral, um Betreuern zu ermöglichen, Leistungsdaten gezielt zu vergleichen und Entwicklungstrends zu erkennen.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8175-ae69-f8f03ea22751"><td id="OMYR" class=""><strong>Fit Criterion</strong></td><td id="_yMU" class="">Test bestanden, wenn ein Trainer nach Eingabe der Kriterien eine Rankingliste angezeigt bekommt, die alle zutreffenden Athlet:innen nach dem gewählten Parameter sortiert darstellt.</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-819d-bbfb-cfa06c2ba186" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81e1-935a-eb5467789339"><th id="JAdH" class="simple-table-header-color simple-table-header">Feld</th><th id="&gt;NaQ" class="simple-table-header-color simple-table-header">Anforderung</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81f0-9e24-c58928e5d545"><td id="JAdH" class="">ID</td><td id="&gt;NaQ" class="">A6.2</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-810c-8dde-f0f41aa9a25c"><td id="JAdH" class="">Typ</td><td id="&gt;NaQ" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8172-ac38-db3d65596aa9"><td id="JAdH" class="">Herkunft</td><td id="&gt;NaQ" class="">UC-06: Rankinganalyse und Vergleich (Ablauf: Keine Daten vorhanden)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81aa-9cdb-fc0c1f308e0b"><td id="JAdH" class="">Description</td><td id="&gt;NaQ" class="">Wenn für die gewählten Kriterien keine Daten vorhanden sind, muss das System eine Fehlermeldung anzeigen, die den Benutzer informiert und eine Anpassung der Kriterien vorschlägt.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81c6-b1d0-f21f08bd9bb4"><td id="JAdH" class="">Rationale</td><td id="&gt;NaQ" class="">Eine klare Rückmeldung verhindert Verwirrung und verbessert die Benutzerfreundlichkeit, falls keine Datensätze zur Analyse vorliegen.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81fc-94e1-f6d2f569d49b"><td id="JAdH" class="">Fit Criterion</td><td id="&gt;NaQ" class="">Test bestanden, wenn bei nicht vorhandenen Datensätzen die Meldung „Keine Daten für die gewählten Kriterien gefunden“ erscheint und der Benutzer die Eingabe erneut anpassen kann.</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8161-8b2c-f412131b6cbb" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-814b-9072-d09a6a0d0f97"><th id="bLvR" class="simple-table-header-color simple-table-header"><strong>Feld</strong></th><th id="Czu\" class="simple-table-header-color simple-table-header"><strong>Anforderung</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-810e-80a7-dac090e003b9"><td id="bLvR" class=""><strong>ID</strong></td><td id="Czu\" class="">A6.3</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8106-af30-c2bcf637f1b3"><td id="bLvR" class=""><strong>Typ</strong></td><td id="Czu\" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8132-9bc3-caa30827027a"><td id="bLvR" class=""><strong>Herkunft</strong></td><td id="Czu\" class="">UC-06: Rankinganalyse und Vergleich (Ablauf: Automatische Aktualisierung)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-814c-9b69-f0724c1fa53d"><td id="bLvR" class=""><strong>Description</strong></td><td id="Czu\" class="">Nach dem Hinzufügen neuer Trainings- oder Wettbewerbsdaten <strong>muss das System das Ranking automatisch neu berechnen</strong> und aktualisieren.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-813a-b1e9-f18a8f9671bc"><td id="bLvR" class=""><strong>Rationale</strong></td><td id="Czu\" class="">So wird gewährleistet, dass die Ranglisten jederzeit aktuelle Leistungsstände widerspiegeln.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8186-8aed-e645b08184f7"><td id="bLvR" class=""><strong>Fit Criterion</strong></td><td id="Czu\" class="">Test bestanden, wenn nach dem Einfügen neuer Daten innerhalb von zehn Sekunden ein aktualisiertes Ranking angezeigt wird, das die neuen Werte berücksichtigt.</td></tr></div></tbody></table></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-8142-b1ce-ea73915086a4" class="toggle"><li><details open=""><summary>UC-07</summary><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-812c-9aee-c4d3aff1baec" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81dd-97cb-fc036863d2e5"><th id="=P&gt;I" class="simple-table-header-color simple-table-header"><strong>Feld</strong></th><th id="rJlX" class="simple-table-header-color simple-table-header"><strong>Anforderung</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81b2-8365-c971581f77ed"><td id="=P&gt;I" class=""><strong>ID</strong></td><td id="rJlX" class="">A7.1</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81a7-b1e2-d19eb02d80c2"><td id="=P&gt;I" class=""><strong>Typ</strong></td><td id="rJlX" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8153-b6da-ee5dc7b4a1a9"><td id="=P&gt;I" class=""><strong>Herkunft</strong></td><td id="rJlX" class=""><code>UC-07: Passwort zurücksetzen</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ca-adc3-f840962e8bb0"><td id="=P&gt;I" class=""><strong>Description</strong></td><td id="rJlX" class="">Das System muss dem Benutzer auf der Login-Seite die Möglichkeit bieten, die Funktion „Passwort vergessen“ auszuwählen, um den Prozess zum Zurücksetzen des Passworts zu starten.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8129-b8f7-c8a5719d5d5c"><td id="=P&gt;I" class=""><strong>Rationale</strong></td><td id="rJlX" class="">Diese Funktion ist notwendig, damit Benutzer bei vergessenen Anmeldedaten eigenständig den Wiederherstellungsprozess beginnen können, ohne administrativen Support in Anspruch zu nehmen.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-813f-acf5-e0a92b17c26d"><td id="=P&gt;I" class=""><strong>Fit Criterion</strong></td><td id="rJlX" class="">Der Test gilt als bestanden, wenn ein Benutzer auf der Login-Seite die Option „Passwort vergessen“ sieht, diese auswählt und daraufhin eine Eingabemaske zur Identifizierung (z. B. Eingabe der registrierten E-Mail-Adresse) angezeigt bekommt.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8150-928e-ea002a91ec7b"><td id="=P&gt;I" class=""><strong>Originator</strong></td><td id="rJlX" class="">Atussa</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8194-a926-ceadc46ed5b6"><td id="=P&gt;I" class=""><strong>Priority</strong></td><td id="rJlX" class="">Muss</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-81bd-8915-f0014ef6dc96" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81db-bd38-fee7531137bd"><th id="&gt;=hQ" class="simple-table-header-color simple-table-header"><strong>Feld</strong></th><th id="bFb`" class="simple-table-header-color simple-table-header"><strong>Anforderung</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8179-873b-fc062828c5fa"><td id="&gt;=hQ" class=""><strong>ID</strong></td><td id="bFb`" class="">A7.2</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81cb-ae89-d246c136ef99"><td id="&gt;=hQ" class=""><strong>Typ</strong></td><td id="bFb`" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8132-9572-c12543aebe68"><td id="&gt;=hQ" class=""><strong>Herkunft</strong></td><td id="bFb`" class=""><code>UC-07: Passwort zurücksetzen</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-819b-8e5d-d586a1328615"><td id="&gt;=hQ" class=""><strong>Description</strong></td><td id="bFb`" class="">Das System muss dem Benutzer nach Eingabe der registrierten E-Mail-Adresse einen Bestätigungslink oder Code per E-Mail zusenden, über den der Benutzer seine Identität nachweisen kann.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81bb-8d29-e1537e9bab15"><td id="&gt;=hQ" class=""><strong>Rationale</strong></td><td id="bFb`" class="">Diese Funktion ist notwendig, um sicherzustellen, dass nur der rechtmäßige Kontoinhaber das Passwort zurücksetzen kann, und um unbefugten Zugriff auf Benutzerkonten zu verhindern.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-812e-bb53-d73a70cb469f"><td id="&gt;=hQ" class=""><strong>Fit Criterion</strong></td><td id="bFb`" class="">Der Test gilt als bestanden, wenn ein Benutzer nach Anforderung der Passwortzurücksetzung eine E-Mail mit einem eindeutigen, zeitlich begrenzten Link erhält und dieser Link zur Bestätigung der Identität genutzt werden kann.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ba-ac26-f236fec78d04"><td id="&gt;=hQ" class=""><strong>Originator</strong></td><td id="bFb`" class="">Atussa</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81b8-baf8-d284f0958a6d"><td id="&gt;=hQ" class=""><strong>Priority</strong></td><td id="bFb`" class="">Muss</td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8107-947a-cf610d69e121" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ed-992b-d768a313e12d"><th id="FJ|k" class="simple-table-header-color simple-table-header"><strong>Feld</strong></th><th id="\a?d" class="simple-table-header-color simple-table-header"><strong>Anforderung</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81e4-a3c5-d074133ab7f6"><td id="FJ|k" class=""><strong>ID</strong></td><td id="\a?d" class="">A7.3</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-816f-aad1-df4253073d99"><td id="FJ|k" class=""><strong>Typ</strong></td><td id="\a?d" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81af-b9a5-f1226dd6e6c0"><td id="FJ|k" class=""><strong>Herkunft</strong></td><td id="\a?d" class=""><code>UC-07: Passwort zurücksetzen</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-814e-b773-ea87750983ac"><td id="FJ|k" class=""><strong>Description</strong></td><td id="\a?d" class="">Das System muss dem Benutzer nach erfolgreicher Identitätsprüfung die Möglichkeit bieten, ein neues Passwort zu vergeben und dieses sicher zu speichern.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8115-9d85-e08a4aa0385f"><td id="FJ|k" class=""><strong>Rationale</strong></td><td id="\a?d" class="">Diese Funktion ist notwendig, damit der Benutzer den Zugang zu seinem Konto wiederherstellen und sich künftig mit einem neuen Passwort anmelden kann.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81f9-9341-e9b173fe6e9c"><td id="FJ|k" class=""><strong>Fit Criterion</strong></td><td id="\a?d" class="">Der Test gilt als bestanden, wenn der Benutzer nach der E-Mail-Bestätigung ein neues Passwort eingeben kann, die Passwortänderung bestätigt wird und er sich anschließend mit dem neuen Passwort erfolgreich anmelden kann.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8131-80f9-f155ed8e5c81"><td id="FJ|k" class=""><strong>Originator</strong></td><td id="\a?d" class="">Atussa</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ad-9073-d17406d3da51"><td id="FJ|k" class=""><strong>Priority</strong></td><td id="\a?d" class="">Muss</td></tr></div></tbody></table></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8cfdb8-b521-819a-a323-db8d3de13d44" class="toggle"><li><details open=""><summary>UC-08</summary><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8143-ae5d-e387064b5f1a" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-814b-a4ce-df76aaaa5919"><td id="~PA[" class=""><strong>Feld</strong></td><td id="pYz=" class=""><strong>Anforderung</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ce-80ce-cbc11fc58183"><td id="~PA[" class=""><strong>ID</strong></td><td id="pYz=" class="">A8.1</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8134-a85d-d4b15e574b7a"><td id="~PA[" class=""><strong>Typ</strong></td><td id="pYz=" class="">Funktionale Anforderung</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81e2-a66c-ddbb20ad7a06"><td id="~PA[" class=""><strong>Herkunft</strong></td><td id="pYz=" class=""><code>UC-08: </code>Trainingsdaten exportieren (AthletInnen)</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8108-aad1-c2547855a971"><td id="~PA[" class=""><strong>Description</strong></td><td id="pYz=" class="">Das System soll dem Athleten die Möglichkeit bieten, ausgewählte Daten als CSV-Datei zu exportieren.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8118-92d0-d2d5843e9fb8"><td id="~PA[" class=""><strong>Rationale</strong></td><td id="pYz=" class="">Dies ermöglicht dem Athleten, seine Trainings- oder Wettbewerbsdaten zur weiteren Analyse in externen Programmen (z.B. Excel) zu verwenden, mit Betreuern zu teilen oder für persönliche Aufzeichnungen zu sichern.</td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81ad-99b0-c0e9c5acc066"><td id="~PA[" class=""><strong>Fit Criterion</strong></td><td id="pYz=" class="">Test bestanden, wenn ein angemeldeter Athlet in einer Ansicht (z.B. Statistik oder Training) eine Export-Aktion auslöst und das System daraufhin eine CSV-Datei generiert, die den ausgewählten Daten entspricht und einen Download im Browser startet.</td></tr></div></tbody></table></div></details></li></ul></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

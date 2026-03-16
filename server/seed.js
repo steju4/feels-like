@@ -47,7 +47,7 @@ const seedDaten = async () => {
         dauer: 45,
         distanz: 8.5,
         note: 'Morgenlauf im Park',
-        feelsLikeScore: 270,
+        feelsLikeScore: 7,
         athletId: athleten[1].id,
       },
       {
@@ -56,7 +56,7 @@ const seedDaten = async () => {
         dauer: 90,
         distanz: 35.0,
         note: 'Intervall-Session',
-        feelsLikeScore: 630,
+        feelsLikeScore: 6,
         athletId: athleten[1].id,
       },
       {
@@ -65,7 +65,7 @@ const seedDaten = async () => {
         dauer: 60,
         distanz: 2.5,
         note: 'Technikfokus',
-        feelsLikeScore: 300,
+        feelsLikeScore: 3,
         athletId: athleten[2].id,
       },
       {
@@ -74,7 +74,7 @@ const seedDaten = async () => {
         dauer: 50,
         distanz: 9.0,
         note: 'Tempodauerlauf',
-        feelsLikeScore: 400,
+        feelsLikeScore: 4,
         athletId: athleten[3].id,
       },
       {
@@ -83,7 +83,7 @@ const seedDaten = async () => {
         dauer: 30,
         distanz: 5.0,
         note: 'Regenerationslauf',
-        feelsLikeScore: 120,
+        feelsLikeScore: 1,
         athletId: athleten[3].id,
       },
       {
@@ -92,7 +92,7 @@ const seedDaten = async () => {
         dauer: 120,
         distanz: 50.0,
         note: 'Lockere Ausdauer',
-        feelsLikeScore: 720,
+        feelsLikeScore: 7,
         athletId: athleten[0].id,
       },
       {
@@ -101,7 +101,7 @@ const seedDaten = async () => {
         dauer: 55,
         distanz: 10.5,
         note: 'Tempodauerlauf',
-        feelsLikeScore: 385,
+        feelsLikeScore: 3,
         athletId: athleten[2].id,
       },
     ];

@@ -1,36 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --rank-cream: #f6f2e9;
+  --rank-paper: #fffdfa;
+  --rank-ink: #1f2a22;
+  --rank-muted: #5a6a5f;
+  --rank-line: #d7ddd2;
+  --rank-green: #1f7a3a;
+  --rank-gold: #d2a23b;
+  --rank-silver: #8f98a3;
+  --rank-bronze: #9a6a3b;
+}
+
+.ranking-container,
+.ranking-container * {
+  box-sizing: border-box;
+  font-family: 'Manrope', sans-serif;
+}
+
 .ranking-container {
-  padding: 20px;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  font-family: Arial, sans-serif;
+  display: grid;
+  gap: 16px;
+  color: var(--rank-ink);
+}
+
+.ranking-hero {
+  background: linear-gradient(135deg, #214830, #1f7a3a);
+  border-radius: 18px;
+  color: #f4fff4;
+  padding: 22px;
+}
+
+.ranking-hero h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 800;
+}
+
+.ranking-hero p {
+  margin: 6px 0 0;
+  opacity: 0.9;
+}
+
+.ranking-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  border: 1px solid var(--rank-line);
+  border-radius: 14px;
+  background: var(--rank-paper);
+  padding: 14px;
+}
+
+.ranking-filters label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--rank-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+
+.ranking-filters select {
+  border: 1px solid #cad4c4;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  color: var(--rank-ink);
+  background: #fff;
+}
+
+.ranking-filters select:focus {
+  outline: none;
+  border-color: #7db08c;
+  box-shadow: 0 0 0 3px rgba(125, 176, 140, 0.18);
+}
+
+.ranking-status {
+  border: 1px solid var(--rank-line);
+  border-radius: 12px;
+  background: #f2f7ee;
+  color: #2e5938;
+  padding: 12px;
+}
+
+.ranking-status.error {
+  border-color: #efc3c3;
+  background: #fff3f3;
+  color: #8b2f2f;
 }
 
 .ranking-table {
   width: 100%;
-  border-collapse: collapse; /* Entfernt doppelte Rahmen */
-  margin-top: 20px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-collapse: collapse;
+  border: 1px solid var(--rank-line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--rank-paper);
+  box-shadow: 0 10px 24px rgba(38, 58, 40, 0.08);
+}
+
+.ranking-table th,
+.ranking-table td {
+  text-align: left;
+  padding: 11px 12px;
+  border-bottom: 1px solid #e5ebdf;
 }
 
 .ranking-table th {
-  background-color: #4CAF50; /* Ein organisches Grün passend zu "Feels Like" */
-  color: white;
-  text-align: left;
-  padding: 12px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--rank-muted);
+  background: #f2f6ef;
 }
 
-.ranking-table td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-}
-
-/* Zeilen-Hervorhebung beim Drüberfahren */
 .ranking-table tbody tr:hover {
-  background-color: #f5f5f5;
+  background: #f9fcf7;
 }
 
-/* Die ersten drei Plätze hervorheben */
-.ranking-table tbody tr:nth-child(1) { font-weight: bold; color: #d4af37; } /* Gold */
-.ranking-table tbody tr:nth-child(2) { color: #aaa9ad; } /* Silber */
-.ranking-table tbody tr:nth-child(3) { color: #b08d57; } /* Bronze */
+.ranking-table tbody tr:nth-child(1) td:first-child {
+  color: var(--rank-gold);
+  font-weight: 800;
+}
+
+.ranking-table tbody tr:nth-child(2) td:first-child {
+  color: var(--rank-silver);
+  font-weight: 800;
+}
+
+.ranking-table tbody tr:nth-child(3) td:first-child {
+  color: var(--rank-bronze);
+  font-weight: 800;
+}
+
+@media (max-width: 680px) {
+  .ranking-table th,
+  .ranking-table td {
+    padding: 9px;
+    font-size: 0.9rem;
+  }
+}
