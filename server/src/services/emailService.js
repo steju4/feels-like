@@ -2,8 +2,8 @@
   E-Mail Service
 
   Versandmodi:
-  - smtp: echte Zustellung ueber konfigurierten SMTP-Server
-  - ethereal: echte Test-Mail ueber Ethereal (inkl. Preview-Link)
+  - smtp: echte Zustellung über konfigurierten SMTP-Server
+  - ethereal: echte Test-Mail über Ethereal (inkl. Preview-Link)
   - console: lokaler Fallback (nur Konsole)
   - auto: smtp falls konfiguriert, sonst ethereal, sonst console
 */
@@ -84,7 +84,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
   const mailMode = getMailMode();
 
   if (!SUPPORTED_MAIL_MODES.has(mailMode)) {
-    throw new Error('MAIL_MODE ist ungueltig. Erlaubt sind: auto, smtp, ethereal, console.');
+    throw new Error('MAIL_MODE ist ungültig. Erlaubt sind: auto, smtp, ethereal, console.');
   }
 
   const subject = 'Einladung zur Feels Like Plattform';
@@ -92,7 +92,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
     `Hallo ${name},`,
     '',
     'du wurdest eingeladen, dich auf der Feels Like Plattform zu registrieren.',
-    `Der Link ist ${TOKEN_VALIDITY_HOURS} Stunden gueltig:`,
+    `Der Link ist ${TOKEN_VALIDITY_HOURS} Stunden gültig:`,
     registerUrl,
     '',
     'Falls du diese Einladung nicht erwartet hast, kannst du diese Nachricht ignorieren.',
@@ -101,7 +101,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
   const html = [
     `<p>Hallo ${name},</p>`,
     '<p>du wurdest eingeladen, dich auf der Feels Like Plattform zu registrieren.</p>',
-    `<p>Der Link ist <strong>${TOKEN_VALIDITY_HOURS} Stunden</strong> gueltig:</p>`,
+    `<p>Der Link ist <strong>${TOKEN_VALIDITY_HOURS} Stunden</strong> gültig:</p>`,
     `<p><a href="${registerUrl}">${registerUrl}</a></p>`,
     '<p>Falls du diese Einladung nicht erwartet hast, kannst du diese Nachricht ignorieren.</p>',
   ].join('');
@@ -117,7 +117,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
   if (mailMode === 'smtp' || (mailMode === 'auto' && isSmtpConfigured())) {
     const transporter = getSmtpTransporter();
     if (!transporter) {
-      throw new Error('SMTP ist nicht vollstaendig konfiguriert.');
+      throw new Error('SMTP ist nicht vollständig konfiguriert.');
     }
 
     await transporter.sendMail(mailOptions);
@@ -128,7 +128,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
     try {
       const transporter = await getEtherealTransporter();
       if (!transporter) {
-        throw new Error('nodemailer ist nicht verfuegbar.');
+        throw new Error('nodemailer ist nicht verfügbar.');
       }
 
       const info = await transporter.sendMail(mailOptions);
@@ -139,14 +139,14 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
         throw error;
       }
 
-      console.warn('[INVITATION_FALLBACK] Ethereal nicht verfuegbar, wechsle auf Konsolen-Fallback.');
+      console.warn('[INVITATION_FALLBACK] Ethereal nicht verfügbar, wechsle auf Konsolen-Fallback.');
       console.warn(error.message);
     }
   }
 
   console.log('[INVITATION_CONSOLE_FALLBACK]');
   console.log(`An: ${to}`);
-  console.log(`Link (gueltig ${TOKEN_VALIDITY_HOURS}h): ${registerUrl}`);
+  console.log(`Link (gültig ${TOKEN_VALIDITY_HOURS}h): ${registerUrl}`);
   return {
     mode: 'console',
     previewUrl: registerUrl,

@@ -40,7 +40,7 @@ export default function AdminUsers() {
     } catch (err) {
       const status = err.response?.status;
       if (status === 403) {
-        setError('Diese Seite ist nur fuer Trainer verfuegbar.');
+        setError('Diese Seite ist nur für Trainer verfügbar.');
       } else {
         setError(err.response?.data?.message || 'Athleten konnten nicht geladen werden.');
       }
@@ -110,7 +110,7 @@ export default function AdminUsers() {
       )));
       setSuccess(`Status von ${athlet.name} wurde auf ${neuerStatus} gesetzt.`);
     } catch (err) {
-      setError(err.response?.data?.message || 'Status konnte nicht geaendert werden.');
+      setError(err.response?.data?.message || 'Status konnte nicht geändert werden.');
     } finally {
       setStatusLoadingId(null);
     }
@@ -120,7 +120,7 @@ export default function AdminUsers() {
     return (
       <section className="admin-users-page">
         <h1>Athletenverwaltung</h1>
-        <div className="admin-message admin-message-error">Keine Berechtigung fuer diese Seite.</div>
+        <div className="admin-message admin-message-error">Keine Berechtigung für diese Seite.</div>
       </section>
     );
   }
@@ -130,7 +130,7 @@ export default function AdminUsers() {
       <div className="admin-header">
         <div>
           <h1>Athletenverwaltung</h1>
-          <p>Einladen, Status pruefen und Aktivitaet steuern.</p>
+          <p>Einladen, Status prüfen und Aktivität steuern.</p>
         </div>
         <button
           type="button"
@@ -143,7 +143,7 @@ export default function AdminUsers() {
             setDeliveryMode('');
           }}
         >
-          {showInviteForm ? 'Formular schliessen' : 'Neuen Athleten einladen'}
+          {showInviteForm ? 'Formular schließen' : 'Neuen Athleten einladen'}
         </button>
       </div>
 

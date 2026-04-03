@@ -5,7 +5,7 @@
   Funktionen:
   - anmelden: Credentials validieren -> AuthService aufrufen -> Session-Cookie setzen.
   - abmelden: Session beenden.
-  - registrieren: Registrierung ueber Einladungslink abschliessen.
+  - registrieren: Registrierung über Einladungslink abschließen.
 */
 
 const authService = require('../services/authService');

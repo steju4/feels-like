@@ -33,6 +33,7 @@ const {
   alleTrainings,
   trainingAendern,
   trainingLoeschen,
+  trainingStatistik,
   ERLAUBTE_SPORTARTEN,
 } = require('../../src/services/trainingService');
 
@@ -390,5 +391,63 @@ describe('trainingLoeschen', () => {
       expect(error.status).toBe(403);
       expect(error.message).toContain('Keine Berechtigung');
     }
+  });
+});
+
+// ============================================================
+// 6. trainingStatistik()
+// ============================================================
+describe('trainingStatistik', () => {
+  test('gibt Nullwerte zurueck wenn keine Trainings vorhanden sind', async () => {
+    mockFindAll.mockResolvedValue([]);
+
+    const result = await trainingStatistik(42);
+
+    expect(result).toEqual({
+      gesamtDistanz: 0,
+      anzahlTrainings: 0,
+      gesamtDauer: 0,
+      durchschnittFeelsLike: 0,
+    });
+  });
+
+  test('berechnet Summen und rundet Distanz sowie Durchschnitt korrekt', async () => {
+    mockFindAll.mockResolvedValue([
+      { distanz: '10.04', dauer: '60', feelsLikeScore: '7' },
+      { distanz: '5.01', dauer: '30', feelsLikeScore: '8' },
+      { distanz: null, dauer: 15, feelsLikeScore: 6 },
+    ]);
+
+    const result = await trainingStatistik(42);
+
+    expect(result).toEqual({
+      gesamtDistanz: 15.1,
+      anzahlTrainings: 3,
+      gesamtDauer: 105,
+      durchschnittFeelsLike: 7,
+    });
+  });
+
+  test('uebergibt Filter aus buildWhereClause an findAll', async () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-04-03T12:00:00'));
+    mockFindAll.mockResolvedValue([]);
+
+    await trainingStatistik(42, { sportart: 'Laufen', zeitraum: 'woche' });
+
+    expect(mockFindAll).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        athletId: 42,
+        sportart: 'Laufen',
+        datum: expect.any(Object),
+      }),
+    });
+
+    const whereArg = mockFindAll.mock.calls[0][0].where;
+    const opSymbols = Object.getOwnPropertySymbols(whereArg.datum);
+    expect(opSymbols).toHaveLength(1);
+    expect(whereArg.datum[opSymbols[0]]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+
+    jest.useRealTimers();
   });
 });

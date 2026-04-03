@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Athlet = require('../models/Athlet');
+const { getJwtSecret } = require('../utils/jwtSecret');
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -7,16 +8,6 @@ function createHttpError(status, message) {
   const error = new Error(message);
   error.status = status;
   return error;
-}
-
-function getJwtSecret() {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    const error = new Error('JWT_SECRET ist nicht gesetzt.');
-    error.status = 500;
-    throw error;
-  }
-  return secret;
 }
 
 function sanitizeUser(user) {
@@ -80,23 +71,23 @@ async function registrierenMitEinladung({ token, name, password, passwordConfirm
   }
 
   if (passwordConfirm !== undefined && normalizedPassword !== String(passwordConfirm)) {
-    throw createHttpError(400, 'Passwort und Passwort-Bestaetigung stimmen nicht ueberein.');
+    throw createHttpError(400, 'Passwort und Passwort-Bestätigung stimmen nicht überein.');
   }
 
   let payload;
   try {
     payload = jwt.verify(normalizedToken, getJwtSecret());
   } catch {
-    throw createHttpError(400, 'Ungueltiger oder abgelaufener Einladungslink.');
+    throw createHttpError(400, 'Ungültiger oder abgelaufener Einladungslink.');
   }
 
   if (payload?.type !== 'invitation' || !payload?.sub) {
-    throw createHttpError(400, 'Ungueltiger Einladungslink.');
+    throw createHttpError(400, 'Ungültiger Einladungslink.');
   }
 
   const athletId = Number.parseInt(String(payload.sub), 10);
   if (Number.isNaN(athletId)) {
-    throw createHttpError(400, 'Ungueltiger Einladungslink.');
+    throw createHttpError(400, 'Ungültiger Einladungslink.');
   }
 
   const athlet = await Athlet.findOne({
@@ -111,7 +102,7 @@ async function registrierenMitEinladung({ token, name, password, passwordConfirm
   }
 
   if (athlet.status !== 'eingeladen') {
-    throw createHttpError(400, 'Einladung ist nicht mehr gueltig.');
+    throw createHttpError(400, 'Einladung ist nicht mehr gültig.');
   }
 
   athlet.name = normalizedName;

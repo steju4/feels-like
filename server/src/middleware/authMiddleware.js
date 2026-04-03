@@ -8,19 +8,10 @@
 */
 
 const jwt = require('jsonwebtoken');
-
-function getJwtSecret() {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    const error = new Error('JWT_SECRET ist nicht gesetzt.');
-    error.status = 500;
-    throw error;
-  }
-  return secret;
-}
+const { getJwtSecret } = require('../utils/jwtSecret');
 
 module.exports = (req, res, next) => {
-  // Header priorisieren, damit API-Clients explizit Auth steuern koennen.
+  // Header priorisieren, damit API-Clients explizit Auth steuern können.
   const cookieToken = req.cookies?.token;
   const headerToken = req.headers.authorization?.startsWith('Bearer ')
     ? req.headers.authorization.slice(7)
@@ -37,7 +28,12 @@ module.exports = (req, res, next) => {
 
     next();
   } catch (error) {
-    // Bei ungueltigem Token Session-Cookie defensiv loeschen
+    if (error?.status === 500) {
+      console.error('Konfigurationsfehler in authMiddleware:', error);
+      return res.status(500).json({ message: 'Serverkonfiguration unvollständig.' });
+    }
+
+    // Bei ungültigem Token Session-Cookie defensiv löschen
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

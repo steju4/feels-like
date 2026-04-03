@@ -12,7 +12,7 @@ function requireRole(expectedRole) {
     }
 
     if (req.user.role !== expectedRole) {
-      return res.status(403).json({ message: 'Keine Berechtigung fuer diese Aktion.' });
+      return res.status(403).json({ message: 'Keine Berechtigung für diese Aktion.' });
     }
 
     return next();

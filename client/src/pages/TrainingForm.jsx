@@ -413,6 +413,7 @@ export default function TrainingForm() {
                         className="btn-edit"
                         onClick={() => handleEdit(t)}
                         title="Bearbeiten"
+                        aria-label="Training bearbeiten"
                       >
                         ✏️
                       </button>
@@ -420,6 +421,7 @@ export default function TrainingForm() {
                         className="btn-delete"
                         onClick={() => handleDeleteClick(t.id)}
                         title="Löschen"
+                        aria-label="Training löschen"
                       >
                         🗑️
                       </button>

@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const Athlet = require('../models/Athlet');
-const { getJwtSecret } = require('./authService');
+const { getJwtSecret } = require('../utils/jwtSecret');
 const { sendeEinladungsMail } = require('./emailService');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
@@ -66,7 +66,7 @@ async function legeAthletAn({ name, email }) {
   }
 
   if (!EMAIL_REGEX.test(preparedEmail)) {
-    throw createHttpError(400, 'Bitte eine gueltige E-Mail-Adresse angeben.');
+    throw createHttpError(400, 'Bitte eine gültige E-Mail-Adresse angeben.');
   }
 
   const existingUser = await Athlet.findOne({ where: { email: preparedEmail } });
@@ -119,7 +119,7 @@ async function aendereAthletStatus({ athletId, status }) {
   const normalizedStatus = String(status || '').trim().toLowerCase();
 
   if (Number.isNaN(parsedAthletId)) {
-    throw createHttpError(400, 'Ungueltige Athlet-ID.');
+    throw createHttpError(400, 'Ungültige Athlet-ID.');
   }
 
   if (!ALLOWED_STATUS_VALUES.has(normalizedStatus)) {
@@ -138,7 +138,7 @@ async function aendereAthletStatus({ athletId, status }) {
   }
 
   if (athlet.status === 'eingeladen') {
-    throw createHttpError(400, 'Status kann erst nach abgeschlossener Registrierung geaendert werden.');
+    throw createHttpError(400, 'Status kann erst nach abgeschlossener Registrierung geändert werden.');
   }
 
   athlet.status = normalizedStatus;

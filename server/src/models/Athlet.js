@@ -15,9 +15,14 @@ const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 10;
 
 async function hashPassword(value) {
-  // Bereits gehashte Passwoerter (bcrypt-Format) nicht erneut hashen.
-  if (typeof value === 'string' && value.startsWith('$2')) {
-    return value;
+  // Bereits gehashte Passwörter nur akzeptieren, wenn es ein valider bcrypt-Hash ist.
+  if (typeof value === 'string') {
+    try {
+      bcrypt.getRounds(value);
+      return value;
+    } catch {
+      // Kein valider Hash -> normal hashen.
+    }
   }
   return bcrypt.hash(String(value), SALT_ROUNDS);
 }

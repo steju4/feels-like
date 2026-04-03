@@ -25,7 +25,7 @@ export default function Register() {
     setSuccess('');
 
     if (!token) {
-      setError('Der Einladungslink ist ungueltig.');
+      setError('Der Einladungslink ist ungültig.');
       return;
     }
 
@@ -35,7 +35,7 @@ export default function Register() {
     }
 
     if (password !== passwordConfirm) {
-      setError('Passwort und Passwort-Bestaetigung stimmen nicht ueberein.');
+      setError('Passwort und Passwort-Bestätigung stimmen nicht überein.');
       return;
     }
 
@@ -67,11 +67,11 @@ export default function Register() {
     <div className="register-container">
       <div className="register-card">
         <h2>Athlet Registrierung</h2>
-        <p>Vervollstaendige dein Konto ueber den Einladungslink.</p>
+        <p>Vervollständige dein Konto über den Einladungslink.</p>
 
         {!token && (
           <div className="register-message register-message-error">
-            Kein gueltiger Token gefunden. Bitte verwende den Link aus der Einladung.
+            Kein gültiger Token gefunden. Bitte verwende den Link aus der Einladung.
           </div>
         )}
 
@@ -105,7 +105,7 @@ export default function Register() {
           </div>
 
           <div className="register-form-row">
-            <label htmlFor="registerPasswordConfirm">Passwort bestaetigen</label>
+            <label htmlFor="registerPasswordConfirm">Passwort bestätigen</label>
             <input
               id="registerPasswordConfirm"
               type="password"
@@ -118,7 +118,7 @@ export default function Register() {
           </div>
 
           <button type="submit" className="register-btn" disabled={submitting || !token}>
-            {submitting ? 'Registriere...' : 'Registrierung abschliessen'}
+            {submitting ? 'Registriere...' : 'Registrierung abschließen'}
           </button>
         </form>
       </div>

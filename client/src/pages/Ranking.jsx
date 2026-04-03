@@ -53,7 +53,7 @@ const Ranking = () => {
       } catch (err) {
         const status = err.response?.status;
         if (status === 403) {
-          setError('Rankinganalyse ist nur fuer Trainer verfuegbar.');
+          setError('Rankinganalyse ist nur für Trainer verfügbar.');
         } else {
           setError('Ranking konnte nicht geladen werden.');
         }

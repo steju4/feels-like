@@ -42,6 +42,6 @@ module.exports = {
   FrequencyStrategy,
   DurationStrategy,
   berechneRanking,
-  // Alias fuer bestehende Aufrufer
+  // Alias für bestehende Aufrufer
   rank: berechneRanking,
 };

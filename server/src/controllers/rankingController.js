@@ -11,6 +11,13 @@ const { Op, fn, col } = require('sequelize');
 const { Athlet, Trainingseinheit } = require('../models');
 const { berechneRanking } = require('../services/analyseService');
 
+function formatDateOnlyLocal(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 exports.berechneRanking = async (req, res) => {
   try {
     if (req.user?.role !== 'trainer') {
@@ -30,7 +37,7 @@ exports.berechneRanking = async (req, res) => {
       if (!Number.isNaN(tage) && tage > 0) {
         const start = new Date();
         start.setDate(start.getDate() - tage);
-        where.datum = { [Op.gte]: start.toISOString().slice(0, 10) };
+        where.datum = { [Op.gte]: formatDateOnlyLocal(start) };
       }
     }
 
@@ -45,10 +52,10 @@ exports.berechneRanking = async (req, res) => {
       include: [
         {
           model: Athlet,
-          attributes: ['id', 'name', 'email'],
+          attributes: ['id', 'name'],
         },
       ],
-      group: ['Trainingseinheit.athletId', 'Athlet.id', 'Athlet.name', 'Athlet.email'],
+      group: ['Trainingseinheit.athletId', 'Athlet.id', 'Athlet.name'],
     });
 
     const daten = aggregiert.map((eintrag) => {
@@ -56,7 +63,6 @@ exports.berechneRanking = async (req, res) => {
       return {
         athletId: raw.athletId,
         name: raw.Athlet?.name || 'Unbekannt',
-        email: raw.Athlet?.email,
         metrics: {
           distanz: Number(raw.sumDistanz) || 0,
           haeufigkeit: Number(raw.anzahl) || 0,

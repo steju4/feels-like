@@ -1,7 +1,7 @@
 /*
   User Controller (AthletenVerwaltung)
 
-  HTTP-Schicht fuer Benutzerverwaltung.
+  HTTP-Schicht für Benutzerverwaltung.
   Fachlogik liegt im userService.
 */
 
@@ -61,6 +61,6 @@ exports.athletStatusAendern = async (req, res) => {
 
     return res.json(result);
   } catch (error) {
-    return handleControllerError(res, error, 'Fehler beim Aendern des Status.');
+    return handleControllerError(res, error, 'Fehler beim Ändern des Status.');
   }
 };
