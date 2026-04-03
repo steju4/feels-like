@@ -1,6 +1,5 @@
 const { Sequelize } = require('sequelize');
 const path = require('path');
-require('dotenv').config();
 
 // SQLite Konfiguration
 // Die Datenbank wird als Datei im Ordner 'server' gespeichert

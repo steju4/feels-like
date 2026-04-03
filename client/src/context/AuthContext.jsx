@@ -8,12 +8,9 @@
   - logout() Funktion -> State leeren.
   - Beim App-Start prüfen, ob Token noch gültig ist (useEffect).
 */
-import { createContext, useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../api/axios';
-
-const AuthContext = createContext();
-
-export const useAuth = () => useContext(AuthContext);
+import { AuthContext } from './authContext';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

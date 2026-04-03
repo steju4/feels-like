@@ -126,10 +126,35 @@ img {
 		max-height: 100vh;
 		object-fit: contain;
 	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
 }
 
 @page {
 	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
 }
 
 .collection-content {
@@ -143,19 +168,16 @@ img {
 
 .column-list {
 	display: flex;
-	justify-content: space-between;
+	gap: 46px;
 }
 
 .column {
-	padding: 0 1em;
+	min-width: 0;
+	overflow: hidden;
 }
 
-.column:first-child {
-	padding-left: 0;
-}
-
-.column:last-child {
-	padding-right: 0;
+.column > *:first-child {
+	margin-top: 0;
 }
 
 .table_of_contents-item {
@@ -251,6 +273,14 @@ ul > li {
 
 ol {
 	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
 }
 
 ol > li {
@@ -710,7 +740,7 @@ blockquote.quote-large {
 	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
 }
 	
-</style></head><body><article id="2e8cfdb8-b521-81cd-9139-d34aa426d362" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title" dir="auto">Grobdesign - Kopie mit Code für Diagramme</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-text"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Projekttitel</th><td>Feels Like</td></tr><tr class="property-row property-row-date"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/calendar_gray.svg" style="width:14px;height:14px;display:block"/></span>Erstellt am</th><td><time>@14. November 2025</time></td></tr><tr class="property-row property-row-last_edited_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Zuletzt aktualisiert von</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Zuletzt aktualisiert um</th><td><time>@17. Januar 2026 10:38</time></td></tr><tr class="property-row property-row-person"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/friends_gray.svg" style="width:14px;height:14px;display:block"/></span>Überprüfer/-innen</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">I</span></span>Isabella Schwarz</span><span class="user"><img src="https://lh3.googleusercontent.com/a/AAcHTtedGTO0Xh7JF3Aon-QW5-EnIIw0P7wsp3fX2nOyDLlG=s100" class="icon user-icon"/>Sophie Lazarjan</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">A</span></span>Atu</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Joey</span></td></tr><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Erstellt von</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Kategorie</th><td><span class="selected-value select-value-color-orange">Strategiedokument</span></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h3 id="2e8cfdb8-b521-817b-971c-cb63c0ffe42c" class="">Versionsverwaltung</h3></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8141-b25d-d8afab156642" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8141-aa5a-cb898cca07ce"><td id="~LwX" class=""><strong>Version</strong></td><td id="MzLw" class=""><strong>Datum</strong></td><td id="@^]|" class=""><strong>Änderungen</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81b5-861a-f8ed7a4819f7"><td id="~LwX" class="">V 1.0.0</td><td id="MzLw" class="">14. November 2025</td><td id="@^]|" class="">Initialversion</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h2 id="2e8cfdb8-b521-81de-829f-c23ddc89e158" class="">Analyseklassenmodell</h2></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2e8cfdb8-b521-816d-92dd-c256fa59a139" class="code code-wrap"><code class="language-Mermaid" style="white-space:pre-wrap;word-break:break-all">classDiagram
+</style></head><body><article id="2e8cfdb8-b521-81cd-9139-d34aa426d362" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title" dir="auto">Grobdesign - Kopie mit Code für Diagramme</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-text"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Projekttitel</th><td>Feels Like</td></tr><tr class="property-row property-row-date"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/calendar_gray.svg" style="width:14px;height:14px;display:block"/></span>Erstellt am</th><td><time>14. November 2025</time></td></tr><tr class="property-row property-row-last_edited_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Zuletzt aktualisiert von</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Zuletzt aktualisiert um</th><td><time>17. Januar 2026 10:38</time></td></tr><tr class="property-row property-row-person"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/friends_gray.svg" style="width:14px;height:14px;display:block"/></span>Überprüfer/-innen</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">I</span></span>Isabella Schwarz</span><span class="user"><img src="https://lh3.googleusercontent.com/a/AAcHTtedGTO0Xh7JF3Aon-QW5-EnIIw0P7wsp3fX2nOyDLlG=s100" class="icon user-icon"/>Sophie Lazarjan</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">A</span></span>Atu</span><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Joey</span></td></tr><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Erstellt von</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">J</span></span>Julian Stengele</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Kategorie</th><td><span class="selected-value select-value-color-orange">Strategiedokument</span></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h3 id="2e8cfdb8-b521-817b-971c-cb63c0ffe42c" class="">Versionsverwaltung</h3></div><div style="display:contents" dir="ltr"><table id="2e8cfdb8-b521-8141-b25d-d8afab156642" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-8141-aa5a-cb898cca07ce"><td id="~LwX" class=""><strong>Version</strong></td><td id="MzLw" class=""><strong>Datum</strong></td><td id="@^]|" class=""><strong>Änderungen</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="2e8cfdb8-b521-81b5-861a-f8ed7a4819f7"><td id="~LwX" class="">V 1.0.0</td><td id="MzLw" class="">14. November 2025</td><td id="@^]|" class="">Initialversion</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h2 id="2e8cfdb8-b521-81de-829f-c23ddc89e158" class="">Analyseklassenmodell</h2></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2e8cfdb8-b521-816d-92dd-c256fa59a139" class="code code-wrap"><code class="language-Mermaid" style="white-space:pre-wrap;word-break:break-all">classDiagram
 
 %% ===========================================
 %% 1. ENTITY-KLASSEN (Domain-Daten)

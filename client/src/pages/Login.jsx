@@ -10,8 +10,8 @@
 */
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/useAuth';
 import './Login.css'; 
 
 export default function Login() {
@@ -21,6 +21,8 @@ export default function Login() {
   
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const infoMessage = location.state?.message || '';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,6 +41,7 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <h2>FeelsLike Login</h2>
+        {infoMessage && <div className="success-message">{infoMessage}</div>}
         {error && <div className="error-message">{error}</div>}
         
         <form onSubmit={handleSubmit}>

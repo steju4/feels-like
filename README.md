@@ -32,7 +32,13 @@ npm run install-all
 Im Ordner `server` liegt eine Datei namens `.env.example`.
 1.  Benenne diese um in `.env` (oder kopiere sie).
 2.  Setze bei `JWT_SECRET` einen sicheren, zufälligen Wert. Er wird verwendet, um JWT-Tokens zu signieren und zu verifizieren. Er sollte nicht zu einfach sein und nicht ins Repository committet werden.
-3. Der Rest (Datenbank, Port) kann so bleiben.
+3.  Setze optional den Mail-Versandmodus:
+	- `MAIL_MODE=auto` (Standard): nutzt SMTP wenn konfiguriert, sonst Ethereal-Testmail, sonst Konsolen-Fallback.
+	- `MAIL_MODE=ethereal`: sendet lokal echte Testmails mit Vorschau-Link (ohne eigenes SMTP-Konto).
+	- `MAIL_MODE=smtp`: sendet echte Einladungen an reale Postfaecher (SMTP-Variablen erforderlich).
+4.  Fuer produktionsnahen Nachweis der E-Mail-Einladung (Dokumentanforderung) nutze `MAIL_MODE=smtp` und setze:
+	`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`.
+5. Der Rest (Datenbank, Port) kann so bleiben.
 
 
 **Hinweis:** Die `.env` Datei wird **nicht** ins Git hochgeladen (Sicherheit!), daher muss jeder seine eigene erstellen.

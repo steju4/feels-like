@@ -5,6 +5,7 @@
   Funktionen:
   - anmelden: Credentials validieren -> AuthService aufrufen -> Session-Cookie setzen.
   - abmelden: Session beenden.
+  - registrieren: Registrierung ueber Einladungslink abschliessen.
 */
 
 const authService = require('../services/authService');
@@ -54,4 +55,18 @@ exports.abmelden = (req, res) => {
     path: '/',
   });
   res.json({ message: 'Erfolgreich ausgeloggt' });
+};
+
+exports.registrieren = async (req, res) => {
+  try {
+    const result = await authService.registrierenMitEinladung(req.body || {});
+    return res.json(result);
+  } catch (error) {
+    if (error?.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+
+    console.error(error);
+    return res.status(500).json({ message: 'Serverfehler bei der Registrierung.' });
+  }
 };

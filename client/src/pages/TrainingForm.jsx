@@ -69,7 +69,7 @@ export default function TrainingForm() {
     try {
       const response = await api.get('/training');
       setTrainings(response.data);
-    } catch (err) {
+    } catch {
       setServerError('Trainings konnten nicht geladen werden.');
     } finally {
       setLoading(false);
