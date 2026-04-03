@@ -21,6 +21,7 @@ const Layout = () => {
           <li><Link to="/">🏠 Dashboard</Link></li>
           <li><Link to="/training">🏃 Mein Training</Link></li>
           <li><Link to="/ranking">🏆 Ranking</Link></li>
+          <li><Link to="/profil">👤 Profil</Link></li>
           {user?.role === 'trainer' && <li><Link to="/admin">👥 Athletenverwaltung</Link></li>}
            
           {/* Logout Button */}

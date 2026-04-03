@@ -29,6 +29,38 @@ exports.profilLaden = async (req, res) => {
   }
 };
 
+exports.profilAktualisieren = async (req, res) => {
+  try {
+    const user = await userService.aktualisiereProfil({
+      userId: req.user.id,
+      name: req.body?.name,
+      email: req.body?.email,
+    });
+
+    return res.json({
+      message: 'Profil wurde erfolgreich aktualisiert.',
+      user,
+    });
+  } catch (error) {
+    return handleControllerError(res, error, 'Fehler beim Aktualisieren des Profils.');
+  }
+};
+
+exports.eigenesPasswortAendern = async (req, res) => {
+  try {
+    const result = await userService.aendereEigenesPasswort({
+      userId: req.user.id,
+      currentPassword: req.body?.currentPassword,
+      newPassword: req.body?.newPassword,
+      newPasswordConfirm: req.body?.newPasswordConfirm,
+    });
+
+    return res.json(result);
+  } catch (error) {
+    return handleControllerError(res, error, 'Fehler beim Ändern des Passworts.');
+  }
+};
+
 exports.athletenListe = async (req, res) => {
   try {
     const athleten = await userService.ladeAthletenListe();

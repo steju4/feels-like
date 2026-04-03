@@ -3,6 +3,8 @@
   
   Endpunkte für User-Verwaltung.
   - GET /me (profilLaden)
+  - PUT /me (profilAktualisieren)
+  - PUT /me/password (eigenesPasswortAendern)
   - GET / (athletenListe - Nur Trainer)
   - POST / (athletAnlegen - Nur Trainer)
   - PUT /:id/status (athletStatusAendern - Nur Trainer)
@@ -16,6 +18,8 @@ const requireRole = require('../middleware/requireRole');
 
 // Profil abrufen (geschützt)
 router.get('/me', authMiddleware, userController.profilLaden);
+router.put('/me', authMiddleware, userController.profilAktualisieren);
+router.put('/me/password', authMiddleware, userController.eigenesPasswortAendern);
 
 router.get('/', authMiddleware, requireRole('trainer'), userController.athletenListe);
 router.post('/', authMiddleware, requireRole('trainer'), userController.athletAnlegen);

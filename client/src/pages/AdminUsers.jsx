@@ -30,6 +30,22 @@ export default function AdminUsers() {
   const [deliveryMode, setDeliveryMode] = useState('');
 
   const isTrainer = useMemo(() => user?.role === 'trainer', [user]);
+  const athletenStats = useMemo(() => {
+    const stats = {
+      gesamt: athleten.length,
+      eingeladen: 0,
+      aktiv: 0,
+      inaktiv: 0,
+    };
+
+    athleten.forEach((athlet) => {
+      if (athlet.status === 'eingeladen') stats.eingeladen += 1;
+      if (athlet.status === 'aktiv') stats.aktiv += 1;
+      if (athlet.status === 'inaktiv') stats.inaktiv += 1;
+    });
+
+    return stats;
+  }, [athleten]);
 
   const loadAthleten = async () => {
     setLoading(true);
@@ -127,8 +143,9 @@ export default function AdminUsers() {
 
   return (
     <section className="admin-users-page">
-      <div className="admin-header">
+      <header className="admin-header">
         <div>
+          <p className="admin-overline">Trainerbereich</p>
           <h1>Athletenverwaltung</h1>
           <p>Einladen, Status prüfen und Aktivität steuern.</p>
         </div>
@@ -145,7 +162,7 @@ export default function AdminUsers() {
         >
           {showInviteForm ? 'Formular schließen' : 'Neuen Athleten einladen'}
         </button>
-      </div>
+      </header>
 
       {error && <div className="admin-message admin-message-error">{error}</div>}
       {success && <div className="admin-message admin-message-success">{success}</div>}
@@ -160,42 +177,68 @@ export default function AdminUsers() {
         </div>
       )}
 
+      <section className="admin-metrics">
+        <article className="admin-metric-card admin-metric-blue">
+          <p className="admin-metric-label">Athleten gesamt</p>
+          <p className="admin-metric-value">{loading ? '-' : athletenStats.gesamt}</p>
+        </article>
+        <article className="admin-metric-card admin-metric-amber">
+          <p className="admin-metric-label">Eingeladen</p>
+          <p className="admin-metric-value">{loading ? '-' : athletenStats.eingeladen}</p>
+        </article>
+        <article className="admin-metric-card admin-metric-green">
+          <p className="admin-metric-label">Aktiv</p>
+          <p className="admin-metric-value">{loading ? '-' : athletenStats.aktiv}</p>
+        </article>
+        <article className="admin-metric-card admin-metric-berry">
+          <p className="admin-metric-label">Inaktiv</p>
+          <p className="admin-metric-value">{loading ? '-' : athletenStats.inaktiv}</p>
+        </article>
+      </section>
+
       {showInviteForm && (
-        <form className="admin-invite-form" onSubmit={handleInviteSubmit}>
-          <div className="admin-form-row">
-            <label htmlFor="inviteName">Name</label>
-            <input
-              id="inviteName"
-              type="text"
-              value={inviteName}
-              onChange={(e) => setInviteName(e.target.value)}
-              placeholder="z. B. Max Muster"
-              required
-            />
-          </div>
+        <section className="admin-card">
+          <h2>Athleten einladen</h2>
+          <form className="admin-invite-form" onSubmit={handleInviteSubmit}>
+            <div className="admin-form-row">
+              <label htmlFor="inviteName">Name</label>
+              <input
+                id="inviteName"
+                type="text"
+                value={inviteName}
+                onChange={(e) => setInviteName(e.target.value)}
+                placeholder="z. B. Max Muster"
+                required
+              />
+            </div>
 
-          <div className="admin-form-row">
-            <label htmlFor="inviteEmail">E-Mail</label>
-            <input
-              id="inviteEmail"
-              type="email"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              placeholder="name@beispiel.de"
-              required
-            />
-          </div>
+            <div className="admin-form-row">
+              <label htmlFor="inviteEmail">E-Mail</label>
+              <input
+                id="inviteEmail"
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="name@beispiel.de"
+                required
+              />
+            </div>
 
-          <button type="submit" className="admin-primary-btn" disabled={submittingInvite}>
-            {submittingInvite ? 'Sende Einladung...' : 'Athlet einladen'}
-          </button>
-        </form>
+            <button type="submit" className="admin-primary-btn" disabled={submittingInvite}>
+              {submittingInvite ? 'Sende Einladung...' : 'Athlet einladen'}
+            </button>
+          </form>
+        </section>
       )}
 
       {loading ? (
         <div className="admin-loading">Lade Athleten...</div>
       ) : (
-        <div className="admin-table-wrapper">
+        <section className="admin-table-wrapper">
+          <div className="admin-table-head">
+            <h2>Athletenliste</h2>
+            <span>{athleten.length} Einträge</span>
+          </div>
           <table className="admin-table">
             <thead>
               <tr>
@@ -243,7 +286,7 @@ export default function AdminUsers() {
               ))}
             </tbody>
           </table>
-        </div>
+        </section>
       )}
     </section>
   );

@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import TrainingForm from './pages/TrainingForm';
 import Ranking from './pages/Ranking';
 import AdminUsers from './pages/AdminUsers';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
               <Route index element={<Dashboard />} /> 
               <Route path="training" element={<TrainingForm />} />
               <Route path="ranking" element={<Ranking />} />
+              <Route path="profil" element={<Profile />} />
               <Route
                 path="admin"
                 element={(

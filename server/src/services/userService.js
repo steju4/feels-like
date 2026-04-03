@@ -5,6 +5,7 @@ const { getJwtSecret } = require('../utils/jwtSecret');
 const { sendeEinladungsMail } = require('./emailService');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
+const MIN_PASSWORD_LENGTH = 8;
 const INVITE_TOKEN_VALIDITY = '48h';
 const ALLOWED_STATUS_VALUES = new Set(['aktiv', 'inaktiv']);
 
@@ -45,6 +46,74 @@ async function ladeProfil(userId) {
   }
 
   return user;
+}
+
+async function aktualisiereProfil({ userId, name, email }) {
+  const preparedName = String(name || '').trim();
+  const preparedEmail = normalizeEmail(email);
+
+  if (!preparedName) {
+    throw createHttpError(400, 'Name ist erforderlich.');
+  }
+
+  if (!EMAIL_REGEX.test(preparedEmail)) {
+    throw createHttpError(400, 'Bitte eine gültige E-Mail-Adresse angeben.');
+  }
+
+  const user = await Athlet.findByPk(userId);
+  if (!user) {
+    throw createHttpError(404, 'User nicht gefunden.');
+  }
+
+  if (user.email !== preparedEmail) {
+    const existingUser = await Athlet.findOne({ where: { email: preparedEmail } });
+    if (existingUser && existingUser.id !== user.id) {
+      throw createHttpError(409, 'Diese E-Mail-Adresse ist bereits registriert.');
+    }
+  }
+
+  user.name = preparedName;
+  user.email = preparedEmail;
+  await user.save();
+
+  return sanitizeAthlet(user);
+}
+
+async function aendereEigenesPasswort({ userId, currentPassword, newPassword, newPasswordConfirm }) {
+  const preparedCurrentPassword = String(currentPassword || '');
+  const preparedNewPassword = String(newPassword || '');
+  const preparedNewPasswordConfirm = String(newPasswordConfirm || '');
+
+  if (!preparedCurrentPassword || !preparedNewPassword || !preparedNewPasswordConfirm) {
+    throw createHttpError(400, 'Aktuelles Passwort, neues Passwort und Bestätigung sind erforderlich.');
+  }
+
+  if (preparedNewPassword.length < MIN_PASSWORD_LENGTH) {
+    throw createHttpError(400, `Das neue Passwort muss mindestens ${MIN_PASSWORD_LENGTH} Zeichen lang sein.`);
+  }
+
+  if (preparedNewPassword !== preparedNewPasswordConfirm) {
+    throw createHttpError(400, 'Neues Passwort und Bestätigung stimmen nicht überein.');
+  }
+
+  if (preparedCurrentPassword === preparedNewPassword) {
+    throw createHttpError(400, 'Das neue Passwort muss sich vom aktuellen Passwort unterscheiden.');
+  }
+
+  const user = await Athlet.findByPk(userId);
+  if (!user) {
+    throw createHttpError(404, 'User nicht gefunden.');
+  }
+
+  const isCurrentPasswordValid = await user.checkPassword(preparedCurrentPassword);
+  if (!isCurrentPasswordValid) {
+    throw createHttpError(400, 'Aktuelles Passwort ist nicht korrekt.');
+  }
+
+  user.passwortHash = preparedNewPassword;
+  await user.save();
+
+  return { message: 'Passwort wurde erfolgreich geändert.' };
 }
 
 async function ladeAthletenListe() {
@@ -152,6 +221,8 @@ async function aendereAthletStatus({ athletId, status }) {
 
 module.exports = {
   ladeProfil,
+  aktualisiereProfil,
+  aendereEigenesPasswort,
   ladeAthletenListe,
   legeAthletAn,
   aendereAthletStatus,

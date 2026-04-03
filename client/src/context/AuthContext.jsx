@@ -16,6 +16,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const refreshUser = async () => {
+    const response = await api.get('/users/me');
+    setUser(response.data);
+    return response.data;
+  };
+
   // App-Start: Prüfen ob Session gültig ist (API Call mit Cookie)
   // Call an users/me automatisch beim Laden der Seite
   // Bei Erfolg: User steht im State zur Verfügung: `user.id`, `user.name` usw.
@@ -63,7 +69,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, refreshUser, isAuthenticated: !!user, loading }}>
       {children}
     </AuthContext.Provider>
   );
