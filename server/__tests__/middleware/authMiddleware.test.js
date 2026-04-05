@@ -1,3 +1,8 @@
+/*
+  Tests für authMiddleware.
+  Deckt Token-Quellen, Fehlerpfade und Cookie-Handling ab.
+*/
+
 const jwt = require('jsonwebtoken');
 const { getJwtSecret } = require('../../src/utils/jwtSecret');
 const authMiddleware = require('../../src/middleware/authMiddleware');
@@ -11,6 +16,7 @@ jest.mock('../../src/utils/jwtSecret', () => ({
 }));
 
 function createResponseMock() {
+  // Express-Response-Mock inkl. clearCookie für Fehlerpfade
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);

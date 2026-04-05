@@ -1,10 +1,6 @@
 /*
-  TODO: Admin / User Management Page
-  
-  Nur für Trainer sichtbar.
-  - Liste aller Athleten.
-  - Button "Neuen Athleten einladen".
-  - Status ändern (aktiv/inaktiv).
+  Trainerbereich zur Athletenverwaltung.
+  Einladen, Status ändern und Versandrückmeldung anzeigen.
 */
 
 import React, { useEffect, useMemo, useState } from 'react';

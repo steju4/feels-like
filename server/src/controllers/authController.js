@@ -1,11 +1,6 @@
 /*
-  Auth Controller (Kontoverwaltung)
-  
-  Steuert den Authentifizierungs-Flow.
-  Funktionen:
-  - anmelden: Credentials validieren -> AuthService aufrufen -> Session-Cookie setzen.
-  - abmelden: Session beenden.
-  - registrieren: Registrierung über Einladungslink abschließen.
+  Controller für Login, Logout, Einladung-Registrierung und Passwort-Reset.
+  Die Fachlogik liegt im authService, hier passiert vor allem Request/Response-Mapping.
 */
 
 const authService = require('../services/authService');
@@ -13,6 +8,7 @@ const authService = require('../services/authService');
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 function getCookieOptions() {
+  // Einheitliche Cookie-Optionen für Login/Session
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -23,6 +19,7 @@ function getCookieOptions() {
 }
 
 function handleControllerError(res, error, defaultMessage) {
+  // Servicefehler mit Status durchreichen, sonst generischer 500-Fallback
   if (error?.status) {
     if (error.status >= 500) {
       console.error(error);
@@ -44,10 +41,10 @@ exports.anmelden = async (req, res) => {
   try {
     const { token, user } = await authService.anmelden(email, password);
 
-    // Session über HttpOnly-Cookie (primärer Kanal)
+    // Session-Token nur im HttpOnly-Cookie setzen
     res.cookie('token', token, getCookieOptions());
 
-    // Keine Token-Rückgabe im Body, um unnötige Exposition zu vermeiden.
+    // Token absichtlich nicht im JSON-Body zurückgeben
     res.json({
       message: 'Erfolgreich eingeloggt',
       user,

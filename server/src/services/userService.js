@@ -1,3 +1,8 @@
+/*
+  Fachlogik für Profilpflege und Athletenverwaltung.
+  Enthält Einladungsflow, Passwortwechsel und Statusregeln.
+*/
+
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const Athlet = require('../models/Athlet');
@@ -66,6 +71,7 @@ async function aktualisiereProfil({ userId, name, email }) {
   }
 
   if (user.email !== preparedEmail) {
+    // E-Mail darf systemweit nur einmal vorkommen
     const existingUser = await Athlet.findOne({ where: { email: preparedEmail } });
     if (existingUser && existingUser.id !== user.id) {
       throw createHttpError(409, 'Diese E-Mail-Adresse ist bereits registriert.');
@@ -156,6 +162,7 @@ async function legeAthletAn({ name, email }) {
     {
       sub: String(athlet.id),
       type: 'invitation',
+      // Zufallskomponente, damit Links eindeutig bleiben
       nonce: crypto.randomBytes(16).toString('hex'),
     },
     getJwtSecret(),
@@ -207,6 +214,7 @@ async function aendereAthletStatus({ athletId, status }) {
   }
 
   if (athlet.status === 'eingeladen') {
+    // Eingeladene Konten werden erst über Registrierung aktiviert
     throw createHttpError(400, 'Status kann erst nach abgeschlossener Registrierung geändert werden.');
   }
 

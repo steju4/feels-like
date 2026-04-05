@@ -1,3 +1,8 @@
+/*
+  Profilseite für Stammdaten und Passwortänderung.
+  Trennt bewusst Profil-Update und Security-Update in zwei Formulare.
+*/
+
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/useAuth';
@@ -54,6 +59,7 @@ export default function Profile() {
       setProfileSuccess(response.data?.message || 'Profil wurde erfolgreich aktualisiert.');
 
       if (refreshUser) {
+        // Header/Navi sollen sofort den aktuellen Namen anzeigen
         await refreshUser();
       }
     } catch (err) {

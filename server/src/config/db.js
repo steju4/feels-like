@@ -1,3 +1,8 @@
+/*
+  Zentrale Sequelize-Konfiguration.
+  Nutzt lokal SQLite als Dateidatenbank.
+*/
+
 const { Sequelize } = require('sequelize');
 const path = require('path');
 
@@ -14,6 +19,7 @@ async function connectDB() {
     await sequelize.authenticate();
     console.log('✅ SQLite Datenbank erfolgreich verbunden!');
   } catch (error) {
+    // Fehler bewusst loggen, damit Startprobleme sofort sichtbar sind
     console.error('❌ Fehler bei der DB-Verbindung:', error);
   }
 }

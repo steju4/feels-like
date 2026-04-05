@@ -1,8 +1,14 @@
+/*
+  HTTP-Schicht für Trainings-CRUD und Dashboard-Stats.
+  Validierung/Fachregeln liegen im trainingService.
+*/
+
 const trainingService = require('../services/trainingService');
 
 function sendError(res, error) {
   const status = error.status || 500;
 
+  // Fach-/Validierungsfehler sauber an den Client zurückgeben
   if (status >= 400 && status < 500) {
     return res.status(status).json({ message: error.message || 'Serverfehler' });
   }

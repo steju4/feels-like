@@ -1,3 +1,8 @@
+/*
+  Öffentliche Registrierungsseite für eingeladene Athleten.
+  Liest den Einladungs-Token aus der URL und schließt die Kontoaktivierung ab.
+*/
+
 import React, { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
@@ -8,6 +13,7 @@ export default function Register() {
   const location = useLocation();
 
   const token = useMemo(() => {
+    // Token kommt aus dem Einladungslink
     const params = new URLSearchParams(location.search);
     return params.get('token') || '';
   }, [location.search]);
@@ -50,6 +56,7 @@ export default function Register() {
 
       setSuccess(response.data?.message || 'Registrierung erfolgreich.');
 
+      // Kurzes visuelles Feedback, dann weiter zum Login
       setTimeout(() => {
         navigate('/login', {
           replace: true,

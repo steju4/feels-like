@@ -1,3 +1,8 @@
+/*
+  Dashboard mit Trainings-Stats und Aktivitätsliste.
+  Filter gelten gleichzeitig für Kennzahlen und Tabellenansicht.
+*/
+
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/useAuth';
 import api from '../api/axios';
@@ -67,6 +72,7 @@ export default function Dashboard() {
   const [filterZeitraum, setFilterZeitraum] = useState('');
 
   const fetchData = useCallback(async () => {
+    // Gleiche Filterparameter für beide Endpunkte
     const params = {};
     if (filterSportart) params.sportart = filterSportart;
     if (filterZeitraum) params.zeitraum = filterZeitraum;
@@ -76,6 +82,7 @@ export default function Dashboard() {
     setLoadingList(true);
 
     try {
+      // Parallel laden, damit das Dashboard schneller reagiert
       const [statsRes, listRes] = await Promise.all([
         api.get('/training/stats', { params }),
         api.get('/training', { params }),

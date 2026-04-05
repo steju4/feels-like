@@ -1,6 +1,12 @@
+/*
+  Tests für analyseService.
+  Prüft Sortierung nach allen Metriken, Fallback und Nicht-Mutation der Eingabe.
+*/
+
 const { berechneRanking } = require('../../src/services/analyseService');
 
 describe('analyseService.berechneRanking', () => {
+  // Gemeinsame Basisdaten für alle Ranking-Varianten
   const baseEntries = [
     {
       athletId: 1,

@@ -1,3 +1,8 @@
+/*
+  Setzt ein neues Passwort über einen Reset-Link.
+  Token wird aus der URL gelesen und mit dem Formular abgeschickt.
+*/
+
 import React, { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
@@ -8,6 +13,7 @@ export default function ResetPassword() {
   const location = useLocation();
 
   const token = useMemo(() => {
+    // Reset-Token aus Query-String
     const params = new URLSearchParams(location.search);
     return params.get('token') || '';
   }, [location.search]);
@@ -48,6 +54,7 @@ export default function ResetPassword() {
 
       setSuccess(response.data?.message || 'Passwort wurde erfolgreich zurückgesetzt.');
 
+      // Kurze Bestätigung anzeigen, dann zurück zum Login
       setTimeout(() => {
         navigate('/login', {
           replace: true,

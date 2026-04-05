@@ -1,8 +1,6 @@
 /*
-  Rollen-Middleware
-
-  Erlaubt den Zugriff nur, wenn req.user die erwartete Rolle besitzt.
-  Muss nach authMiddleware eingesetzt werden.
+  Rollenprüfung für geschützte Endpunkte.
+  Erwartet ein bereits gesetztes req.user aus dem authMiddleware.
 */
 
 function requireRole(expectedRole) {

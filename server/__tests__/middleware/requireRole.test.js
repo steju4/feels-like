@@ -1,6 +1,12 @@
+/*
+  Tests für requireRole.
+  Prüft Zugriff ohne User, mit falscher Rolle und mit passender Rolle.
+*/
+
 const requireRole = require('../../src/middleware/requireRole');
 
 function createResponseMock() {
+  // Minimales Response-Mock für Status/JSON-Assertions
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);

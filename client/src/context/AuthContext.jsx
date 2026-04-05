@@ -1,12 +1,6 @@
 /*
-  TODO: Auth Context
-  
-  React Context für globales State-Management des Users.
-  Aufgaben:
-  - State halten: { user: null, token: null, isAuthenticated: false }
-  - login(email, password) Funktion bereitstellen -> API Call -> State setzen.
-  - logout() Funktion -> State leeren.
-  - Beim App-Start prüfen, ob Token noch gültig ist (useEffect).
+  Stellt Auth-Zustand global bereit.
+  Kümmert sich um Session-Check, Login, Logout und User-Refresh.
 */
 import { useState, useEffect } from 'react';
 import api from '../api/axios';

@@ -1,22 +1,10 @@
 /*
-  Unit Tests – TrainingService (trainingService.js)
-
-  Testfall-Mapping (gemäß Software Verification Plan):
-  - TC-03 (analog): Unit Tests für Geschäftslogik-Funktionen
-  - Äquivalenzklassentests für Validierung
-
-  Testet die Funktionen der Kontrollklasse TrainingsVerwaltung:
-    - validateTrainingsDaten()
-    - trainingErfassen()
-    - alleTrainings()
-    - trainingAendern()
-    - trainingLoeschen()
-
-  Das Sequelize-Model "Trainingseinheit" wird gemockt,
-  damit die Tests isoliert (ohne DB) laufen → echte Unit Tests.
+  Tests für trainingService.
+  Deckt Validierung, CRUD, Berechtigungen und Statistik ab.
+  Das Trainingseinheit-Model ist vollständig gemockt.
 */
 
-// --- Mock des Sequelize-Models (vor dem require!) ---
+// Model-Mock vor dem Service-Import initialisieren
 const mockCreate = jest.fn();
 const mockFindAll = jest.fn();
 const mockFindByPk = jest.fn();
@@ -37,7 +25,7 @@ const {
   ERLAUBTE_SPORTARTEN,
 } = require('../../src/services/trainingService');
 
-// --- Hilfsdaten ---
+// Standarddaten für valide Eingaben
 const gueltigeDaten = {
   datum: '2026-03-01',
   sportart: 'Laufen',
@@ -47,17 +35,13 @@ const gueltigeDaten = {
   note: 'Gutes Training',
 };
 
-// Reset mocks vor jedem Test
+// Mocks zwischen Tests zurücksetzen
 beforeEach(() => {
   jest.clearAllMocks();
 });
 
-// ============================================================
-// 1. VALIDIERUNG – validateTrainingsDaten()
-// ============================================================
+// Validierung
 describe('validateTrainingsDaten', () => {
-
-  // --- Äquivalenzklasse: Gültige Eingaben ---
   describe('Gültige Eingaben (Normalfall)', () => {
     test('akzeptiert vollständige, gültige Daten', () => {
       const result = validateTrainingsDaten(gueltigeDaten);
@@ -103,7 +87,6 @@ describe('validateTrainingsDaten', () => {
     });
   });
 
-  // --- Äquivalenzklasse: Pflichtfelder fehlen ---
   describe('Pflichtfelder fehlen', () => {
     test('lehnt ab wenn datum fehlt', () => {
       const daten = { ...gueltigeDaten, datum: undefined };
@@ -140,7 +123,6 @@ describe('validateTrainingsDaten', () => {
     });
   });
 
-  // --- Äquivalenzklasse: Ungültige Werte ---
   describe('Ungültige Werte (Grenzfälle)', () => {
     test('lehnt ungültige Sportart ab', () => {
       const daten = { ...gueltigeDaten, sportart: 'Tanzen' };
@@ -189,9 +171,7 @@ describe('validateTrainingsDaten', () => {
   });
 });
 
-// ============================================================
-// 2. trainingErfassen()
-// ============================================================
+// Erfassen
 describe('trainingErfassen', () => {
   test('erstellt Training mit gültigen Daten', async () => {
     const mockTraining = { id: 1, ...gueltigeDaten, athletId: 42 };
@@ -240,9 +220,7 @@ describe('trainingErfassen', () => {
   });
 });
 
-// ============================================================
-// 3. alleTrainings()
-// ============================================================
+// Liste
 describe('alleTrainings', () => {
   test('lädt alle Trainings des Athleten', async () => {
     const mockList = [
@@ -271,9 +249,7 @@ describe('alleTrainings', () => {
   });
 });
 
-// ============================================================
-// 4. trainingAendern()
-// ============================================================
+// Ändern
 describe('trainingAendern', () => {
   test('aktualisiert Training mit gültigen Daten', async () => {
     const mockTraining = {
@@ -319,7 +295,7 @@ describe('trainingAendern', () => {
   test('wirft 403 wenn Training einem anderen Athleten gehört', async () => {
     const mockTraining = {
       id: 1,
-      athletId: 99, // gehört Athlet 99, aber Athlet 42 will ändern
+      athletId: 99,
     };
     mockFindByPk.mockResolvedValue(mockTraining);
 
@@ -348,9 +324,7 @@ describe('trainingAendern', () => {
   });
 });
 
-// ============================================================
-// 5. trainingLoeschen()
-// ============================================================
+// Löschen
 describe('trainingLoeschen', () => {
   test('löscht Training erfolgreich', async () => {
     const mockTraining = {
@@ -380,7 +354,7 @@ describe('trainingLoeschen', () => {
   test('wirft 403 wenn Training einem anderen Athleten gehört', async () => {
     const mockTraining = {
       id: 1,
-      athletId: 99, // gehört Athlet 99
+      athletId: 99,
     };
     mockFindByPk.mockResolvedValue(mockTraining);
 
@@ -394,9 +368,7 @@ describe('trainingLoeschen', () => {
   });
 });
 
-// ============================================================
-// 6. trainingStatistik()
-// ============================================================
+// Statistik
 describe('trainingStatistik', () => {
   test('gibt Nullwerte zurueck wenn keine Trainings vorhanden sind', async () => {
     mockFindAll.mockResolvedValue([]);

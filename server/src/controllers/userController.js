@@ -1,13 +1,12 @@
 /*
-  User Controller (AthletenVerwaltung)
-
-  HTTP-Schicht für Benutzerverwaltung.
-  Fachlogik liegt im userService.
+  Controller für Profilfunktionen und Athletenverwaltung.
+  Verantwortlich für HTTP-Ebene, Validierungs-/Businessregeln kommen aus dem userService.
 */
 
 const userService = require('../services/userService');
 
 function handleControllerError(res, error, defaultMessage) {
+  // Definierte Servicefehler direkt zurückgeben
   if (error?.status) {
     if (error.status >= 500) {
       console.error(error);
@@ -31,6 +30,7 @@ exports.profilLaden = async (req, res) => {
 
 exports.profilAktualisieren = async (req, res) => {
   try {
+    // Nur die erlaubten Felder an den Service weiterreichen
     const user = await userService.aktualisiereProfil({
       userId: req.user.id,
       name: req.body?.name,
@@ -48,6 +48,7 @@ exports.profilAktualisieren = async (req, res) => {
 
 exports.eigenesPasswortAendern = async (req, res) => {
   try {
+    // Passwortfelder explizit mappen, damit der Service sauber validieren kann
     const result = await userService.aendereEigenesPasswort({
       userId: req.user.id,
       currentPassword: req.body?.currentPassword,

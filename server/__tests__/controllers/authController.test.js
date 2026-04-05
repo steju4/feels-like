@@ -1,3 +1,8 @@
+/*
+  Tests für authController.
+  Fokus: Statuscodes, Cookie-Verhalten und korrekte Übergabe an den Service.
+*/
+
 const authService = require('../../src/services/authService');
 const authController = require('../../src/controllers/authController');
 
@@ -9,6 +14,7 @@ jest.mock('../../src/services/authService', () => ({
 }));
 
 function createResponseMock() {
+  // Express-Response-Mock mit chainbarem status/json/cookie
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);
@@ -20,6 +26,7 @@ function createResponseMock() {
 describe('authController', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Testumgebung: secure-Cookies sollen nicht erzwungen sein
     process.env.NODE_ENV = 'test';
   });
 

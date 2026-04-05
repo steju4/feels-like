@@ -1,3 +1,8 @@
+/*
+  Liest das JWT-Secret zentral aus der Umgebung.
+  Bricht bewusst hart ab, wenn der Wert fehlt.
+*/
+
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET;
   if (!secret) {

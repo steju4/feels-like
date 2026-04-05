@@ -1,31 +1,16 @@
 /*
-  Training Page (TrainingsVerwaltung – Frontend / Oberflächenpaket)
-
-  "TrainingView" aus dem SDD.
-  Bietet:
-  1. Trainings-Listenansicht (tabellarisch, eigene Trainings)
-  2. Formular zum Erstellen und Bearbeiten (gleiche Komponente, Edit-Modus mit vorausgefüllten Daten)
-  3. Löschen mit Bestätigungsdialog
-  4. Client-seitige Validierung (Pflichtfelder, Zahlenbereiche)
-  5. Fehler- und Erfolgsmeldungen im UI
-
-  Felder gemäß Grobdesign – Entität "Trainingseinheit":
-  - datum (Date)
-  - sportart (String: Laufen / Radfahren / Schwimmen)
-  - dauer (int, Minuten)
-  - distanz (double, km – optional)
-  - feelsLikeScore (int, 1–10)
-  - note (Text – optional)
+  Seite für Trainingsverwaltung.
+  Einträge erfassen, bearbeiten, löschen und als Tabelle anzeigen.
 */
 
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import './TrainingForm.css';
 
-// Erlaubte Sportarten (identisch zum Backend)
+// Erlaubte Sportarten, bewusst gleich wie im Backend
 const SPORTARTEN = ['Laufen', 'Radfahren', 'Schwimmen'];
 
-// Leeres Formular-Template
+// Ausgangszustand fürs Formular
 const LEERES_FORMULAR = {
   datum: '',
   sportart: '',
@@ -36,23 +21,23 @@ const LEERES_FORMULAR = {
 };
 
 export default function TrainingForm() {
-  // === State ===
+  // State
   const [trainings, setTrainings] = useState([]);
   const [formData, setFormData] = useState({ ...LEERES_FORMULAR });
-  const [editId, setEditId] = useState(null);           // null = Erstellen, ID = Bearbeiten
-  const [showForm, setShowForm] = useState(false);       // Formular anzeigen/verbergen
-  const [errors, setErrors] = useState([]);              // Client-seitige Validierungsfehler
-  const [serverError, setServerError] = useState('');     // Fehlermeldung vom Server
-  const [successMsg, setSuccessMsg] = useState('');       // Erfolgsmeldung
-  const [loading, setLoading] = useState(true);           // Ladezustand
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null); // ID für Lösch-Bestätigung
+  const [editId, setEditId] = useState(null); // null = neu, ID = bearbeiten
+  const [showForm, setShowForm] = useState(false);
+  const [errors, setErrors] = useState([]);
+  const [serverError, setServerError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
-  // === Trainings laden (beim Mount) ===
+  // Beim Start direkt die vorhandenen Trainings laden
   useEffect(() => {
     ladeTrainings();
   }, []);
 
-  // Erfolgsmeldung nach 4 Sekunden ausblenden
+  // Erfolgsmeldung nach kurzer Zeit ausblenden
   useEffect(() => {
     if (successMsg) {
       const timer = setTimeout(() => setSuccessMsg(''), 4000);
@@ -60,10 +45,7 @@ export default function TrainingForm() {
     }
   }, [successMsg]);
 
-  /**
-   * Alle eigenen Trainings vom Server laden.
-   * GET /api/training
-   */
+  // Eigene Trainings laden
   const ladeTrainings = async () => {
     setLoading(true);
     try {
@@ -76,7 +58,7 @@ export default function TrainingForm() {
     }
   };
 
-  // === Client-seitige Validierung ===
+  // Client-seitige Validierung
   const validateForm = () => {
     const validationErrors = [];
 
@@ -102,17 +84,13 @@ export default function TrainingForm() {
     return validationErrors.length === 0;
   };
 
-  // === Formular-Handler ===
+  // Formularfelder aktualisieren
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  /**
-   * Formular absenden – entweder Create oder Update.
-   * POST /api/training    (Erstellen)
-   * PUT  /api/training/:id (Bearbeiten)
-   */
+  // Absenden: neu anlegen oder vorhandenes Training aktualisieren
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError('');
@@ -122,16 +100,16 @@ export default function TrainingForm() {
 
     try {
       if (editId) {
-        // PUT – Training ändern
+        // Vorhandenen Eintrag aktualisieren
         await api.put(`/training/${editId}`, formData);
         setSuccessMsg('Trainingseinheit erfolgreich aktualisiert.');
       } else {
-        // POST – Neues Training
+        // Neuen Eintrag anlegen
         await api.post('/training', formData);
         setSuccessMsg('Trainingseinheit erfolgreich erfasst.');
       }
 
-      // Formular zurücksetzen und Liste neu laden
+      // Danach zurücksetzen und Tabelle aktualisieren
       resetForm();
       ladeTrainings();
     } catch (err) {
@@ -139,9 +117,7 @@ export default function TrainingForm() {
     }
   };
 
-  /**
-   * Edit-Modus aktivieren – Formular mit bestehenden Daten vorausfüllen.
-   */
+  // Edit-Modus aktivieren und vorhandene Daten ins Formular laden
   const handleEdit = (training) => {
     setEditId(training.id);
     setFormData({
@@ -156,21 +132,16 @@ export default function TrainingForm() {
     setErrors([]);
     setServerError('');
     setSuccessMsg('');
-    // Zum Formular scrollen
+    // Nutzer direkt zum Formular bringen
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  /**
-   * Lösch-Bestätigung anzeigen.
-   */
+  // Erst nur bestätigen lassen
   const handleDeleteClick = (id) => {
     setDeleteConfirmId(id);
   };
 
-  /**
-   * Training tatsächlich löschen (nach Bestätigung).
-   * DELETE /api/training/:id
-   */
+  // Nach Bestätigung endgültig löschen
   const handleDeleteConfirm = async () => {
     try {
       await api.delete(`/training/${deleteConfirmId}`);
@@ -183,9 +154,7 @@ export default function TrainingForm() {
     }
   };
 
-  /**
-   * Formular zurücksetzen (Cancel oder nach dem Speichern).
-   */
+  // Formularzustand zurücksetzen
   const resetForm = () => {
     setFormData({ ...LEERES_FORMULAR });
     setEditId(null);
@@ -194,7 +163,7 @@ export default function TrainingForm() {
     setServerError('');
   };
 
-  // Hilfsfunktionen
+  // Kleine UI-Helfer
   const sportartIcon = (sportart) => {
     switch (sportart) {
       case 'Laufen': return '🏃';
@@ -235,19 +204,19 @@ export default function TrainingForm() {
         </div>
       )}
 
-      {/* Server-Fehlermeldung */}
+      {/* Fehler vom Backend */}
       {serverError && (
         <div className="alert alert-error">
           {serverError}
         </div>
       )}
 
-      {/* FORMULAR (Erstellen / Bearbeiten) */}
+      {/* Formular für Neu/Ändern */}
       {showForm && (
         <div className="training-form-card">
           <h2>{editId ? 'Training bearbeiten' : 'Neues Training erfassen'}</h2>
 
-          {/* Client-Validierungsfehler */}
+          {/* Validierungsfehler */}
           {errors.length > 0 && (
             <div className="alert alert-error">
               <ul>
@@ -260,7 +229,6 @@ export default function TrainingForm() {
 
           <form onSubmit={handleSubmit} className="training-form">
             <div className="form-grid">
-              {/* Datum */}
               <div className="form-group">
                 <label htmlFor="datum">Datum *</label>
                 <input
@@ -273,7 +241,6 @@ export default function TrainingForm() {
                 />
               </div>
 
-              {/* Sportart – Dropdown */}
               <div className="form-group">
                 <label htmlFor="sportart">Sportart *</label>
                 <select
@@ -290,7 +257,6 @@ export default function TrainingForm() {
                 </select>
               </div>
 
-              {/* Dauer (Minuten) */}
               <div className="form-group">
                 <label htmlFor="dauer">Dauer (Min) *</label>
                 <input
@@ -305,7 +271,6 @@ export default function TrainingForm() {
                 />
               </div>
 
-              {/* Distanz (km) – optional */}
               <div className="form-group">
                 <label htmlFor="distanz">Distanz (km)</label>
                 <input
@@ -320,7 +285,6 @@ export default function TrainingForm() {
                 />
               </div>
 
-              {/* FeelsLikeScore (RPE) (1-10) */}
               <div className="form-group">
                 <label htmlFor="feelsLikeScore">FeelsLikeScore (RPE) (1-10) *</label>
                 <div className="score-input-wrapper">
@@ -338,7 +302,6 @@ export default function TrainingForm() {
                 </div>
               </div>
 
-              {/* Notiz – optional */}
               <div className="form-group form-group-full">
                 <label htmlFor="note">Notiz</label>
                 <textarea
@@ -352,7 +315,6 @@ export default function TrainingForm() {
               </div>
             </div>
 
-            {/* Buttons */}
             <div className="form-actions">
               <button type="submit" className="btn-primary">
                 {editId ? 'Änderungen speichern' : 'Training speichern'}
@@ -365,7 +327,7 @@ export default function TrainingForm() {
         </div>
       )}
 
-      {/* TRAININGS-LISTE (Tabelle) */}
+      {/* Trainingsliste */}
       <div className="training-list-card">
         {loading ? (
           <p className="loading-text">Trainings werden geladen...</p>
@@ -434,7 +396,7 @@ export default function TrainingForm() {
         )}
       </div>
 
-      {/* LÖSCH-BESTÄTIGUNGSDIALOG */}
+      {/* Lösch-Bestätigung */}
       {deleteConfirmId !== null && (
         <div className="modal-overlay">
           <div className="modal-dialog">

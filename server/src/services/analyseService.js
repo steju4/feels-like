@@ -1,3 +1,8 @@
+/*
+  Ranking-Logik mit einfacher Strategy-Struktur.
+  Je nach Metrik wird eine andere Sortierstrategie angewendet.
+*/
+
 class DistanceStrategy {
   apply(entries) {
     return [...entries]
@@ -29,6 +34,7 @@ const strategies = {
 };
 
 function chooseStrategy(key) {
+  // Unbekannte Metrik -> sicher auf Distanz zurückfallen
   return strategies[key] || strategies.distanz;
 }
 

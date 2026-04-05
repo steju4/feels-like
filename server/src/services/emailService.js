@@ -24,6 +24,7 @@ let cachedSmtpTransporter = null;
 let cachedEtherealTransporter = null;
 
 function getMailMode() {
+  // Standard: auto (entscheidet dynamisch anhand verfügbarer Konfiguration)
   return String(process.env.MAIL_MODE || 'auto').trim().toLowerCase();
 }
 
@@ -115,6 +116,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
     html,
   };
 
+  // Erst SMTP nutzen, wenn explizit gewünscht oder sauber konfiguriert
   if (mailMode === 'smtp' || (mailMode === 'auto' && isSmtpConfigured())) {
     const transporter = getSmtpTransporter();
     if (!transporter) {
@@ -125,6 +127,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
     return { mode: 'smtp' };
   }
 
+  // Sonst Testversand über Ethereal
   if (mailMode === 'ethereal' || (mailMode === 'auto' && !isSmtpConfigured())) {
     try {
       const transporter = await getEtherealTransporter();
@@ -145,6 +148,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
     }
   }
 
+  // Letzte Stufe: lokaler Konsolen-Fallback
   console.log('[INVITATION_CONSOLE_FALLBACK]');
   console.log(`An: ${to}`);
   console.log(`Link (gültig ${TOKEN_VALIDITY_HOURS}h): ${registerUrl}`);
@@ -188,6 +192,7 @@ async function sendePasswortResetMail({ to, name, resetUrl }) {
     html,
   };
 
+  // Erst SMTP nutzen, wenn explizit gewünscht oder sauber konfiguriert
   if (mailMode === 'smtp' || (mailMode === 'auto' && isSmtpConfigured())) {
     const transporter = getSmtpTransporter();
     if (!transporter) {
@@ -198,6 +203,7 @@ async function sendePasswortResetMail({ to, name, resetUrl }) {
     return { mode: 'smtp' };
   }
 
+  // Sonst Testversand über Ethereal
   if (mailMode === 'ethereal' || (mailMode === 'auto' && !isSmtpConfigured())) {
     try {
       const transporter = await getEtherealTransporter();
@@ -218,6 +224,7 @@ async function sendePasswortResetMail({ to, name, resetUrl }) {
     }
   }
 
+  // Letzte Stufe: lokaler Konsolen-Fallback
   console.log('[PASSWORD_RESET_CONSOLE_FALLBACK]');
   console.log(`An: ${to}`);
   console.log(`Link (ca. ${RESET_TOKEN_VALIDITY_MINUTES}m gültig): ${resetUrl}`);

@@ -1,11 +1,6 @@
 /*
-  Auth Routes (Kontoverwaltung)
-  
-  Definition der Endpunkte für Authentifizierung.
-  - POST /register (registrieren)
-  Routen:
-  - POST /login (anmelden)
-  - POST /logout (abmelden)
+  Auth-Endpunkte für Login, Logout, Einladung-Registrierung
+  und den Passwort-Reset-Flow.
 */
 
 const express = require('express');

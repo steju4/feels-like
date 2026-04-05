@@ -1,3 +1,8 @@
+/*
+  Rankingansicht für Trainer nach Sportart, Zeitraum und Metrik.
+  Zeigt Top-Liste basierend auf den aktuellen Filterwerten.
+*/
+
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../api/axios';
 import './Ranking.css';
@@ -46,6 +51,7 @@ const Ranking = () => {
       setLoading(true);
       setError('');
       try {
+        // Neu laden bei jeder Änderung von Sportart, Zeitraum oder Metrik
         const response = await api.get('/ranking', {
           params: { sportart, zeitraum, metrik },
         });

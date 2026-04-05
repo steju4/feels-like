@@ -1,3 +1,8 @@
+/*
+  Auth-Service: Login, Einladung und Passwort-Reset.
+  Zentraler Ort für Validierung und fachliche Regeln rund um Konten.
+*/
+
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const Athlet = require('../models/Athlet');
@@ -33,6 +38,7 @@ function buildPasswordResetUrl(token) {
   return `${baseUrl}/passwort-reset?token=${encodeURIComponent(token)}`;
 }
 
+// Fingerabdruck vom aktuellen Passwort-Hash, damit alte Reset-Links ungültig werden
 function createPasswordHashFingerprint(passwortHash) {
   return crypto
     .createHash('sha256')
@@ -141,6 +147,7 @@ async function passwortResetAnfordern({ email }) {
     throw createHttpError(400, 'Bitte eine gültige E-Mail-Adresse angeben.');
   }
 
+  // Absichtlich generisch, damit nicht erkennbar ist, ob die E-Mail existiert
   const genericMessage = 'Wenn die E-Mail-Adresse registriert ist, wurde ein Passwort-Reset-Link versendet.';
 
   const user = await Athlet.findOne({ where: { email: normalizedEmail } });
@@ -152,6 +159,7 @@ async function passwortResetAnfordern({ email }) {
     {
       sub: String(user.id),
       type: 'password-reset',
+      // Bindet den Link an den aktuellen Passwort-Stand
       pfp: createPasswordHashFingerprint(user.passwortHash),
       nonce: crypto.randomBytes(16).toString('hex'),
     },
@@ -210,6 +218,7 @@ async function passwortResetBestaetigen({ token, password, passwordConfirm }) {
     throw createHttpError(400, 'Reset-Link ist nicht mehr gültig.');
   }
 
+  // Wurde das Passwort seit Link-Erstellung geändert, ist der Link sofort ungültig
   const expectedFingerprint = createPasswordHashFingerprint(user.passwortHash);
   if (payload.pfp !== expectedFingerprint) {
     throw createHttpError(400, 'Reset-Link ist nicht mehr gültig oder wurde bereits verwendet.');

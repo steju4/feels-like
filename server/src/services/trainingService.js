@@ -62,6 +62,7 @@ function validateTrainingsDaten(daten) {
   return { valid: errors.length === 0, errors };
 }
 
+// Zeitraum-Filter in ein Startdatum umrechnen
 function getVonDatum(zeitraum) {
   if (!zeitraum) return null;
 
@@ -88,6 +89,7 @@ function getVonDatum(zeitraum) {
   return formatDateOnlyLocal(vonDatum);
 }
 
+// Gemeinsame Filterlogik für Liste und Statistik
 function buildWhereClause(athletId, { sportart, zeitraum } = {}) {
   const where = { athletId };
 
@@ -178,6 +180,7 @@ async function trainingStatistik(athletId, filter = {}) {
   const where = buildWhereClause(athletId, filter);
   const trainings = await Trainingseinheit.findAll({ where });
 
+  // Leerer Filterbereich -> neutrale Nullwerte
   if (trainings.length === 0) {
     return {
       gesamtDistanz: 0,

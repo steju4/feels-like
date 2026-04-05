@@ -1,12 +1,6 @@
 /*
-  TODO: Login Page
-  
-  Design-Vorlage: "Login-Formular" (siehe HTML Mockup).
-  Funktionen:
-  - Eingabefelder für E-Mail und Passwort.
-  - "Login" Button -> ruft login() aus AuthContext auf.
-  - Fehlermeldungen anzeigen (z.B. "Falsches Passwort").
-  - Redirect nach erfolgreichem Login (Dashboard).
+  Login-Seite für bestehende Nutzer.
+  Übergibt Zugangsdaten an den AuthContext und zeigt Rückmeldungen an.
 */
 
 import React, { useState } from 'react';
@@ -31,7 +25,7 @@ export default function Login() {
     const result = await login(email, password);
     
     if (result.success) {
-      navigate('/'); // Nach Login zum Dashboard
+      navigate('/'); // Nach erfolgreichem Login direkt ins Dashboard
     } else {
       setError(result.message);
     }

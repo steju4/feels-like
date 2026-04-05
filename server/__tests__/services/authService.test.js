@@ -1,3 +1,8 @@
+/*
+  Tests für den Passwort-Reset im authService.
+  Fokus: Eingabeprüfung, Token-Inhalt und Invalidierung nach Nutzung.
+*/
+
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
@@ -20,6 +25,7 @@ const {
 } = require('../../src/services/authService');
 
 function createFingerprint(passwortHash) {
+  // Muss der Logik im Service entsprechen
   return crypto.createHash('sha256').update(String(passwortHash || '')).digest('hex').slice(0, 16);
 }
 

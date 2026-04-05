@@ -1,3 +1,8 @@
+/*
+  Startpunkt für den Passwort-Reset.
+  Nimmt die E-Mail entgegen und fordert den Reset-Link beim Backend an.
+*/
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
@@ -14,6 +19,7 @@ export default function ForgotPassword() {
     setError('');
     setSuccess('');
 
+    // Whitespace am Rand entfernen, um unnötige Fehlermeldungen zu vermeiden
     const preparedEmail = String(email || '').trim();
     if (!preparedEmail) {
       setError('Bitte gib deine E-Mail-Adresse ein.');

@@ -1,3 +1,8 @@
+/*
+  Tests für userController.
+  Prüft Mapping von Requestdaten, Service-Aufrufe und Fehlerweitergabe.
+*/
+
 const userService = require('../../src/services/userService');
 const userController = require('../../src/controllers/userController');
 
@@ -11,6 +16,7 @@ jest.mock('../../src/services/userService', () => ({
 }));
 
 function createResponseMock() {
+  // Schlanker Express-Response-Mock
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);
