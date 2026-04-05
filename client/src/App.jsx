@@ -5,6 +5,8 @@ import Layout from './components/layout';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import TrainingForm from './pages/TrainingForm';
 import Ranking from './pages/Ranking';
 import AdminUsers from './pages/AdminUsers';
@@ -19,6 +21,8 @@ function App() {
           {/* Öffentlicher Bereich */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/passwort-vergessen" element={<ForgotPassword />} />
+          <Route path="/passwort-reset" element={<ResetPassword />} />
 
           {/* Geschützter Bereich */}
           <Route element={<ProtectedRoute />}>

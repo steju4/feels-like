@@ -216,7 +216,7 @@ describe('trainingErfassen', () => {
   test('wirft Fehler 400 bei ungültigen Daten', async () => {
     try {
       await trainingErfassen(42, {});
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(400);
       expect(error.message).toBeTruthy();
@@ -309,7 +309,7 @@ describe('trainingAendern', () => {
 
     try {
       await trainingAendern(999, 42, gueltigeDaten);
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(404);
       expect(error.message).toContain('nicht gefunden');
@@ -325,7 +325,7 @@ describe('trainingAendern', () => {
 
     try {
       await trainingAendern(1, 42, gueltigeDaten);
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(403);
       expect(error.message).toContain('Keine Berechtigung');
@@ -341,7 +341,7 @@ describe('trainingAendern', () => {
 
     try {
       await trainingAendern(1, 42, { sportart: 'Tanzen' });
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(400);
     }
@@ -371,7 +371,7 @@ describe('trainingLoeschen', () => {
 
     try {
       await trainingLoeschen(999, 42);
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(404);
     }
@@ -386,7 +386,7 @@ describe('trainingLoeschen', () => {
 
     try {
       await trainingLoeschen(1, 42);
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(403);
       expect(error.message).toContain('Keine Berechtigung');

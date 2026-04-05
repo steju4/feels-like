@@ -78,6 +78,21 @@
   transform: translateY(1px);
 }
 
+.login-meta-link {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.login-meta-link a {
+  color: #1b5e20;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-meta-link a:hover {
+  text-decoration: underline;
+}
+
 .error-message {
   background-color: #ffebee;
   color: #c62828;

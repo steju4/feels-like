@@ -10,7 +10,7 @@
 */
 
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import './Login.css'; 
 
@@ -68,6 +68,10 @@ export default function Login() {
           </div>
 
           <button type="submit" className="login-btn">Einloggen</button>
+
+          <div className="login-meta-link">
+            <Link to="/passwort-vergessen">Passwort vergessen?</Link>
+          </div>
         </form>
       </div>
     </div>

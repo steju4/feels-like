@@ -16,6 +16,7 @@ try {
 }
 
 const TOKEN_VALIDITY_HOURS = 48;
+const RESET_TOKEN_VALIDITY_MINUTES = Number(process.env.PASSWORD_RESET_TOKEN_VALIDITY_MINUTES || 30);
 
 const SUPPORTED_MAIL_MODES = new Set(['auto', 'smtp', 'ethereal', 'console']);
 
@@ -153,6 +154,80 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
   };
 }
 
+async function sendePasswortResetMail({ to, name, resetUrl }) {
+  const mailMode = getMailMode();
+
+  if (!SUPPORTED_MAIL_MODES.has(mailMode)) {
+    throw new Error('MAIL_MODE ist ungültig. Erlaubt sind: auto, smtp, ethereal, console.');
+  }
+
+  const subject = 'Passwort zurücksetzen - Feels Like Plattform';
+  const text = [
+    `Hallo ${name},`,
+    '',
+    'du hast das Zurücksetzen deines Passworts angefordert.',
+    `Der Link ist etwa ${RESET_TOKEN_VALIDITY_MINUTES} Minuten gültig und einmalig nutzbar:`,
+    resetUrl,
+    '',
+    'Falls du diese Anfrage nicht gestellt hast, kannst du diese Nachricht ignorieren.',
+  ].join('\n');
+
+  const html = [
+    `<p>Hallo ${name},</p>`,
+    '<p>du hast das Zurücksetzen deines Passworts angefordert.</p>',
+    `<p>Der Link ist etwa <strong>${RESET_TOKEN_VALIDITY_MINUTES} Minuten</strong> gültig und einmalig nutzbar:</p>`,
+    `<p><a href="${resetUrl}">${resetUrl}</a></p>`,
+    '<p>Falls du diese Anfrage nicht gestellt hast, kannst du diese Nachricht ignorieren.</p>',
+  ].join('');
+
+  const mailOptions = {
+    from: getFromAddress(),
+    to,
+    subject,
+    text,
+    html,
+  };
+
+  if (mailMode === 'smtp' || (mailMode === 'auto' && isSmtpConfigured())) {
+    const transporter = getSmtpTransporter();
+    if (!transporter) {
+      throw new Error('SMTP ist nicht vollständig konfiguriert.');
+    }
+
+    await transporter.sendMail(mailOptions);
+    return { mode: 'smtp' };
+  }
+
+  if (mailMode === 'ethereal' || (mailMode === 'auto' && !isSmtpConfigured())) {
+    try {
+      const transporter = await getEtherealTransporter();
+      if (!transporter) {
+        throw new Error('nodemailer ist nicht verfügbar.');
+      }
+
+      const info = await transporter.sendMail(mailOptions);
+      const previewUrl = nodemailer.getTestMessageUrl(info) || undefined;
+      return { mode: 'ethereal', previewUrl };
+    } catch (error) {
+      if (mailMode === 'ethereal') {
+        throw error;
+      }
+
+      console.warn('[PASSWORD_RESET_FALLBACK] Ethereal nicht verfügbar, wechsle auf Konsolen-Fallback.');
+      console.warn(error.message);
+    }
+  }
+
+  console.log('[PASSWORD_RESET_CONSOLE_FALLBACK]');
+  console.log(`An: ${to}`);
+  console.log(`Link (ca. ${RESET_TOKEN_VALIDITY_MINUTES}m gültig): ${resetUrl}`);
+  return {
+    mode: 'console',
+    previewUrl: resetUrl,
+  };
+}
+
 module.exports = {
   sendeEinladungsMail,
+  sendePasswortResetMail,
 };

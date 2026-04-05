@@ -22,6 +22,18 @@ function getCookieOptions() {
   };
 }
 
+function handleControllerError(res, error, defaultMessage) {
+  if (error?.status) {
+    if (error.status >= 500) {
+      console.error(error);
+    }
+    return res.status(error.status).json({ message: error.message });
+  }
+
+  console.error(error);
+  return res.status(500).json({ message: defaultMessage });
+}
+
 exports.anmelden = async (req, res) => {
   const { email, password } = req.body;
 
@@ -62,11 +74,32 @@ exports.registrieren = async (req, res) => {
     const result = await authService.registrierenMitEinladung(req.body || {});
     return res.json(result);
   } catch (error) {
-    if (error?.status) {
-      return res.status(error.status).json({ message: error.message });
-    }
+    return handleControllerError(res, error, 'Serverfehler bei der Registrierung.');
+  }
+};
 
-    console.error(error);
-    return res.status(500).json({ message: 'Serverfehler bei der Registrierung.' });
+exports.passwortResetAnfordern = async (req, res) => {
+  try {
+    const result = await authService.passwortResetAnfordern({
+      email: req.body?.email,
+    });
+
+    return res.json(result);
+  } catch (error) {
+    return handleControllerError(res, error, 'Serverfehler beim Anfordern des Passwort-Resets.');
+  }
+};
+
+exports.passwortResetBestaetigen = async (req, res) => {
+  try {
+    const result = await authService.passwortResetBestaetigen({
+      token: req.body?.token,
+      password: req.body?.password,
+      passwordConfirm: req.body?.passwordConfirm,
+    });
+
+    return res.json(result);
+  } catch (error) {
+    return handleControllerError(res, error, 'Serverfehler beim Zurücksetzen des Passworts.');
   }
 };
