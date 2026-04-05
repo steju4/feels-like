@@ -1,4 +1,10 @@
-require('dotenv').config();
+/*
+  Server-Einstiegspunkt.
+  Lädt Middleware, registriert API-Routen und startet Express nach DB-Verbindung.
+*/
+
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const { connectDB, sequelize } = require('./config/db');
 const express = require('express');
@@ -44,7 +50,7 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {
-  
+  // Für dieses Projekt werden Tabellen beim Start synchronisiert
   sequelize.sync().then(() => {
     console.log('✅ Tabellen sind synchronisiert');
     app.listen(PORT, () => {

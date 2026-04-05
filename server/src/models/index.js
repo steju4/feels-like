@@ -1,3 +1,7 @@
+/*
+  Bindet alle Modelle zusammen und definiert ihre Beziehungen.
+*/
+
 const { sequelize } = require('../config/db');
 const Athlet = require('./Athlet');
 const Trainingseinheit = require('./Trainingseinheit');

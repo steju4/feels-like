@@ -1,9 +1,6 @@
 /*
-  TODO: Axios Instance
-  
-  Zentrale Konfiguration für API-Aufrufe.
-  - BaseURL setzen (z.B. http://localhost:3000/api)
-  - Interceptors hinzufügen, um den JWT-Token aus dem Context/LocalStorage automatisch an jeden Request anzuhängen.
+  Zentrale Axios-Instanz für alle API-Aufrufe im Client.
+  Hält Basis-URL und Credential-Verhalten an einer Stelle.
 */
 
 import axios from 'axios';
