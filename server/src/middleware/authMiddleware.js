@@ -1,13 +1,26 @@
 /*
-  JWT-Absicherung für API-Routen.
-  Akzeptiert Bearer-Token oder Session-Cookie.
+  Auth Middleware
+
+  Schützt Routen durch JWT-Verifizierung.
+  Token-Quellen:
+  1) Authorization: Bearer <token> (bevorzugt)
+  2) HttpOnly-Cookie 'token' (Browser-Session)
 */
 
 const jwt = require('jsonwebtoken');
-const { getJwtSecret } = require('../utils/jwtSecret');
+
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    const error = new Error('JWT_SECRET ist nicht gesetzt.');
+    error.status = 500;
+    throw error;
+  }
+  return secret;
+}
 
 module.exports = (req, res, next) => {
-  // Header priorisieren, damit API-Clients die Auth klar steuern können
+  // Header priorisieren, damit API-Clients explizit Auth steuern koennen.
   const cookieToken = req.cookies?.token;
   const headerToken = req.headers.authorization?.startsWith('Bearer ')
     ? req.headers.authorization.slice(7)
@@ -24,12 +37,7 @@ module.exports = (req, res, next) => {
 
     next();
   } catch (error) {
-    if (error?.status === 500) {
-      console.error('Konfigurationsfehler in authMiddleware:', error);
-      return res.status(500).json({ message: 'Serverkonfiguration unvollständig.' });
-    }
-
-    // Bei ungültigem Token Session-Cookie vorsorglich löschen
+    // Bei ungueltigem Token Session-Cookie defensiv loeschen
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

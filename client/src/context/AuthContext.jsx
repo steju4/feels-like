@@ -1,20 +1,23 @@
 /*
-  Stellt Auth-Zustand global bereit.
-  Kümmert sich um Session-Check, Login, Logout und User-Refresh.
+  TODO: Auth Context
+  
+  React Context für globales State-Management des Users.
+  Aufgaben:
+  - State halten: { user: null, token: null, isAuthenticated: false }
+  - login(email, password) Funktion bereitstellen -> API Call -> State setzen.
+  - logout() Funktion -> State leeren.
+  - Beim App-Start prüfen, ob Token noch gültig ist (useEffect).
 */
-import { useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import api from '../api/axios';
-import { AuthContext } from './authContext';
+
+const AuthContext = createContext();
+
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const refreshUser = async () => {
-    const response = await api.get('/users/me');
-    setUser(response.data);
-    return response.data;
-  };
 
   // App-Start: Prüfen ob Session gültig ist (API Call mit Cookie)
   // Call an users/me automatisch beim Laden der Seite
@@ -63,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, refreshUser, isAuthenticated: !!user, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,22 +1,18 @@
 /*
-  Controller für die Rankinganalyse.
-  Baut DB-Filter, aggregiert Trainingsdaten und delegiert das Sortieren an den analyseService.
+  Ranking Controller (AnalyseService)
+  
+  Logik für die Bestenlisten und Auswertungen.
+  Funktionen:
+  - berechneRanking: Alle User abrufen, FeelsLike-Scores summieren/berechnen, sortieren und zurückgeben.
+  - berechneStatistik: Persönliche Statistiken für Charts.
 */
 
 const { Op, fn, col } = require('sequelize');
 const { Athlet, Trainingseinheit } = require('../models');
 const { berechneRanking } = require('../services/analyseService');
 
-function formatDateOnlyLocal(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
 exports.berechneRanking = async (req, res) => {
   try {
-    // Defensive Prüfung, auch wenn die Route bereits requireRole nutzt
     if (req.user?.role !== 'trainer') {
       return res.status(403).json({ message: 'Rankinganalyse ist nur für Trainer verfügbar.' });
     }
@@ -24,7 +20,7 @@ exports.berechneRanking = async (req, res) => {
     const { sportart = 'alle', zeitraum, metrik = 'distanz' } = req.query;
 
     const where = {};
-    // Sportart nur filtern, wenn nicht explizit "alle"
+    // Sportart-Filter nur setzen, wenn nicht "alle"
     if (sportart && sportart.toLowerCase() !== 'alle') {
       where.sportart = sportart;
     }
@@ -34,12 +30,10 @@ exports.berechneRanking = async (req, res) => {
       if (!Number.isNaN(tage) && tage > 0) {
         const start = new Date();
         start.setDate(start.getDate() - tage);
-        // Filter ab Startdatum (inklusive)
-        where.datum = { [Op.gte]: formatDateOnlyLocal(start) };
+        where.datum = { [Op.gte]: start.toISOString().slice(0, 10) };
       }
     }
 
-    // Aggregation pro Athlet: Distanzsumme, Dauersumme, Anzahl
     const aggregiert = await Trainingseinheit.findAll({
       attributes: [
         'athletId',
@@ -51,10 +45,10 @@ exports.berechneRanking = async (req, res) => {
       include: [
         {
           model: Athlet,
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'email'],
         },
       ],
-      group: ['Trainingseinheit.athletId', 'Athlet.id', 'Athlet.name'],
+      group: ['Trainingseinheit.athletId', 'Athlet.id', 'Athlet.name', 'Athlet.email'],
     });
 
     const daten = aggregiert.map((eintrag) => {
@@ -62,7 +56,7 @@ exports.berechneRanking = async (req, res) => {
       return {
         athletId: raw.athletId,
         name: raw.Athlet?.name || 'Unbekannt',
-        // Rohwerte für die Strategy-Auswahl im analyseService
+        email: raw.Athlet?.email,
         metrics: {
           distanz: Number(raw.sumDistanz) || 0,
           haeufigkeit: Number(raw.anzahl) || 0,

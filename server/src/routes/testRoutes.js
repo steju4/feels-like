@@ -1,7 +1,3 @@
-/*
-  Kleine Diagnose-Route für lokalen API/DB-Check.
-*/
-
 const express = require('express');
 const router = express.Router();
 const Athlet = require('../models/Athlet');

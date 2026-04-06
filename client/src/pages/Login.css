@@ -78,21 +78,6 @@
   transform: translateY(1px);
 }
 
-.login-meta-link {
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.login-meta-link a {
-  color: #1b5e20;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.login-meta-link a:hover {
-  text-decoration: underline;
-}
-
 .error-message {
   background-color: #ffebee;
   color: #c62828;
@@ -102,15 +87,4 @@
   text-align: center;
   font-size: 0.9rem;
   border: 1px solid #ffcdd2;
-}
-
-.success-message {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-size: 0.9rem;
-  border: 1px solid #c8e6c9;
 }

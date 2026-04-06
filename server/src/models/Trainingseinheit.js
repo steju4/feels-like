@@ -1,6 +1,15 @@
 /*
-  Modell für einzelne Trainingseinheiten.
-  Enthält Kerndaten wie Datum, Sportart, Dauer, Distanz, RPE und Athlet-Zuordnung.
+  Trainingseinheit Model
+  
+  Definiert das Schema für eine Trainingseinheit.
+  Felder (basierend auf dem Grobdesign):
+  - datum: Wann fand das Training statt?
+  - sportart: Sportart (z.B. Laufen, Radfahren, Schwimmen)
+  - dauer: Dauer in Minuten
+  - distanz: Zurückgelegte Distanz in km
+  - feelsLikeScore: Subjektive Belastung (RPE) auf Skala 1-10
+  - note: Freitext Notiz
+  - athletId: Verknüpfung zum User (Athlet)
 */
 
 const { DataTypes } = require('sequelize');
@@ -12,7 +21,7 @@ const Trainingseinheit = sequelize.define('Trainingseinheit', {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  // Sportart (z. B. Laufen, Radfahren, Schwimmen)
+  // Sportart
   sportart: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -25,7 +34,7 @@ const Trainingseinheit = sequelize.define('Trainingseinheit', {
       min: 1,
     },
   },
-  // Distanz in km (optional)
+  // Distanz in km
   distanz: {
     type: DataTypes.DOUBLE,
     allowNull: true,
@@ -35,7 +44,7 @@ const Trainingseinheit = sequelize.define('Trainingseinheit', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  // Subjektive Belastung (RPE) auf Skala 1-10
+  // Belastungsempfinden als FeelsLikeScore (RPE) auf Skala 1-10
   feelsLikeScore: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -44,7 +53,7 @@ const Trainingseinheit = sequelize.define('Trainingseinheit', {
       max: 10,
     },
   },
-  // Fremdschlüssel auf Athlet
+  // Zuordnung zum Athleten
   athletId: {
     type: DataTypes.INTEGER,
     allowNull: false,

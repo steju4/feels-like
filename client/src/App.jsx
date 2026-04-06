@@ -1,16 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext.jsx';
+import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import Layout from './components/layout';
+import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
 import TrainingForm from './pages/TrainingForm';
 import Ranking from './pages/Ranking';
 import AdminUsers from './pages/AdminUsers';
-import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
@@ -20,9 +16,6 @@ function App() {
         <Routes>
           {/* Öffentlicher Bereich */}
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/passwort-vergessen" element={<ForgotPassword />} />
-          <Route path="/passwort-reset" element={<ResetPassword />} />
 
           {/* Geschützter Bereich */}
           <Route element={<ProtectedRoute />}>
@@ -30,15 +23,7 @@ function App() {
               <Route index element={<Dashboard />} /> 
               <Route path="training" element={<TrainingForm />} />
               <Route path="ranking" element={<Ranking />} />
-              <Route path="profil" element={<Profile />} />
-              <Route
-                path="admin"
-                element={(
-                  <ProtectedRoute requiredRole="trainer">
-                    <AdminUsers />
-                  </ProtectedRoute>
-                )}
-              />
+              <Route path="admin" element={<AdminUsers />} />
             </Route>
           </Route>
         </Routes>
