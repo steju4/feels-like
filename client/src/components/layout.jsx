@@ -1,9 +1,9 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import './Layout.css';
 
 const Layout = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = (e) => {
@@ -21,6 +21,8 @@ const Layout = () => {
           <li><Link to="/">🏠 Dashboard</Link></li>
           <li><Link to="/training">🏃 Mein Training</Link></li>
           <li><Link to="/ranking">🏆 Ranking</Link></li>
+          <li><Link to="/profil">👤 Profil</Link></li>
+          {user?.role === 'trainer' && <li><Link to="/admin">👥 Athletenverwaltung</Link></li>}
            
           {/* Logout Button */}
           <li style={{marginTop: 'auto'}}>

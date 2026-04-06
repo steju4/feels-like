@@ -1,16 +1,23 @@
 /*
-  Training Service (TrainingsVerwaltung – Geschaeftslogik)
+  Training Service (TrainingsVerwaltung – Geschäftslogik)
 
-  Schicht 2 gemaess SDD:
-  - Validierung und Autorisierung fuer CRUD
-  - Filterlogik fuer Dashboard-Ansicht
-  - Statistikberechnung fuer Dashboard-Kennzahlen
+  Schicht 2 gemäß SDD:
+  - Validierung und Autorisierung für CRUD
+  - Filterlogik für Dashboard-Ansicht
+  - Statistikberechnung für Dashboard-Kennzahlen
 */
 
 const { Op } = require('sequelize');
 const Trainingseinheit = require('../models/Trainingseinheit');
 
 const ERLAUBTE_SPORTARTEN = ['Laufen', 'Radfahren', 'Schwimmen'];
+
+function formatDateOnlyLocal(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 function createHttpError(status, message) {
   const error = new Error(message);
@@ -55,6 +62,7 @@ function validateTrainingsDaten(daten) {
   return { valid: errors.length === 0, errors };
 }
 
+// Zeitraum-Filter in ein Startdatum umrechnen
 function getVonDatum(zeitraum) {
   if (!zeitraum) return null;
 
@@ -78,9 +86,10 @@ function getVonDatum(zeitraum) {
       return null;
   }
 
-  return vonDatum.toISOString().split('T')[0];
+  return formatDateOnlyLocal(vonDatum);
 }
 
+// Gemeinsame Filterlogik für Liste und Statistik
 function buildWhereClause(athletId, { sportart, zeitraum } = {}) {
   const where = { athletId };
 
@@ -161,7 +170,7 @@ async function trainingLoeschen(trainingId, athletId) {
   }
 
   if (training.athletId !== athletId) {
-    throw createHttpError(403, 'Keine Berechtigung, dieses Training zu loeschen.');
+    throw createHttpError(403, 'Keine Berechtigung, dieses Training zu löschen.');
   }
 
   await training.destroy();
@@ -171,6 +180,7 @@ async function trainingStatistik(athletId, filter = {}) {
   const where = buildWhereClause(athletId, filter);
   const trainings = await Trainingseinheit.findAll({ where });
 
+  // Leerer Filterbereich -> neutrale Nullwerte
   if (trainings.length === 0) {
     return {
       gesamtDistanz: 0,
