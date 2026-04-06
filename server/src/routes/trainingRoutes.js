@@ -1,3 +1,8 @@
+/*
+	Trainings-Routen für erfassen, lesen, ändern, löschen und Statistik.
+	Alle Endpunkte sind authentifiziert.
+*/
+
 const express = require('express');
 const router = express.Router();
 const trainingController = require('../controllers/trainingController');

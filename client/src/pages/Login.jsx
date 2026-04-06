@@ -1,17 +1,11 @@
 /*
-  TODO: Login Page
-  
-  Design-Vorlage: "Login-Formular" (siehe HTML Mockup).
-  Funktionen:
-  - Eingabefelder für E-Mail und Passwort.
-  - "Login" Button -> ruft login() aus AuthContext auf.
-  - Fehlermeldungen anzeigen (z.B. "Falsches Passwort").
-  - Redirect nach erfolgreichem Login (Dashboard).
+  Login-Seite für bestehende Nutzer.
+  Übergibt Zugangsdaten an den AuthContext und zeigt Rückmeldungen an.
 */
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/useAuth';
 import './Login.css'; 
 
 export default function Login() {
@@ -21,6 +15,8 @@ export default function Login() {
   
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const infoMessage = location.state?.message || '';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +25,7 @@ export default function Login() {
     const result = await login(email, password);
     
     if (result.success) {
-      navigate('/'); // Nach Login zum Dashboard
+      navigate('/'); // Nach erfolgreichem Login direkt ins Dashboard
     } else {
       setError(result.message);
     }
@@ -39,6 +35,7 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <h2>FeelsLike Login</h2>
+        {infoMessage && <div className="success-message">{infoMessage}</div>}
         {error && <div className="error-message">{error}</div>}
         
         <form onSubmit={handleSubmit}>
@@ -65,6 +62,10 @@ export default function Login() {
           </div>
 
           <button type="submit" className="login-btn">Einloggen</button>
+
+          <div className="login-meta-link">
+            <Link to="/passwort-vergessen">Passwort vergessen?</Link>
+          </div>
         </form>
       </div>
     </div>

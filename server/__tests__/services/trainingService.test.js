@@ -1,22 +1,10 @@
 /*
-  Unit Tests – TrainingService (trainingService.js)
-
-  Testfall-Mapping (gemäß Software Verification Plan):
-  - TC-03 (analog): Unit Tests für Geschäftslogik-Funktionen
-  - Äquivalenzklassentests für Validierung
-
-  Testet die Funktionen der Kontrollklasse TrainingsVerwaltung:
-    - validateTrainingsDaten()
-    - trainingErfassen()
-    - alleTrainings()
-    - trainingAendern()
-    - trainingLoeschen()
-
-  Das Sequelize-Model "Trainingseinheit" wird gemockt,
-  damit die Tests isoliert (ohne DB) laufen → echte Unit Tests.
+  Tests für trainingService.
+  Deckt Validierung, CRUD, Berechtigungen und Statistik ab.
+  Das Trainingseinheit-Model ist vollständig gemockt.
 */
 
-// --- Mock des Sequelize-Models (vor dem require!) ---
+// Model-Mock vor dem Service-Import initialisieren
 const mockCreate = jest.fn();
 const mockFindAll = jest.fn();
 const mockFindByPk = jest.fn();
@@ -33,10 +21,11 @@ const {
   alleTrainings,
   trainingAendern,
   trainingLoeschen,
+  trainingStatistik,
   ERLAUBTE_SPORTARTEN,
 } = require('../../src/services/trainingService');
 
-// --- Hilfsdaten ---
+// Standarddaten für valide Eingaben
 const gueltigeDaten = {
   datum: '2026-03-01',
   sportart: 'Laufen',
@@ -46,17 +35,13 @@ const gueltigeDaten = {
   note: 'Gutes Training',
 };
 
-// Reset mocks vor jedem Test
+// Mocks zwischen Tests zurücksetzen
 beforeEach(() => {
   jest.clearAllMocks();
 });
 
-// ============================================================
-// 1. VALIDIERUNG – validateTrainingsDaten()
-// ============================================================
+// Validierung
 describe('validateTrainingsDaten', () => {
-
-  // --- Äquivalenzklasse: Gültige Eingaben ---
   describe('Gültige Eingaben (Normalfall)', () => {
     test('akzeptiert vollständige, gültige Daten', () => {
       const result = validateTrainingsDaten(gueltigeDaten);
@@ -102,7 +87,6 @@ describe('validateTrainingsDaten', () => {
     });
   });
 
-  // --- Äquivalenzklasse: Pflichtfelder fehlen ---
   describe('Pflichtfelder fehlen', () => {
     test('lehnt ab wenn datum fehlt', () => {
       const daten = { ...gueltigeDaten, datum: undefined };
@@ -139,7 +123,6 @@ describe('validateTrainingsDaten', () => {
     });
   });
 
-  // --- Äquivalenzklasse: Ungültige Werte ---
   describe('Ungültige Werte (Grenzfälle)', () => {
     test('lehnt ungültige Sportart ab', () => {
       const daten = { ...gueltigeDaten, sportart: 'Tanzen' };
@@ -188,9 +171,7 @@ describe('validateTrainingsDaten', () => {
   });
 });
 
-// ============================================================
-// 2. trainingErfassen()
-// ============================================================
+// Erfassen
 describe('trainingErfassen', () => {
   test('erstellt Training mit gültigen Daten', async () => {
     const mockTraining = { id: 1, ...gueltigeDaten, athletId: 42 };
@@ -215,7 +196,7 @@ describe('trainingErfassen', () => {
   test('wirft Fehler 400 bei ungültigen Daten', async () => {
     try {
       await trainingErfassen(42, {});
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(400);
       expect(error.message).toBeTruthy();
@@ -239,9 +220,7 @@ describe('trainingErfassen', () => {
   });
 });
 
-// ============================================================
-// 3. alleTrainings()
-// ============================================================
+// Liste
 describe('alleTrainings', () => {
   test('lädt alle Trainings des Athleten', async () => {
     const mockList = [
@@ -270,9 +249,7 @@ describe('alleTrainings', () => {
   });
 });
 
-// ============================================================
-// 4. trainingAendern()
-// ============================================================
+// Ändern
 describe('trainingAendern', () => {
   test('aktualisiert Training mit gültigen Daten', async () => {
     const mockTraining = {
@@ -308,7 +285,7 @@ describe('trainingAendern', () => {
 
     try {
       await trainingAendern(999, 42, gueltigeDaten);
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(404);
       expect(error.message).toContain('nicht gefunden');
@@ -318,13 +295,13 @@ describe('trainingAendern', () => {
   test('wirft 403 wenn Training einem anderen Athleten gehört', async () => {
     const mockTraining = {
       id: 1,
-      athletId: 99, // gehört Athlet 99, aber Athlet 42 will ändern
+      athletId: 99,
     };
     mockFindByPk.mockResolvedValue(mockTraining);
 
     try {
       await trainingAendern(1, 42, gueltigeDaten);
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(403);
       expect(error.message).toContain('Keine Berechtigung');
@@ -340,16 +317,14 @@ describe('trainingAendern', () => {
 
     try {
       await trainingAendern(1, 42, { sportart: 'Tanzen' });
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(400);
     }
   });
 });
 
-// ============================================================
-// 5. trainingLoeschen()
-// ============================================================
+// Löschen
 describe('trainingLoeschen', () => {
   test('löscht Training erfolgreich', async () => {
     const mockTraining = {
@@ -370,7 +345,7 @@ describe('trainingLoeschen', () => {
 
     try {
       await trainingLoeschen(999, 42);
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(404);
     }
@@ -379,16 +354,72 @@ describe('trainingLoeschen', () => {
   test('wirft 403 wenn Training einem anderen Athleten gehört', async () => {
     const mockTraining = {
       id: 1,
-      athletId: 99, // gehört Athlet 99
+      athletId: 99,
     };
     mockFindByPk.mockResolvedValue(mockTraining);
 
     try {
       await trainingLoeschen(1, 42);
-      fail('Sollte einen Fehler werfen');
+      throw new Error('Sollte einen Fehler werfen');
     } catch (error) {
       expect(error.status).toBe(403);
       expect(error.message).toContain('Keine Berechtigung');
     }
+  });
+});
+
+// Statistik
+describe('trainingStatistik', () => {
+  test('gibt Nullwerte zurueck wenn keine Trainings vorhanden sind', async () => {
+    mockFindAll.mockResolvedValue([]);
+
+    const result = await trainingStatistik(42);
+
+    expect(result).toEqual({
+      gesamtDistanz: 0,
+      anzahlTrainings: 0,
+      gesamtDauer: 0,
+      durchschnittFeelsLike: 0,
+    });
+  });
+
+  test('berechnet Summen und rundet Distanz sowie Durchschnitt korrekt', async () => {
+    mockFindAll.mockResolvedValue([
+      { distanz: '10.04', dauer: '60', feelsLikeScore: '7' },
+      { distanz: '5.01', dauer: '30', feelsLikeScore: '8' },
+      { distanz: null, dauer: 15, feelsLikeScore: 6 },
+    ]);
+
+    const result = await trainingStatistik(42);
+
+    expect(result).toEqual({
+      gesamtDistanz: 15.1,
+      anzahlTrainings: 3,
+      gesamtDauer: 105,
+      durchschnittFeelsLike: 7,
+    });
+  });
+
+  test('uebergibt Filter aus buildWhereClause an findAll', async () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-04-03T12:00:00'));
+    mockFindAll.mockResolvedValue([]);
+
+    await trainingStatistik(42, { sportart: 'Laufen', zeitraum: 'woche' });
+
+    expect(mockFindAll).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        athletId: 42,
+        sportart: 'Laufen',
+        datum: expect.any(Object),
+      }),
+    });
+
+    const whereArg = mockFindAll.mock.calls[0][0].where;
+    const opSymbols = Object.getOwnPropertySymbols(whereArg.datum);
+    expect(opSymbols).toHaveLength(1);
+    expect(whereArg.datum[opSymbols[0]]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+
+    jest.useRealTimers();
   });
 });
