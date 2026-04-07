@@ -31,6 +31,8 @@ export default function TrainingForm() {
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(true);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [exportSportart, setExportSportart] = useState('');
+  const [exporting, setExporting] = useState(false);
 
   // Beim Start direkt die vorhandenen Trainings laden
   useEffect(() => {
@@ -154,6 +156,42 @@ export default function TrainingForm() {
     }
   };
 
+  // Trainingsdaten als CSV herunterladen (optional nach Sportart gefiltert)
+  const handleExport = async () => {
+    setServerError('');
+    setSuccessMsg('');
+    setExporting(true);
+
+    try {
+      const response = await api.get('/training/export', {
+        params: exportSportart ? { sportart: exportSportart } : {},
+        responseType: 'blob',
+      });
+
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'] || 'text/csv',
+      });
+
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = 'trainings.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+
+      setSuccessMsg('CSV-Export wurde gestartet.');
+    } catch (err) {
+      const serverMessage = typeof err.response?.data?.message === 'string'
+        ? err.response.data.message
+        : '';
+      setServerError(serverMessage || 'CSV-Export fehlgeschlagen.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   // Formularzustand zurücksetzen
   const resetForm = () => {
     setFormData({ ...LEERES_FORMULAR });
@@ -187,14 +225,41 @@ export default function TrainingForm() {
           <h1>Meine Trainingseinheiten</h1>
           <p className="training-subtitle">Verwalte deine Trainings – erfassen, bearbeiten und löschen.</p>
         </div>
-        {!showForm && (
-          <button
-            className="btn-primary"
-            onClick={() => { setShowForm(true); setEditId(null); setFormData({ ...LEERES_FORMULAR }); }}
-          >
-            + Training erfassen
-          </button>
-        )}
+        <div className="training-header-actions">
+          {trainings.length > 0 && (
+            <div className="export-controls">
+              <label htmlFor="exportSportart">Export-Filter</label>
+              <select
+                id="exportSportart"
+                value={exportSportart}
+                onChange={(e) => setExportSportart(e.target.value)}
+                disabled={exporting}
+              >
+                <option value="">Alle Sportarten</option>
+                {SPORTARTEN.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="btn-secondary export-btn"
+                onClick={handleExport}
+                disabled={exporting}
+              >
+                {exporting ? 'Export läuft...' : '📥 Als CSV exportieren'}
+              </button>
+            </div>
+          )}
+
+          {!showForm && (
+            <button
+              className="btn-primary"
+              onClick={() => { setShowForm(true); setEditId(null); setFormData({ ...LEERES_FORMULAR }); }}
+            >
+              + Training erfassen
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Erfolgsmeldung */}

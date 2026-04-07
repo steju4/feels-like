@@ -12,6 +12,8 @@ router.use(authMiddleware);
 
 // WICHTIG: /stats vor /:id, damit "stats" nicht als ID interpretiert wird.
 router.get('/stats', trainingController.getStats);
+// WICHTIG: /export ebenfalls vor /:id, damit "export" nicht als ID interpretiert wird.
+router.get('/export', trainingController.exportiereTrainings);
 
 router.get('/', trainingController.alleTrainings);
 router.post('/', trainingController.trainingErfassen);
