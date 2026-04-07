@@ -11,12 +11,55 @@ const { Op } = require('sequelize');
 const Trainingseinheit = require('../models/Trainingseinheit');
 
 const ERLAUBTE_SPORTARTEN = ['Laufen', 'Radfahren', 'Schwimmen'];
+const CSV_SPALTEN = ['Datum', 'Sportart', 'Dauer (min)', 'Distanz (km)', 'FeelsLike-Score', 'Notiz'];
 
 function formatDateOnlyLocal(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+function formatCsvDatum(datum) {
+  if (!datum) {
+    return '';
+  }
+
+  if (typeof datum === 'string') {
+    return datum;
+  }
+
+  if (datum instanceof Date && !Number.isNaN(datum.getTime())) {
+    return formatDateOnlyLocal(datum);
+  }
+
+  return String(datum);
+}
+
+function escapeCsvWert(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  const text = String(value).replace(/"/g, '""');
+  if (/[",\n\r]/.test(text)) {
+    return `"${text}"`;
+  }
+
+  return text;
+}
+
+function trainingZuCsvZeile(training) {
+  const werte = [
+    formatCsvDatum(training.datum),
+    training.sportart || '',
+    training.dauer ?? '',
+    training.distanz ?? '',
+    training.feelsLikeScore ?? '',
+    training.note || '',
+  ];
+
+  return werte.map(escapeCsvWert).join(',');
 }
 
 function createHttpError(status, message) {
@@ -202,6 +245,22 @@ async function trainingStatistik(athletId, filter = {}) {
   };
 }
 
+async function exportiereDaten(athletId, filter = {}) {
+  const where = buildWhereClause(athletId, filter);
+
+  const trainings = await Trainingseinheit.findAll({
+    where,
+    order: [['datum', 'DESC']],
+  });
+
+  const csvZeilen = [CSV_SPALTEN.join(',')];
+  trainings.forEach((training) => {
+    csvZeilen.push(trainingZuCsvZeile(training));
+  });
+
+  return csvZeilen.join('\n');
+}
+
 module.exports = {
   ERLAUBTE_SPORTARTEN,
   validateTrainingsDaten,
@@ -211,4 +270,5 @@ module.exports = {
   trainingAendern,
   trainingLoeschen,
   trainingStatistik,
+  exportiereDaten,
 };

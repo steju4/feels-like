@@ -72,12 +72,27 @@ async function getStats(req, res) {
   }
 }
 
+async function exportiereTrainings(req, res) {
+  try {
+    const csvInhalt = await trainingService.exportiereDaten(req.user.id, {
+      sportart: req.query.sportart,
+    });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="trainings.csv"');
+    return res.send(csvInhalt);
+  } catch (error) {
+    return sendError(res, error);
+  }
+}
+
 module.exports = {
   trainingErfassen,
   alleTrainings,
   trainingAendern,
   trainingLoeschen,
   getStats,
+  exportiereTrainings,
   // Alias-Namen für Dashboard-Routenkompatibilität
   createTraining: trainingErfassen,
   getAlleTrainings: alleTrainings,
