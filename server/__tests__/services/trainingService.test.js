@@ -22,6 +22,7 @@ const {
   trainingAendern,
   trainingLoeschen,
   trainingStatistik,
+  exportiereDaten,
   ERLAUBTE_SPORTARTEN,
 } = require('../../src/services/trainingService');
 
@@ -421,5 +422,61 @@ describe('trainingStatistik', () => {
     expect(whereArg.datum[opSymbols[0]]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
     jest.useRealTimers();
+  });
+});
+
+// CSV-Export
+describe('exportiereDaten', () => {
+  test('liefert CSV mit Header und Trainingsdaten, optional nach Sportart gefiltert', async () => {
+    mockFindAll.mockResolvedValue([
+      {
+        datum: '2026-04-01',
+        sportart: 'Laufen',
+        dauer: 45,
+        distanz: 10.5,
+        feelsLikeScore: 8,
+        note: 'Langer Lauf',
+      },
+    ]);
+
+    const csv = await exportiereDaten(42, { sportart: 'Laufen' });
+
+    expect(mockFindAll).toHaveBeenCalledWith({
+      where: {
+        athletId: 42,
+        sportart: 'Laufen',
+      },
+      order: [['datum', 'DESC']],
+    });
+
+    const zeilen = csv.split('\n');
+    expect(zeilen[0]).toBe('Datum,Sportart,Dauer (min),Distanz (km),FeelsLike-Score,Notiz');
+    expect(zeilen[1]).toBe('2026-04-01,Laufen,45,10.5,8,Langer Lauf');
+  });
+
+  test('escaped Sonderzeichen in CSV-Feldern korrekt', async () => {
+    mockFindAll.mockResolvedValue([
+      {
+        datum: '2026-04-02',
+        sportart: 'Radfahren',
+        dauer: 90,
+        distanz: null,
+        feelsLikeScore: 7,
+        note: 'Intervall, "hart"\nmit Endspurt',
+      },
+    ]);
+
+    const csv = await exportiereDaten(42);
+
+    expect(csv).toContain('2026-04-02,Radfahren,90,,7,');
+    expect(csv).toContain('"Intervall, ""hart""\nmit Endspurt"');
+  });
+
+  test('liefert nur Header wenn keine Trainings vorhanden sind', async () => {
+    mockFindAll.mockResolvedValue([]);
+
+    const csv = await exportiereDaten(42);
+
+    expect(csv).toBe('Datum,Sportart,Dauer (min),Distanz (km),FeelsLike-Score,Notiz');
   });
 });
