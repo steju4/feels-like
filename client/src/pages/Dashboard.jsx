@@ -1,9 +1,21 @@
 /*
-  Dashboard mit Trainings-Stats und Aktivitätsliste.
-  Filter gelten gleichzeitig für Kennzahlen und Tabellenansicht.
+  Dashboard mit Live-Statistik und visualisierten Diagrammen
+  Filter gelten für Kennzahlen, Diagramme und Aktivitätsliste
 */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  LineChart,
+  Line,
+  Legend,
+} from 'recharts';
 import { useAuth } from '../context/useAuth';
 import api from '../api/axios';
 import './Dashboard.css';
@@ -19,10 +31,18 @@ function formatDauer(minuten) {
 
 function formatDatum(dateStr) {
   if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString('de-DE', {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('de-DE', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
+  });
+}
+
+function formatDatumKurz(dateStr) {
+  if (!dateStr) return '';
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
   });
 }
 
@@ -63,7 +83,7 @@ export default function Dashboard() {
   const { user } = useAuth();
 
   const [stats, setStats] = useState(null);
-  const [trainings, setTrainings] = useState([]);
+  const [recentTrainings, setRecentTrainings] = useState([]);
   const [loadingStats, setLoadingStats] = useState(true);
   const [loadingList, setLoadingList] = useState(true);
   const [fetchError, setFetchError] = useState('');
@@ -72,7 +92,7 @@ export default function Dashboard() {
   const [filterZeitraum, setFilterZeitraum] = useState('');
 
   const fetchData = useCallback(async () => {
-    // Gleiche Filterparameter für beide Endpunkte
+    // nur aktive Filter an API übergeben
     const params = {};
     if (filterSportart) params.sportart = filterSportart;
     if (filterZeitraum) params.zeitraum = filterZeitraum;
@@ -82,13 +102,17 @@ export default function Dashboard() {
     setLoadingList(true);
 
     try {
-      // Parallel laden, damit das Dashboard schneller reagiert
+      // Stats + Liste parallel laden --> kürzere Wartezeit
       const [statsRes, listRes] = await Promise.all([
-        api.get('/training/stats', { params }),
+        api.get('/ranking/statistik', { params }),
         api.get('/training', { params }),
       ]);
+
+      // Dashboard zeigt nur die letzten 5 Einträge
+      const letzteAktivitaeten = Array.isArray(listRes.data) ? listRes.data.slice(0, 5) : [];
+
       setStats(statsRes.data);
-      setTrainings(listRes.data);
+      setRecentTrainings(letzteAktivitaeten);
     } catch (err) {
       console.error('Dashboard Fehler:', err);
       setFetchError('Dashboard-Daten konnten nicht geladen werden. Bitte Seite neu laden.');
@@ -101,6 +125,28 @@ export default function Dashboard() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const sportHaeufigkeitData = useMemo(() => {
+    if (!stats?.haeufigkeitProSportart) return [];
+    return stats.haeufigkeitProSportart.map((eintrag) => ({
+      sportart: eintrag.sportart,
+      anzahl: Number(eintrag.count) || 0,
+    }));
+  }, [stats]);
+
+  const feelsLikeChartData = useMemo(() => {
+    if (!stats?.feelsLikeVerlauf) return [];
+    return stats.feelsLikeVerlauf.map((eintrag, index) => ({
+      datum: eintrag.datum,
+      // fallback falls ein Datum mal fehlt
+      datumKurz: formatDatumKurz(eintrag.datum) || `T${index + 1}`,
+      score: Number(eintrag.feelsLikeScore) || 0,
+      sportart: eintrag.sportart || '',
+    }));
+  }, [stats]);
+
+  const hatTrainings = (stats?.anzahlTrainings || 0) > 0;
+  const zeitraumLabel = filterZeitraum ? `Letzte ${filterZeitraum} Tage` : 'Gesamter Zeitraum';
 
   return (
     <section className="dashboard-shell">
@@ -115,7 +161,7 @@ export default function Dashboard() {
       <section className="dashboard-filterbar">
         <label>
           Sportart
-          <select value={filterSportart} onChange={e => setFilterSportart(e.target.value)}>
+          <select value={filterSportart} onChange={(e) => setFilterSportart(e.target.value)}>
             <option value="">Alle</option>
             <option value="Laufen">Laufen</option>
             <option value="Radfahren">Radfahren</option>
@@ -125,20 +171,23 @@ export default function Dashboard() {
 
         <label>
           Zeitraum
-          <select value={filterZeitraum} onChange={e => setFilterZeitraum(e.target.value)}>
+          <select value={filterZeitraum} onChange={(e) => setFilterZeitraum(e.target.value)}>
             <option value="">Gesamt</option>
-            <option value="woche">Letzte 7 Tage</option>
-            <option value="monat">Letzter Monat</option>
-            <option value="quartal">Letztes Quartal</option>
-            <option value="jahr">Letztes Jahr</option>
+            <option value="30">Letzte 30 Tage</option>
+            <option value="90">Letzte 90 Tage</option>
+            <option value="365">Letzte 365 Tage</option>
           </select>
         </label>
 
         {(filterSportart || filterZeitraum) && (
-          <button type="button" className="dashboard-clear" onClick={() => {
-            setFilterSportart('');
-            setFilterZeitraum('');
-          }}>
+          <button
+            type="button"
+            className="dashboard-clear"
+            onClick={() => {
+              setFilterSportart('');
+              setFilterZeitraum('');
+            }}
+          >
             Filter zurücksetzen
           </button>
         )}
@@ -157,7 +206,7 @@ export default function Dashboard() {
         <StatCard
           title="Einheiten"
           value={stats ? stats.anzahlTrainings : '-'}
-          helper="im Filter"
+          helper={zeitraumLabel}
           tone="green"
           loading={loadingStats}
         />
@@ -177,22 +226,102 @@ export default function Dashboard() {
         />
       </section>
 
+      <section className="dashboard-visuals">
+        <article className="dashboard-visual-card">
+          <div className="dashboard-visual-head">
+            <h2>Trainings-Häufigkeit pro Sportart</h2>
+            <span>{zeitraumLabel}</span>
+          </div>
+
+          {loadingStats ? (
+            <div className="chart-loading">
+              <span className="dash-spinner" aria-hidden="true" />
+              <p>Lade Diagramm ...</p>
+            </div>
+          ) : !hatTrainings ? (
+            <div className="chart-empty">Keine Trainingsdaten für den aktuellen Filter.</div>
+          ) : (
+            <div className="chart-wrap">
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={sportHaeufigkeitData} margin={{ top: 8, right: 14, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#dbe3d7" />
+                  <XAxis dataKey="sportart" axisLine={false} tickLine={false} tick={{ fill: '#4b5f51', fontSize: 12 }} />
+                  <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fill: '#4b5f51', fontSize: 12 }} />
+                  <Tooltip formatter={(value) => [`${value}`, 'Trainings']} />
+                  <Bar dataKey="anzahl" name="Trainings" fill="#2c6e49" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </article>
+
+        <article className="dashboard-visual-card">
+          <div className="dashboard-visual-head">
+            <h2>FeelsLike-Score Verlauf</h2>
+            <span>{zeitraumLabel}</span>
+          </div>
+
+          {loadingStats ? (
+            <div className="chart-loading">
+              <span className="dash-spinner" aria-hidden="true" />
+              <p>Lade Diagramm ...</p>
+            </div>
+          ) : !hatTrainings ? (
+            <div className="chart-empty">Noch keine Trainings vorhanden.</div>
+          ) : (
+            <div className="chart-wrap">
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={feelsLikeChartData} margin={{ top: 8, right: 14, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#dbe3d7" />
+                  <XAxis dataKey="datumKurz" axisLine={false} tickLine={false} tick={{ fill: '#4b5f51', fontSize: 12 }} />
+                  <YAxis
+                    domain={[1, 10]}
+                    allowDecimals={false}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#4b5f51', fontSize: 12 }}
+                  />
+                  <Tooltip
+                    // Tooltip-Datum aus Rohwert statt aus Kurzlabel
+                    labelFormatter={(_, payload) => {
+                      const rawDate = payload?.[0]?.payload?.datum;
+                      return rawDate ? formatDatum(rawDate) : '';
+                    }}
+                    formatter={(value) => [`${value} / 10`, 'FeelsLikeScore']}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="score"
+                    name="FeelsLikeScore"
+                    stroke="#7a2f5c"
+                    strokeWidth={3}
+                    dot={{ r: 3 }}
+                    activeDot={{ r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </article>
+      </section>
+
       <section className="dashboard-activities">
         <div className="dashboard-activities-head">
           <h2>Letzte Aktivitäten</h2>
-          {!loadingList && <span>{trainings.length} Einträge</span>}
+          {!loadingList && <span>{recentTrainings.length} Einträge</span>}
         </div>
 
         {loadingList ? (
           <div className="activity-loading">Lade Aktivitäten ...</div>
-        ) : trainings.length === 0 ? (
+        ) : recentTrainings.length === 0 ? (
           <div className="activity-empty">
             <p>Keine Trainings im aktuellen Filter.</p>
             <span>Wähle einen anderen Zeitraum oder eine andere Sportart.</span>
           </div>
         ) : (
           <ul className="activity-list">
-            {trainings.map(training => (
+            {recentTrainings.map((training) => (
               <ActivityItem key={training.id} training={training} />
             ))}
           </ul>

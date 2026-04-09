@@ -4,7 +4,7 @@
   Das Trainingseinheit-Model ist vollständig gemockt.
 */
 
-// Model-Mock vor dem Service-Import initialisieren
+// Model-Mock vor Service-Import initialisieren
 const mockCreate = jest.fn();
 const mockFindAll = jest.fn();
 const mockFindByPk = jest.fn();
@@ -402,6 +402,7 @@ describe('trainingStatistik', () => {
   });
 
   test('uebergibt Filter aus buildWhereClause an findAll', async () => {
+    // deterministische Datumsberechnung für Woche
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-04-03T12:00:00'));
     mockFindAll.mockResolvedValue([]);
@@ -417,6 +418,7 @@ describe('trainingStatistik', () => {
     });
 
     const whereArg = mockFindAll.mock.calls[0][0].where;
+    // Sequelize Operator-Symbol dynamisch prüfen
     const opSymbols = Object.getOwnPropertySymbols(whereArg.datum);
     expect(opSymbols).toHaveLength(1);
     expect(whereArg.datum[opSymbols[0]]).toMatch(/^\d{4}-\d{2}-\d{2}$/);

@@ -93,6 +93,35 @@
   color: #8b2f2f;
 }
 
+.ranking-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.ranking-summary-card {
+  border: 1px solid var(--rank-line);
+  border-radius: 12px;
+  background: var(--rank-paper);
+  padding: 12px;
+}
+
+.ranking-summary-label {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--rank-muted);
+  font-weight: 700;
+}
+
+.ranking-summary-value {
+  margin: 6px 0 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--rank-ink);
+}
+
 .ranking-table {
   width: 100%;
   border-collapse: collapse;
@@ -108,6 +137,7 @@
   text-align: left;
   padding: 11px 12px;
   border-bottom: 1px solid #e5ebdf;
+  white-space: nowrap;
 }
 
 .ranking-table th {

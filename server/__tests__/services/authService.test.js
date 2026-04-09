@@ -25,7 +25,7 @@ const {
 } = require('../../src/services/authService');
 
 function createFingerprint(passwortHash) {
-  // Muss der Logik im Service entsprechen
+  // Muss Logik im Service entsprechen
   return crypto.createHash('sha256').update(String(passwortHash || '')).digest('hex').slice(0, 16);
 }
 
@@ -79,6 +79,7 @@ describe('authService - Passwort-Reset', () => {
     expect(args.resetUrl).toContain('/passwort-reset?token=');
 
     const token = decodeURIComponent(args.resetUrl.split('token=')[1]);
+    // Payload prüfen statt nur URL-Format
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     expect(payload.type).toBe('password-reset');
     expect(payload.sub).toBe('42');
@@ -155,6 +156,7 @@ describe('authService - Passwort-Reset', () => {
       passwordConfirm: 'newPassword123',
     });
 
+    // gleicher Token darf nach Passwortwechsel nicht mehr funktionieren
     await expect(passwortResetBestaetigen({
       token,
       password: 'anotherPassword123',

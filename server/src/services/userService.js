@@ -1,6 +1,6 @@
 /*
   Fachlogik für Profilpflege und Athletenverwaltung.
-  Enthält Einladungsflow, Passwortwechsel und Statusregeln.
+  Enthält Einladungsflow, Passwortwechsel und Statusregeln
 */
 
 const crypto = require('crypto');

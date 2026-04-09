@@ -1,6 +1,6 @@
 /*
   Rollenprüfung für geschützte Endpunkte.
-  Erwartet ein bereits gesetztes req.user aus dem authMiddleware.
+  Erwartet bereits gesetztes req.user aus dem authMiddleware.
 */
 
 function requireRole(expectedRole) {

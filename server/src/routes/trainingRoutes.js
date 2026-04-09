@@ -10,9 +10,9 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.use(authMiddleware);
 
-// WICHTIG: /stats vor /:id, damit "stats" nicht als ID interpretiert wird.
+// WICHTIG: /stats vor /:id, damit stats nicht als ID interpretiert wird
 router.get('/stats', trainingController.getStats);
-// WICHTIG: /export ebenfalls vor /:id, damit "export" nicht als ID interpretiert wird.
+// WICHTIG: /export vor /:id, damit export nicht als ID interpretiert wird
 router.get('/export', trainingController.exportiereTrainings);
 
 router.get('/', trainingController.alleTrainings);

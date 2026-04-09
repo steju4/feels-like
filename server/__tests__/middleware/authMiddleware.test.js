@@ -16,7 +16,7 @@ jest.mock('../../src/utils/jwtSecret', () => ({
 }));
 
 function createResponseMock() {
-  // Express-Response-Mock inkl. clearCookie für Fehlerpfade
+  // Express-Response-Mock mit clearCookie für Fehlerpfade
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);

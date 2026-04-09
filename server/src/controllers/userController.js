@@ -48,7 +48,7 @@ exports.profilAktualisieren = async (req, res) => {
 
 exports.eigenesPasswortAendern = async (req, res) => {
   try {
-    // Passwortfelder explizit mappen, damit der Service sauber validieren kann
+    // Passwortfelder mappen, damit Service sauber validieren kann
     const result = await userService.aendereEigenesPasswort({
       userId: req.user.id,
       currentPassword: req.body?.currentPassword,

@@ -13,6 +13,7 @@ import AdminUsers from './pages/AdminUsers';
 import Profile from './pages/Profile';
 import './App.css';
 
+// Zentrale Routenstruktur der App
 function App() {
   return (
     <AuthProvider>
@@ -26,10 +27,18 @@ function App() {
 
           {/* Geschützter Bereich */}
           <Route element={<ProtectedRoute />}>
+            {/* Layout bleibt gleich, nur Outlet-Seite wechselt */}
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} /> 
               <Route path="training" element={<TrainingForm />} />
-              <Route path="ranking" element={<Ranking />} />
+              <Route
+                path="ranking"
+                element={(
+                  <ProtectedRoute requiredRole="trainer">
+                    <Ranking />
+                  </ProtectedRoute>
+                )}
+              />
               <Route path="profil" element={<Profile />} />
               <Route
                 path="admin"
