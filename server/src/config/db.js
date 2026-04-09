@@ -7,7 +7,7 @@ const { Sequelize } = require('sequelize');
 const path = require('path');
 
 // SQLite Konfiguration
-// Datenbank wird als Datei im Ordner 'server' gespeichert
+// Datenbank wird als Datei im Ordner server gespeichert
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: path.join(__dirname, '../../database.sqlite'), 

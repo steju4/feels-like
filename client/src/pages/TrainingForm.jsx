@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import './TrainingForm.css';
 
-// Erlaubte Sportarten, bewusst gleich wie im Backend
+// Erlaubte Sportarten gleich wie im Backend
 const SPORTARTEN = ['Laufen', 'Radfahren', 'Schwimmen'];
 
 // Ausgangszustand fürs Formular
@@ -34,7 +34,7 @@ export default function TrainingForm() {
   const [exportSportart, setExportSportart] = useState('');
   const [exporting, setExporting] = useState(false);
 
-  // Beim Start direkt die vorhandenen Trainings laden
+  // Beim Start vorhandene Trainings laden
   useEffect(() => {
     ladeTrainings();
   }, []);
@@ -111,7 +111,7 @@ export default function TrainingForm() {
         setSuccessMsg('Trainingseinheit erfolgreich erfasst.');
       }
 
-      // Danach zurücksetzen und Tabelle aktualisieren
+      // Dann zurücksetzen und Tabelle aktualisieren
       resetForm();
       ladeTrainings();
     } catch (err) {
@@ -156,7 +156,7 @@ export default function TrainingForm() {
     }
   };
 
-  // Trainingsdaten als CSV herunterladen (optional nach Sportart gefiltert)
+  // Trainingsdaten als CSV herunterladen
   const handleExport = async () => {
     setServerError('');
     setSuccessMsg('');
@@ -201,7 +201,7 @@ export default function TrainingForm() {
     setServerError('');
   };
 
-  // Kleine UI-Helfer
+  // UI-Icons für Sportarten
   const sportartIcon = (sportart) => {
     switch (sportart) {
       case 'Laufen': return '🏃';

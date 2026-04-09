@@ -1,6 +1,6 @@
 /*
   Route-Guard für geschützte Bereiche.
-  Optional mit Rollenprüfung, z. B. nur für Trainer.
+  Optional mit Rollenprüfung z.B. nur für Trainer.
 */
 
 import React from 'react';
@@ -23,6 +23,7 @@ const ProtectedRoute = ({ requiredRole, children }) => {
     return <Navigate to="/" replace />;
   }
 
+  // entweder explizites children-Element oder verschachtelte Route
   return children || <Outlet />;
 };
 

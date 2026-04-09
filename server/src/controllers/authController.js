@@ -1,6 +1,6 @@
 /*
   Controller für Login, Logout, Einladung-Registrierung und Passwort-Reset.
-  Die Fachlogik liegt im authService, hier passiert vor allem Request/Response-Mapping.
+  Fachlogik liegt im authService, hier vor allem Request/Response-Mapping.
 */
 
 const authService = require('../services/authService');
@@ -44,7 +44,7 @@ exports.anmelden = async (req, res) => {
     // Session-Token nur im HttpOnly-Cookie setzen
     res.cookie('token', token, getCookieOptions());
 
-    // Token absichtlich nicht im JSON-Body zurückgeben
+    // Token nicht im JSON-Body zurückgeben
     res.json({
       message: 'Erfolgreich eingeloggt',
       user,

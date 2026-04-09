@@ -1,7 +1,5 @@
 /*
   Training Service (TrainingsVerwaltung – Geschäftslogik)
-
-  Schicht 2 gemäß SDD:
   - Validierung und Autorisierung für CRUD
   - Filterlogik für Dashboard-Ansicht
   - Statistikberechnung für Dashboard-Kennzahlen
@@ -41,8 +39,10 @@ function escapeCsvWert(value) {
     return '';
   }
 
+  // CSV-Regel: Quotes doppeln
   const text = String(value).replace(/"/g, '""');
   if (/[",\n\r]/.test(text)) {
+    // bei Komma/Zeilenumbruch in Quotes packen
     return `"${text}"`;
   }
 
@@ -69,6 +69,7 @@ function createHttpError(status, message) {
 }
 
 function validateTrainingsDaten(daten) {
+  // alle Fehler sammeln, nicht direkt ersten abbrechen
   const errors = [];
 
   if (!daten.datum) {
@@ -105,11 +106,11 @@ function validateTrainingsDaten(daten) {
   return { valid: errors.length === 0, errors };
 }
 
-// Zeitraum-Filter in ein Startdatum umrechnen
+// Zeitraum-Filter in Startdatum umrechnen
 function getVonDatum(zeitraum) {
   if (!zeitraum) return null;
 
-  // Neue Filterwerte: direkte Tagesangabe (z. B. 30/90/365)
+  // Filterwerte: direkte Tagesangabe (z. B. 30/90/365)
   const numerischeTage = parseInt(zeitraum, 10);
   if (!Number.isNaN(numerischeTage) && numerischeTage > 0) {
     const numerischesDatum = new Date();
@@ -120,6 +121,7 @@ function getVonDatum(zeitraum) {
   const now = new Date();
   const vonDatum = new Date(now);
 
+  // Vorherige Filtermöglichkeiten weiterhin unterstützen ("woche", "monat", "quartal", "jahr")
   switch (zeitraum) {
     case 'woche':
       vonDatum.setDate(now.getDate() - 7);

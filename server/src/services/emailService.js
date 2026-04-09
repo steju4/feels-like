@@ -3,7 +3,7 @@
 
   Versandmodi:
   - smtp: echte Zustellung über konfigurierten SMTP-Server
-  - ethereal: echte Test-Mail über Ethereal (inkl. Preview-Link)
+  - ethereal: echte Test-Mail über Ethereal mit Preview-Link
   - console: lokaler Fallback (nur Konsole)
   - auto: smtp falls konfiguriert, sonst ethereal, sonst console
 */
@@ -24,7 +24,7 @@ let cachedSmtpTransporter = null;
 let cachedEtherealTransporter = null;
 
 function getMailMode() {
-  // Standard: auto (entscheidet dynamisch anhand verfügbarer Konfiguration)
+  // Standard: auto (entscheidet anhand verfügbarer Konfiguration)
   return String(process.env.MAIL_MODE || 'auto').trim().toLowerCase();
 }
 
@@ -116,7 +116,7 @@ async function sendeEinladungsMail({ to, name, registerUrl }) {
     html,
   };
 
-  // Erst SMTP nutzen, wenn explizit gewünscht oder sauber konfiguriert
+  // Erst SMTP nutzen, wenn gewünscht oder konfiguriert
   if (mailMode === 'smtp' || (mailMode === 'auto' && isSmtpConfigured())) {
     const transporter = getSmtpTransporter();
     if (!transporter) {
@@ -192,7 +192,7 @@ async function sendePasswortResetMail({ to, name, resetUrl }) {
     html,
   };
 
-  // Erst SMTP nutzen, wenn explizit gewünscht oder sauber konfiguriert
+  // SMTP nutzen, wenn gewünscht oder konfiguriert
   if (mailMode === 'smtp' || (mailMode === 'auto' && isSmtpConfigured())) {
     const transporter = getSmtpTransporter();
     if (!transporter) {

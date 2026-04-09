@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {
-  // Für dieses Projekt werden Tabellen beim Start synchronisiert
+  // Tabellen beim Start synchronisieren (nur in Entwicklung, nicht in Produktion)
   sequelize.sync().then(() => {
     console.log('✅ Tabellen sind synchronisiert');
     app.listen(PORT, () => {

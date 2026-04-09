@@ -1,6 +1,6 @@
 /*
-  Dashboard mit Live-Statistik und visualisierten Diagrammen.
-  Filter gelten für Kennzahlen, Diagramme und Aktivitätsliste.
+  Dashboard mit Live-Statistik und visualisierten Diagrammen
+  Filter gelten für Kennzahlen, Diagramme und Aktivitätsliste
 */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -92,6 +92,7 @@ export default function Dashboard() {
   const [filterZeitraum, setFilterZeitraum] = useState('');
 
   const fetchData = useCallback(async () => {
+    // nur aktive Filter an API übergeben
     const params = {};
     if (filterSportart) params.sportart = filterSportart;
     if (filterZeitraum) params.zeitraum = filterZeitraum;
@@ -101,11 +102,13 @@ export default function Dashboard() {
     setLoadingList(true);
 
     try {
+      // Stats + Liste parallel laden --> kürzere Wartezeit
       const [statsRes, listRes] = await Promise.all([
         api.get('/ranking/statistik', { params }),
         api.get('/training', { params }),
       ]);
 
+      // Dashboard zeigt nur die letzten 5 Einträge
       const letzteAktivitaeten = Array.isArray(listRes.data) ? listRes.data.slice(0, 5) : [];
 
       setStats(statsRes.data);
@@ -135,6 +138,7 @@ export default function Dashboard() {
     if (!stats?.feelsLikeVerlauf) return [];
     return stats.feelsLikeVerlauf.map((eintrag, index) => ({
       datum: eintrag.datum,
+      // fallback falls ein Datum mal fehlt
       datumKurz: formatDatumKurz(eintrag.datum) || `T${index + 1}`,
       score: Number(eintrag.feelsLikeScore) || 0,
       sportart: eintrag.sportart || '',
@@ -278,6 +282,7 @@ export default function Dashboard() {
                     tick={{ fill: '#4b5f51', fontSize: 12 }}
                   />
                   <Tooltip
+                    // Tooltip-Datum aus Rohwert statt aus Kurzlabel
                     labelFormatter={(_, payload) => {
                       const rawDate = payload?.[0]?.payload?.datum;
                       return rawDate ? formatDatum(rawDate) : '';

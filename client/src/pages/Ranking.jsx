@@ -34,6 +34,7 @@ const Ranking = () => {
   const [zeitraum, setZeitraum] = useState('30');
   const [metrik, setMetrik] = useState('distanz');
 
+  // Label für Karten-/Tabellenköpfe
   const wertLabel = useMemo(() => {
     const m = metriken.find((item) => item.value === metrik);
     return m ? m.label : 'Wert';
@@ -47,6 +48,7 @@ const Ranking = () => {
   };
 
   const statistik = useMemo(() => {
+    // neutrale Defaults für leeren Zustand
     if (!daten.length) {
       return {
         anzahlAthleten: 0,

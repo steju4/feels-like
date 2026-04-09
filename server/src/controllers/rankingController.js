@@ -27,6 +27,7 @@ function parseZeitraumTage(zeitraum) {
   }
 
   switch (zeitraum) {
+    // Legacy-Keywords aus älteren Filtern
     case 'woche':
       return 7;
     case 'monat':
@@ -50,7 +51,7 @@ exports.berechneRanking = async (req, res) => {
     const { sportart = 'alle', zeitraum, metrik = 'distanz' } = req.query;
 
     const where = {};
-    // Sportart nur filtern, wenn nicht explizit "alle"
+    // Sportart nur filtern, wenn nicht explizit "Alle" ausgewählt wurde
     if (sportart && sportart.toLowerCase() !== 'alle') {
       where.sportart = sportart;
     }
@@ -181,6 +182,7 @@ exports.berechneStatistik = async (req, res) => {
     });
 
     const haeufigkeitProSportart = Object.entries(sportartenVerteilung).map(([name, count]) => ({
+      // fürs Frontend direkt als Liste statt Objekt
       sportart: name,
       count,
     }));

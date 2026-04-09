@@ -12,7 +12,7 @@ const Trainingseinheit = sequelize.define('Trainingseinheit', {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  // Sportart (z. B. Laufen, Radfahren, Schwimmen)
+  // Sportart
   sportart: {
     type: DataTypes.STRING,
     allowNull: false,

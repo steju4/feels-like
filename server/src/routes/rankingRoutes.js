@@ -12,7 +12,7 @@ const requireRole = require('../middleware/requireRole');
 
 router.get('/statistik', authMiddleware, rankingController.berechneStatistik);
 
-// Reihenfolge wichtig: erst Auth, dann Rollenprüfung
+// Reihenfolge: erst Auth, dann Rollenprüfung
 router.get('/', authMiddleware, requireRole('trainer'), rankingController.berechneRanking);
 
 module.exports = router;

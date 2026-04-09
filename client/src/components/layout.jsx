@@ -2,12 +2,13 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../context/useAuth';
 import './Layout.css';
 
+// Shell mit Sidebar + Content-Bereich
 const Layout = () => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = (e) => {
-    e.preventDefault(); // Verhindert normales Link-Verhalten
+    e.preventDefault();
     logout();
     navigate('/login');
   };
@@ -20,6 +21,7 @@ const Layout = () => {
         <ul className="nav-links">
           <li><Link to="/">🏠 Dashboard</Link></li>
           <li><Link to="/training">🏃 Mein Training</Link></li>
+          {/* Trainer sehen Analyse/Verwaltung zusätzlich */}
           {user?.role === 'trainer' && <li><Link to="/ranking">🏆 Ranking</Link></li>}
           <li><Link to="/profil">👤 Profil</Link></li>
           {user?.role === 'trainer' && <li><Link to="/admin">👥 Athletenverwaltung</Link></li>}

@@ -1,6 +1,6 @@
 /*
   Liest das JWT-Secret zentral aus der Umgebung.
-  Bricht bewusst hart ab, wenn der Wert fehlt.
+  Bricht hart ab, wenn der Wert fehlt.
 */
 
 function getJwtSecret() {

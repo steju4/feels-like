@@ -1,5 +1,5 @@
 /*
-  Login-Seite für bestehende Nutzer.
+  Login-Seite für bestehende Nutzer
   Übergibt Zugangsdaten an den AuthContext und zeigt Rückmeldungen an.
 */
 
@@ -16,16 +16,18 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  // z.B. Erfolgsmeldung nach Registrierung
   const infoMessage = location.state?.message || '';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
+    // AuthContext kapselt API + Sessionzustand
     const result = await login(email, password);
     
     if (result.success) {
-      navigate('/'); // Nach erfolgreichem Login direkt ins Dashboard
+      navigate('/'); // Nach erfolgreichem Login zum Dashboard
     } else {
       setError(result.message);
     }

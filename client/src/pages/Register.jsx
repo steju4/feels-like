@@ -1,6 +1,6 @@
 /*
   Öffentliche Registrierungsseite für eingeladene Athleten.
-  Liest den Einladungs-Token aus der URL und schließt die Kontoaktivierung ab.
+  Liest Einladungs-Token aus der URL und schließt  Kontoaktivierung ab.
 */
 
 import React, { useMemo, useState } from 'react';
@@ -27,10 +27,12 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // vor jedem Versuch UI-Meldungen resetten
     setError('');
     setSuccess('');
 
     if (!token) {
+      // ohne Invite-Token keine Registrierung
       setError('Der Einladungslink ist ungültig.');
       return;
     }
@@ -56,7 +58,7 @@ export default function Register() {
 
       setSuccess(response.data?.message || 'Registrierung erfolgreich.');
 
-      // Kurzes visuelles Feedback, dann weiter zum Login
+      // Kurzes visuelles Feedback dann zum Login
       setTimeout(() => {
         navigate('/login', {
           replace: true,
@@ -125,6 +127,7 @@ export default function Register() {
           </div>
 
           <button type="submit" className="register-btn" disabled={submitting || !token}>
+            {/* auch im UI absichern, falls Token fehlt */}
             {submitting ? 'Registriere...' : 'Registrierung abschließen'}
           </button>
         </form>

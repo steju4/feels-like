@@ -25,6 +25,7 @@ export default function AdminUsers() {
   const [previewUrl, setPreviewUrl] = useState('');
   const [deliveryMode, setDeliveryMode] = useState('');
 
+  // Zentraler Rollencheck
   const isTrainer = useMemo(() => user?.role === 'trainer', [user]);
   const athletenStats = useMemo(() => {
     const stats = {
@@ -71,6 +72,7 @@ export default function AdminUsers() {
 
   const handleInviteSubmit = async (e) => {
     e.preventDefault();
+    // alte Meldungen vor neuem Submit leeren
     setError('');
     setSuccess('');
     setPreviewUrl('');
@@ -99,6 +101,7 @@ export default function AdminUsers() {
       setInviteName('');
       setInviteEmail('');
       setShowInviteForm(false);
+      // nach Invite Liste frisch vom Server
       await loadAthleten();
     } catch (err) {
       setError(err.response?.data?.message || 'Einladung konnte nicht gesendet werden.');
@@ -115,6 +118,7 @@ export default function AdminUsers() {
 
     try {
       await api.put(`/users/${athlet.id}/status`, { status: neuerStatus });
+      // direkte UI-Reaktion
       setAthleten((prev) => prev.map((item) => (
         item.id === athlet.id
           ? { ...item, status: neuerStatus }

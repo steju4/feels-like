@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const { getJwtSecret } = require('../utils/jwtSecret');
 
 module.exports = (req, res, next) => {
-  // Header priorisieren, damit API-Clients die Auth klar steuern können
+  // Header priorisieren, damit API-Clients die Auth steuern können
   const cookieToken = req.cookies?.token;
   const headerToken = req.headers.authorization?.startsWith('Bearer ')
     ? req.headers.authorization.slice(7)

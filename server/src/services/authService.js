@@ -38,7 +38,7 @@ function buildPasswordResetUrl(token) {
   return `${baseUrl}/passwort-reset?token=${encodeURIComponent(token)}`;
 }
 
-// Fingerabdruck vom aktuellen Passwort-Hash, damit alte Reset-Links ungültig werden
+// Fingerprint vom aktuellen Passwort-Hash, damit alte Reset-Links ungültig werden
 function createPasswordHashFingerprint(passwortHash) {
   return crypto
     .createHash('sha256')
@@ -69,6 +69,7 @@ async function anmelden(email, password) {
   }
 
   const token = jwt.sign(
+    // nur benötigte Claims
     { id: user.id, role: user.role, name: user.name },
     getJwtSecret(),
     { expiresIn: '7d' }
@@ -147,10 +148,11 @@ async function passwortResetAnfordern({ email }) {
     throw createHttpError(400, 'Bitte eine gültige E-Mail-Adresse angeben.');
   }
 
-  // Absichtlich generisch, damit nicht erkennbar ist, ob die E-Mail existiert
+  // generisch damit nicht erkennbar ist ob die E-Mail existiert
   const genericMessage = 'Wenn die E-Mail-Adresse registriert ist, wurde ein Passwort-Reset-Link versendet.';
 
   const user = await Athlet.findOne({ where: { email: normalizedEmail } });
+  // eingeladene Accounts haben noch kein reguläres Passwort
   if (!user || user.status === 'eingeladen') {
     return { message: genericMessage };
   }

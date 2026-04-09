@@ -1,6 +1,6 @@
 /*
   Profilseite für Stammdaten und Passwortänderung.
-  Trennt bewusst Profil-Update und Security-Update in zwei Formulare.
+  Trennt Profil-Update und Security-Update in zwei Formulare.
 */
 
 import React, { useEffect, useState } from 'react';
@@ -59,7 +59,7 @@ export default function Profile() {
       setProfileSuccess(response.data?.message || 'Profil wurde erfolgreich aktualisiert.');
 
       if (refreshUser) {
-        // Header/Navi sollen sofort den aktuellen Namen anzeigen
+        // Header soll sofort den aktuellen Namen anzeigen
         await refreshUser();
       }
     } catch (err) {

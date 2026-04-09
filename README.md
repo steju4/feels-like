@@ -1,123 +1,300 @@
-# Feels Like Organic 🌿 - Trainingsverwaltung
+# Feels Like Organic
 
-Dies ist das Repo für die Webanwendung "Feels Like". 
-Das Projekt besteht aus einem React-Frontend und einem Node.js-Backend.
-
-## 🏗 Architektur & Tech-Stack
-
-Wir folgen einer **3-Schichten-Architektur**:
-1.  **Frontend:** React (Vite) - *Ordner: `/client`*
-2.  **Backend:** Node.js (Express) - *Ordner: `/server`*
-3.  **Datenbank:** SQLite (via Sequelize) - *Lokal als Datei*
-
-> **Hinweis zur Datenbank:** > Wir nutzen für die Entwicklung **SQLite**.
-> Die Datenbank ist einfach eine Datei (`server/database.sqlite`), die beim Start automatisch erstellt wird.
+Trainingsverwaltung mit React-Frontend und Node.js-Backend
 
 ---
 
-## 🚀 Installation & Start (Optimiert)
+## Kurzüberblick
 
-Wir haben Skripte im Hauptordner eingerichtet, damit man nicht ständig ordner wechseln muss.
+| Bereich | Stack |
+|---|---|
+| Frontend | React, Vite |
+| Backend | Node.js, Express |
+| Datenbank | SQLite, Sequelize |
 
-### 1. Repository klonen & Installieren
+## Inhalt
+
+1. [Projekt und Architektur](#projekt-und-architektur)
+2. [Team](#team)
+3. [Voraussetzungen](#voraussetzungen)
+4. [Schnellstart](#schnellstart)
+5. [Setup und Start im Detail](#setup-und-start-im-detail)
+6. [Starten der Anwendung](#starten-der-anwendung)
+7. [Custom NPM Scripts](#custom-npm-scripts)
+8. [Tests und QA](#tests-und-qa)
+9. [Seed-Accounts](#seed-accounts)
+10. [Ordnerstruktur](#ordnerstruktur)
+
+---
+
+## Projekt und Architektur
+
+Das Projekt ist als klassische 3-Schichten-Architektur aufgebaut:
+
+| Schicht | Technologie | Ort |
+|---|---|---|
+| Frontend | React + Vite | client |
+| Backend | Node.js + Express | server |
+| Persistenz | SQLite + Sequelize | server/database.sqlite |
+
+> **Wichtig:**
+> Die lokale Datenbank wird beim Seeding neu erzeugt. Bestehende Daten gehen dabei verloren.
+
+---
+
+## Team
+
+| Name | Rolle/Funktion |
+|---|---|
+| Julian Stengele | Scrum Master, Development Team |
+| Atussa Mehrawari | Product Owner, Development Team |
+| Isabella Schwarz | Developer, Development Team |
+| Sophie Lazarjan | Developer, Development Team |
+| Joey Stöckle | Developer, Development Team |
+
+> **Hinweis:**
+> Joey Stöckle wird in der Projektdokumentation weiterhin als Teammitglied geführt. Im Projektverlauf wurde die Teamgröße jedoch von 5 auf 4 reduziert, daher war er in der späteren Umsetzungsphase nicht mehr als aktives Kernteammitglied eingeplant und aktiv beteiligt.
+
+---
+
+## Voraussetzungen
+
+### Getestete lokale Versionen
+
+| Tool | Version |
+|---|---|
+| Node.js | v22.14.0 |
+| npm | 10.9.2 |
+
+### Empfehlung
+
+- Node.js LTS (mindestens 20.x)
+- npm ab 10.x
+
+Versionen prüfen:
+
 ```bash
-git clone <DEIN-REPO-URL>
-cd feels-like-organic
+node -v
+npm -v
+```
 
-# Dieser Befehl installiert ALLES (Root, Client und Server Dependencies)
+---
+
+## Schnellstart
+
+```bash
+cd feels-like
+npm run install-all
+npm run seed
+npm run dev
+```
+
+Danach erreichbar unter:
+
+- Frontend: http://localhost:5173
+- API: http://localhost:3000
+
+---
+
+## Setup und Start im Detail
+
+### 1) In Projektordner wechseln
+
+```bash
+cd feels-like
+```
+
+### 2) Dependencies installieren
+
+Empfohlen:
+
+```bash
 npm run install-all
 ```
 
-### 2. Environment Variablen (WICHTIG!)
-Im Ordner `server` liegt eine Datei namens `.env.example`.
-1.  Benenne diese um in `.env` (oder kopiere sie).
-2.  Setze bei `JWT_SECRET` einen sicheren, zufälligen Wert. Er wird verwendet, um JWT-Tokens zu signieren und zu verifizieren. Er sollte nicht zu einfach sein und nicht ins Repository committet werden.
-3.  Setze optional den Mail-Versandmodus:
-	- `MAIL_MODE=auto` (Standard): nutzt SMTP wenn konfiguriert, sonst Ethereal-Testmail, sonst Konsolen-Fallback.
-	- `MAIL_MODE=ethereal`: sendet lokal echte Testmails mit Vorschau-Link (ohne eigenes SMTP-Konto).
-	- `MAIL_MODE=smtp`: sendet echte Einladungen an reale Postfaecher (SMTP-Variablen erforderlich).
-4.  Fuer produktionsnahen Nachweis der E-Mail-Einladung (Dokumentanforderung) nutze `MAIL_MODE=smtp` und setze:
-	`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`.
-5. Der Rest (Datenbank, Port) kann so bleiben.
+Manuell (falls gewünscht):
+
+```bash
+npm install
+cd client && npm install
+cd ../server && npm install
+```
+
+### 3) Environment konfigurieren (.env)
+
+Datei `server/.env` auf Basis von `server/.env.example` erstellen
+
+Windows (PowerShell):
+
+```powershell
+Copy-Item server/.env.example server/.env
+```
+
+macOS/Linux:
+
+```bash
+cp server/.env.example server/.env
+```
+
+### 4) Minimale .env für lokale Entwicklung
+
+```env
+PORT=3000
+JWT_SECRET=bitte_einen_langen_zufaelligen_wert_setzen
+DB_LOGGING=false
+APP_BASE_URL=http://localhost:5173
+MAIL_MODE=auto
+```
+
+### 5) Wichtige .env Variablen
+
+| Variable | Zweck | Beispiel |
+|---|---|---|
+| PORT | Backend-Port | 3000 |
+| JWT_SECRET | Signierung von JWTs | sehr-langer-zufallswert |
+| APP_BASE_URL | Basis-URL für Einladungs-/Reset-Links | http://localhost:5173 |
+| MAIL_MODE | Mailmodus: auto, smtp, ethereal, console | auto |
+| DB_LOGGING | Sequelize SQL-Logging | false |
+
+Weitere optionale Variablen (z. B. SMTP-Details, Passwort-Reset-TTL) stehen in `server/.env.example`
 
 
-**Hinweis:** Die `.env` Datei wird **nicht** ins Git hochgeladen (Sicherheit!), daher muss jeder seine eigene erstellen.
+>`MAIL_MODE` kurz erklärt:
+>- auto: SMTP wenn vollständig konfiguriert, sonst Ethereal, sonst Konsole
+>- smtp: echter SMTP-Versand
+>- ethereal: Testversand mit Preview-Link
+>- console: Link nur in der Konsole
 
-### 3. Datenbank vorbereiten
-Um Testdaten zu haben (inkl. 1 Trainer-Account und 3 Athleten), führe aus:
+### 6) Testdaten einspielen
 
 ```bash
 npm run seed
 ```
 
+Wichtig:
+Der Seed führt im Backend sequelize.sync({ force: true }) aus und setzt die Datenbank zurück
+
 ---
 
-## ▶️ Projekt starten
-Du hast zwei Möglichkeiten:
+## Starten der Anwendung
 
-### Option A: Der "All-in-One" Modus (Empfohlen)
-Startet Backend und Frontend gleichzeitig in einem Terminal.
+### Alles in einem Terminal
 
 ```bash
 npm run dev
 ```
-Nutze `STRG + C` um beide Server zu stoppen.
 
-### Option B: Manuell (Getrennte Terminals)
-Falls du die Logs getrennt sehen willst:
+### Getrennte Terminals
 
-**Terminal 1:** `npm run dev:server`  
-**Terminal 2:** `npm run dev:client`
-
----
-
-## 🏗 Architektur & Tech-Stack
-Die App ist dann unter `http://localhost:5173` erreichbar. Die API läuft unter `http://localhost:3000`.
-
----
-
-## Entwickler-Workflow
-
-Damit man sich nicht gegenseitig stört und um Merge-Konflikte zu vermeiden, gelten folgende Regeln:
-
-### 1. 🛡️ Schutz des `dev` Branch
-Niemand pusht direkt auf `main` oder `dev`! Diese Branches müssen immer stabil sein.
-
-### 2. 🌱 Neue Features entwickeln (Feature Branches)
-Erstelle für JEDE Aufgabe einen neuen Branch namens nach folgendem Schema: `type/name` (z.B. `feature/login-page`, `fix/dashboard-css`, `docs/update-readme`).
+Terminal 1:
 
 ```bash
-# Zuerst aktualisieren
-git checkout dev
-git pull
-
-# Neuer Branch für dein Feature (Namensschema: type/name)
-# Beispiele: feature/login-page, fix/dashboard-css, docs/update-readme
-git checkout -b feature/mein-neues-feature
+npm run dev:server
 ```
 
-### 3. 💾 Speichern & Hochladen
+Terminal 2:
 
 ```bash
-git add .
-git commit -m "Kurze Beschreibung was gemacht wurde"
-git push origin feature/mein-neues-feature
+npm run dev:client
 ```
-
-### 4. 👀 Pull Request (PR) & Code Review
-1. Gehe auf GitHub.
-2. Erstelle einen **Pull Request** von deinem Branch auf `dev`.
-3. Weise einem Teammitglied den PR als **Reviewer** zu.
-4. **Merge erst, wenn das Review approved wurde!**
 
 ---
 
-## 📂 Ordnerstruktur
+## Custom NPM Scripts
 
-- docs/: Projektdokumentation (Pflichtenheft, SDP, Architektur, ...).
+### Root
 
-- client/src/views/: Hier liegen die Seiten der App (Login, Dashboard).
+| Befehl | Beschreibung |
+|---|---|
+| npm run install-all | installiert Root + client + server Dependencies |
+| npm run seed | führt server seed aus |
+| npm run dev | startet client und server parallel |
+| npm run dev:server | startet nur server im Dev-Modus |
+| npm run dev:client | startet nur client im Dev-Modus |
+| npm run build | baut client |
+| npm run build:client | baut client (alias) |
+| npm run lint | lint client + server |
+| npm run lint:client | lint nur client |
+| npm run lint:server | lint nur server |
+| npm run test | führt server Tests aus |
+| npm run qa | lint + test |
+| npm run qa:release | qa + build |
 
-- server/src/models/: Hier sind die Datenbank-Tabellen definiert (Athlet, Training).
+### Server
 
-- server/src/services/: Hier liegt die Geschäftslogik (Rankings, Statistiken).
+| Befehl | Beschreibung |
+|---|---|
+| npm run dev --prefix server | startet server mit nodemon |
+| npm run start --prefix server | startet server ohne nodemon |
+| npm run seed --prefix server | führt Seed direkt aus |
+| npm run lint --prefix server | lint server + tests |
+| npm run test --prefix server | alle Jest Tests |
+| npm run test:watch --prefix server | Jest Watch Mode |
+| npm run test:coverage --prefix server | Jest Coverage |
+
+### Client
+
+| Befehl | Beschreibung |
+|---|---|
+| npm run dev --prefix client | startet Vite Dev Server |
+| npm run build --prefix client | erstellt Build |
+| npm run preview --prefix client | zeigt Build lokal an |
+| npm run lint --prefix client | lint client |
+
+---
+
+## Tests und QA
+
+Schnellprüfung:
+
+```bash
+npm run qa
+```
+
+Nur Tests:
+
+```bash
+npm run test
+```
+
+Coverage:
+
+```bash
+npm run test:coverage --prefix server
+```
+
+---
+
+## Seed-Accounts
+
+Nach npm run seed sind folgende Accounts vorhanden:
+
+| Name | E-Mail | Passwort | Rolle | Status |
+|---|---|---|---|---|
+| Julian Stengele | julian@test.de | 123456 | trainer | aktiv |
+| Isabella Schwarz | isabella@test.de | geheim | athlet | aktiv |
+| Sophie Lazarjan | sophie@test.de | geheim | athlet | aktiv |
+| Atussa Mehrawari | atussa@test.de | geheim | athlet | aktiv |
+| Joey Stoeckle | joey@test.de | geheim | athlet | aktiv |
+| Simon Zweigler | simon@test.de | geheim | athlet | aktiv |
+| Lena Berg | lena@test.de | geheim | athlet | aktiv |
+| Max Kramer | max@test.de | geheim | athlet | aktiv |
+| Nina Vollmer | nina@test.de | geheim | athlet | inaktiv |
+| Fabio Neumann | fabio@test.de | geheim | athlet | aktiv |
+
+Hinweis:
+Seed-Daten sind nur für lokale Entwicklung/Tests gedacht
+
+---
+
+## Ordnerstruktur
+
+| Pfad | Inhalt |
+|---|---|
+| docs | Projektdokumentation |
+| client | Frontend |
+| server | Backend |
+| server/src/models | Sequelize Modelle |
+| server/src/services | Geschäftslogik |
+| server/src/controllers | API-Controller |
+| server/src/routes | API-Routen |

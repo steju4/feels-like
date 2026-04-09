@@ -117,6 +117,7 @@ describe('rankingController.berechneStatistik', () => {
       athletId: 99,
       sportart: 'Laufen',
     }));
+    // Datum wird als gte-Filter gesetzt
     expect(whereArg.datum[Op.gte]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
     expect(res.json).toHaveBeenCalledWith({

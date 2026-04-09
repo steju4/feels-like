@@ -14,7 +14,7 @@ jest.mock('../../src/services/authService', () => ({
 }));
 
 function createResponseMock() {
-  // Express-Response-Mock mit chainbarem status/json/cookie
+  // Express-Response-Mock mit status/json/cookie
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);
@@ -26,7 +26,7 @@ function createResponseMock() {
 describe('authController', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Testumgebung: secure-Cookies sollen nicht erzwungen sein
+    // Testumgebung: secure-Cookies nicht erzwingen
     process.env.NODE_ENV = 'test';
   });
 
@@ -54,6 +54,7 @@ describe('authController', () => {
       await authController.anmelden(req, res);
 
       expect(authService.anmelden).toHaveBeenCalledWith('user@example.com', 'secret123');
+      // Token soll nur im Cookie landen
       expect(res.cookie).toHaveBeenCalledWith(
         'token',
         'jwt-token',

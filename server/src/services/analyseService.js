@@ -34,7 +34,7 @@ const strategies = {
 };
 
 function chooseStrategy(key) {
-  // Unbekannte Metrik -> sicher auf Distanz zurückfallen
+  // Unbekannte Metrik -> auf Distanz zurückfallen
   return strategies[key] || strategies.distanz;
 }
 
