@@ -1,5 +1,5 @@
 /*
-  Tests fuer trainingController.
+  Tests für trainingController.
   Fokus auf den CSV-Export-Endpunkt inklusive Headern und Fehler-Mapping.
 */
 

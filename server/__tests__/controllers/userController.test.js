@@ -16,7 +16,7 @@ jest.mock('../../src/services/userService', () => ({
 }));
 
 function createResponseMock() {
-  // Schlanker Express-Response-Mock
+  // Response-Mock
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);

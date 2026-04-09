@@ -29,7 +29,14 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} /> 
               <Route path="training" element={<TrainingForm />} />
-              <Route path="ranking" element={<Ranking />} />
+              <Route
+                path="ranking"
+                element={(
+                  <ProtectedRoute requiredRole="trainer">
+                    <Ranking />
+                  </ProtectedRoute>
+                )}
+              />
               <Route path="profil" element={<Profile />} />
               <Route
                 path="admin"

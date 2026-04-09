@@ -22,7 +22,7 @@ const zeitraeume = [
 
 const metriken = [
   { value: 'distanz', label: 'Distanz (km)' },
-  { value: 'haeufigkeit', label: 'Häufigkeit' },
+  { value: 'haeufigkeit', label: 'Anzahl Aktivitäten' },
   { value: 'dauer', label: 'Dauer (Minuten)' },
 ];
 
@@ -39,11 +39,52 @@ const Ranking = () => {
     return m ? m.label : 'Wert';
   }, [metrik]);
 
-  const formatWert = (wert) => {
+  const formatWert = (wert, metrikKey = metrik) => {
     const num = Number(wert || 0);
-    if (metrik === 'haeufigkeit') return `${num.toFixed(0)}x`;
-    if (metrik === 'dauer') return `${num.toFixed(0)} min`;
+    if (metrikKey === 'haeufigkeit') return `${num.toFixed(0)}`;
+    if (metrikKey === 'dauer') return `${num.toFixed(0)} min`;
     return `${num.toFixed(2)} km`;
+  };
+
+  const statistik = useMemo(() => {
+    if (!daten.length) {
+      return {
+        anzahlAthleten: 0,
+        anzahlAktivitaeten: 0,
+        durchschnittMetrik: 0,
+        topWert: 0,
+      };
+    }
+
+    const anzahlAktivitaeten = daten.reduce((sum, eintrag) => {
+      return sum + (Number(eintrag.metrics?.haeufigkeit) || 0);
+    }, 0);
+
+    const gesamtMetrik = daten.reduce((sum, eintrag) => {
+      return sum + (Number(eintrag.wert) || 0);
+    }, 0);
+
+    return {
+      anzahlAthleten: daten.length,
+      anzahlAktivitaeten,
+      durchschnittMetrik: gesamtMetrik / daten.length,
+      topWert: Number(daten[0]?.wert) || 0,
+    };
+  }, [daten]);
+
+  const formatDurchschnittProAktivitaet = (eintrag, metrikKey) => {
+    const anzahl = Number(eintrag.metrics?.haeufigkeit) || 0;
+    if (!anzahl) {
+      return '-';
+    }
+
+    const gesamtWert = Number(eintrag.metrics?.[metrikKey]) || 0;
+    const durchschnitt = gesamtWert / anzahl;
+
+    if (metrikKey === 'dauer') {
+      return `${durchschnitt.toFixed(1)} min`;
+    }
+    return `${durchschnitt.toFixed(2)} km`;
   };
 
   useEffect(() => {
@@ -75,7 +116,7 @@ const Ranking = () => {
     <div className="ranking-container">
       <header className="ranking-hero">
         <h1>Rankinganalyse</h1>
-        <p>Vergleiche Athletinnen und Athleten nach Distanz, Häufigkeit oder Dauer im gewählten Zeitraum.</p>
+        <p>Vergleiche Athletinnen und Athleten nach Distanz, Aktivitätsanzahl oder Dauer im gewählten Zeitraum.</p>
       </header>
 
       <div className="ranking-filters">
@@ -111,29 +152,56 @@ const Ranking = () => {
       {error && <div className="ranking-status error">{error}</div>}
 
       {!loading && !error && (
-        <table className="ranking-table">
-          <thead>
-            <tr>
-              <th>Platz</th>
-              <th>Athlet/in</th>
-              <th>{wertLabel}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {daten.length === 0 && (
+        <>
+          <section className="ranking-summary-grid" aria-label="Ranking Überblick">
+            <article className="ranking-summary-card">
+              <p className="ranking-summary-label">Athlet/innen im Ranking</p>
+              <p className="ranking-summary-value">{statistik.anzahlAthleten}</p>
+            </article>
+            <article className="ranking-summary-card">
+              <p className="ranking-summary-label">Aktivitäten gesamt</p>
+              <p className="ranking-summary-value">{statistik.anzahlAktivitaeten}</p>
+            </article>
+            <article className="ranking-summary-card">
+              <p className="ranking-summary-label">Durchschnitt ({wertLabel})</p>
+              <p className="ranking-summary-value">{formatWert(statistik.durchschnittMetrik)}</p>
+            </article>
+            <article className="ranking-summary-card">
+              <p className="ranking-summary-label">Top-Wert ({wertLabel})</p>
+              <p className="ranking-summary-value">{formatWert(statistik.topWert)}</p>
+            </article>
+          </section>
+
+          <table className="ranking-table">
+            <thead>
               <tr>
-                <td colSpan="3">Keine Daten für die ausgewählten Filterkriterien.</td>
+                <th>Platz</th>
+                <th>Athlet/in</th>
+                <th>{wertLabel}</th>
+                <th>Aktivitäten</th>
+                <th>Ø Distanz/Aktivität</th>
+                <th>Ø Dauer/Aktivität</th>
               </tr>
-            )}
-            {daten.map((eintrag, index) => (
-              <tr key={eintrag.athletId || index}>
-                <td>{index + 1}.</td>
-                <td><strong>{eintrag.name}</strong></td>
-                <td>{formatWert(eintrag.wert)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {daten.length === 0 && (
+                <tr>
+                  <td colSpan="6">Keine Daten für die ausgewählten Filterkriterien.</td>
+                </tr>
+              )}
+              {daten.map((eintrag, index) => (
+                <tr key={eintrag.athletId || index}>
+                  <td>{index + 1}.</td>
+                  <td><strong>{eintrag.name}</strong></td>
+                  <td>{formatWert(eintrag.wert)}</td>
+                  <td>{formatWert(eintrag.metrics?.haeufigkeit, 'haeufigkeit')}</td>
+                  <td>{formatDurchschnittProAktivitaet(eintrag, 'distanz')}</td>
+                  <td>{formatDurchschnittProAktivitaet(eintrag, 'dauer')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   );

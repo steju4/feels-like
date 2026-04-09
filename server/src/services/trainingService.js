@@ -109,6 +109,14 @@ function validateTrainingsDaten(daten) {
 function getVonDatum(zeitraum) {
   if (!zeitraum) return null;
 
+  // Neue Filterwerte: direkte Tagesangabe (z. B. 30/90/365)
+  const numerischeTage = parseInt(zeitraum, 10);
+  if (!Number.isNaN(numerischeTage) && numerischeTage > 0) {
+    const numerischesDatum = new Date();
+    numerischesDatum.setDate(numerischesDatum.getDate() - numerischeTage);
+    return formatDateOnlyLocal(numerischesDatum);
+  }
+
   const now = new Date();
   const vonDatum = new Date(now);
 
