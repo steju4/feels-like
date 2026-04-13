@@ -273,7 +273,7 @@ Nach npm run seed sind folgende Accounts vorhanden:
 |---|---|---|---|---|
 | Julian Stengele | julian@test.de | 123456 | trainer | aktiv |
 | Isabella Schwarz | isabella@test.de | geheim | athlet | aktiv |
-| Sophie Lazarjan | sophie@test.de | 87654321 | athlet | aktiv |
+| Sophie Lazarjan | sophie@test.de | geheim | athlet | aktiv |
 | Atussa Mehrawari | atussa@test.de | geheim | athlet | aktiv |
 | Joey Stoeckle | joey@test.de | geheim | athlet | aktiv |
 | Simon Zweigler | simon@test.de | geheim | athlet | aktiv |
